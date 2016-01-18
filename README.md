@@ -1,2 +1,2 @@
 # miroculus-pipeline
-admin console for miroculus
+Miroculus pipeline components
