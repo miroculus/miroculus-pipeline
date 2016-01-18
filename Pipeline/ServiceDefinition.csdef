@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ServiceDefinition name="Pipeline" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2015-04.2.6">
+  <WorkerRole name="PipelineWorker" vmsize="Small">
+    <ConfigurationSettings>
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" />
+      <Setting name="DB_SERVER" />
+      <Setting name="DB_NAME" />
+      <Setting name="DB_PASSWORD" />
+      <Setting name="DB_USER" />
+    </ConfigurationSettings>
+    <Startup>
+      <Task commandLine="setup_worker.cmd &gt; log.txt" executionContext="elevated" taskType="simple">
+        <Environment>
+          <Variable name="EMULATED"><RoleInstanceValue xpath="/RoleEnvironment/Deployment/@emulated" /></Variable>
+          <Variable name="RUNTIMEID" value="node" />
+          <Variable name="RUNTIMEURL" value="http://az413943.vo.msecnd.net/node/0.10.21.exe;http://nodertncu.blob.core.windows.net/iisnode/0.1.21.exe" />
+        </Environment>
+      </Task>
+      <Task commandLine="node.cmd .\startup.js" executionContext="elevated" />
+    </Startup>
+    <Runtime>
+      <Environment>
+        <Variable name="EMULATED">
+          <RoleInstanceValue xpath="/RoleEnvironment/Deployment/@emulated" />
+        </Variable>
+        <Variable name="DB_SERVER">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='DB_SERVER']/@value" />
+        </Variable>
+        <Variable name="DB_NAME">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='DB_NAME']/@value" />
+        </Variable>
+        <Variable name="DB_PASSWORD">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='DB_PASSWORD']/@value" />
+        </Variable>
+        <Variable name="DB_USER">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='DB_USER']/@value" />
+        </Variable>
+      </Environment>
+      <EntryPoint>
+        <ProgramEntryPoint commandLine="node.cmd .\worker.js" setReadyOnProcessStart="true" />
+      </EntryPoint>
+    </Runtime>
+    <Imports>
+      <Import moduleName="RemoteAccess" />
+      <Import moduleName="RemoteForwarder" />
+    </Imports>
+  </WorkerRole>
+</ServiceDefinition>

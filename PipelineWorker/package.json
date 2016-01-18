@@ -1,0 +1,13 @@
+{
+  "name": "PipelineWorker",
+  "version": "0.0.0",
+  "description": "PipelineWorker",
+  "main": "worker.js",
+  "author": {
+    "name": "amitu",
+    "email": "ami.turgman@microsoft.com"
+  },
+  "dependencies": {
+    "tedious": "^1.13.2"
+  }
+}
