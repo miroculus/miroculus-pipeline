@@ -7,11 +7,16 @@
       <Setting name="DB_NAME" />
       <Setting name="DB_PASSWORD" />
       <Setting name="DB_USER" />
+      <Setting name="STORAGE_ACCOUNT" />
+      <Setting name="STORAGE_KEY" />
+      <Setting name="QUEUE_SCORING" />
     </ConfigurationSettings>
     <Startup>
       <Task commandLine="setup_worker.cmd &gt; log.txt" executionContext="elevated" taskType="simple">
         <Environment>
-          <Variable name="EMULATED"><RoleInstanceValue xpath="/RoleEnvironment/Deployment/@emulated" /></Variable>
+          <Variable name="EMULATED">
+            <RoleInstanceValue xpath="/RoleEnvironment/Deployment/@emulated" />
+          </Variable>
           <Variable name="RUNTIMEID" value="node" />
           <Variable name="RUNTIMEURL" value="http://az413943.vo.msecnd.net/node/0.10.21.exe;http://nodertncu.blob.core.windows.net/iisnode/0.1.21.exe" />
         </Environment>
@@ -35,6 +40,15 @@
         <Variable name="DB_USER">
           <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='DB_USER']/@value" />
         </Variable>
+        <Variable name="STORAGE_ACCOUNT">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='STORAGE_ACCOUNT']/@value" />
+        </Variable>
+        <Variable name="STORAGE_KEY">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='STORAGE_KEY']/@value" />
+        </Variable>
+        <Variable name="QUEUE_SCORING">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='QUEUE_SCORING']/@value" />
+        </Variable>
       </Environment>
       <EntryPoint>
         <ProgramEntryPoint commandLine="node.cmd .\worker.js" setReadyOnProcessStart="true" />
@@ -44,5 +58,63 @@
       <Import moduleName="RemoteAccess" />
       <Import moduleName="RemoteForwarder" />
     </Imports>
+  </WorkerRole>
+  <WorkerRole name="ScoringWorker" vmsize="Small">
+    <ConfigurationSettings>
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" />
+      <Setting name="DB_SERVER" />
+      <Setting name="DB_NAME" />
+      <Setting name="DB_PASSWORD" />
+      <Setting name="DB_USER" />
+      <Setting name="STORAGE_ACCOUNT" />
+      <Setting name="STORAGE_KEY" />
+      <Setting name="QUEUE_SCORING" />
+    </ConfigurationSettings>
+    <Imports>
+      <Import moduleName="RemoteAccess" />
+    </Imports>
+    <Startup>
+      <Task commandLine="setup_worker.cmd &gt; log.txt" executionContext="elevated" taskType="simple">
+        <Environment>
+          <Variable name="EMULATED">
+            <RoleInstanceValue xpath="/RoleEnvironment/Deployment/@emulated" />
+          </Variable>
+          <Variable name="RUNTIMEID" value="node" />
+          <Variable name="RUNTIMEURL" value="http://az413943.vo.msecnd.net/node/0.10.21.exe;http://nodertncu.blob.core.windows.net/iisnode/0.1.21.exe" />
+        </Environment>
+      </Task>
+      <Task commandLine="node.cmd .\startup.js" executionContext="elevated" />
+    </Startup>
+    <Runtime>
+      <Environment>
+        <Variable name="EMULATED">
+          <RoleInstanceValue xpath="/RoleEnvironment/Deployment/@emulated" />
+        </Variable>
+        <Variable name="DB_SERVER">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='DB_SERVER']/@value" />
+        </Variable>
+        <Variable name="DB_NAME">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='DB_NAME']/@value" />
+        </Variable>
+        <Variable name="DB_PASSWORD">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='DB_PASSWORD']/@value" />
+        </Variable>
+        <Variable name="DB_USER">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='DB_USER']/@value" />
+        </Variable>
+        <Variable name="STORAGE_ACCOUNT">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='STORAGE_ACCOUNT']/@value" />
+        </Variable>
+        <Variable name="STORAGE_KEY">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='STORAGE_KEY']/@value" />
+        </Variable>
+        <Variable name="QUEUE_SCORING">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='QUEUE_SCORING']/@value" />
+        </Variable>
+      </Environment>
+      <EntryPoint>
+        <ProgramEntryPoint commandLine="node.cmd .\worker.js" setReadyOnProcessStart="true" />
+      </EntryPoint>
+    </Runtime>
   </WorkerRole>
 </ServiceDefinition>

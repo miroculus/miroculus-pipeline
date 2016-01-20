@@ -7,6 +7,8 @@ Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "Pipeline", "Pipeline\Pipeli
 EndProject
 Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "PipelineWorker", "PipelineWorker\PipelineWorker.njsproj", "{DB8A4A68-4D80-48DE-8098-44F76FF92573}"
 EndProject
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "ScoringWorker", "ScoringWorker\ScoringWorker.njsproj", "{BE1C9924-224A-43D3-A8FD-3CF418820FA1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{DB8A4A68-4D80-48DE-8098-44F76FF92573}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB8A4A68-4D80-48DE-8098-44F76FF92573}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB8A4A68-4D80-48DE-8098-44F76FF92573}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE1C9924-224A-43D3-A8FD-3CF418820FA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE1C9924-224A-43D3-A8FD-3CF418820FA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE1C9924-224A-43D3-A8FD-3CF418820FA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE1C9924-224A-43D3-A8FD-3CF418820FA1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

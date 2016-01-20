@@ -1,4 +1,8 @@
 
+##setenv private files
+setenv.cmd
+
+
 ## Node.js
 # Logs
 logs
