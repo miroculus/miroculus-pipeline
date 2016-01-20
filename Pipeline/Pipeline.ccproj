@@ -38,6 +38,14 @@
     <ServiceConfiguration Include="ServiceConfiguration.Cloud.cscfg" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\QueryIDsWorker\QueryIDsWorker.njsproj">
+      <Name>QueryIDsWorker</Name>
+      <Project>{0943f5b6-57b9-4f32-b477-3ed4c8d62475}</Project>
+      <Private>True</Private>
+      <RoleType>Worker</RoleType>
+      <RoleName>QueryIDsWorker</RoleName>
+      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
+    </ProjectReference>
     <ProjectReference Include="..\PipelineWorker\PipelineWorker.njsproj">
       <Name>PipelineWorker</Name>
       <Project>{db8a4a68-4d80-48de-8098-44f76ff92573}</Project>
@@ -50,9 +58,11 @@
   <ItemGroup>
     <Folder Include="PipelineWorkerContent\" />
     <Folder Include="Profiles" />
+    <Folder Include="QueryIDsWorkerContent\" />
   </ItemGroup>
   <ItemGroup>
     <DiagnosticsConfiguration Include="PipelineWorkerContent\diagnostics.wadcfgx" />
+    <DiagnosticsConfiguration Include="QueryIDsWorkerContent\diagnostics.wadcfgx" />
   </ItemGroup>
   <ItemGroup>
     <PublishProfile Include="Profiles\miroculus-pipelineProduction.azurePubxml" />

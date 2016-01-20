@@ -1,0 +1,7 @@
+﻿{
+  "useDevelopmentStorage": true,
+  "storageName": "<storageaccountname>",
+  "storageKey": "key",
+  "queueName": "newstuff"
+}
+
