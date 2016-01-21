@@ -14,7 +14,7 @@ var createDateContinuum = function (from, to) {
     return dates;
 };
 
-exports.getPapers = function (dateFrom, dateTo, doneCallback) {
+getPapers = function (dateFrom, dateTo, doneCallback) {
     var dates = createDateContinuum(dateFrom, dateTo);
     var papersData = { papers: [] };
     
@@ -24,7 +24,7 @@ exports.getPapers = function (dateFrom, dateTo, doneCallback) {
         ncbi.searchRequest('pmc', [pdaTimeSpan], 10000, 0, 'edat', -1, function (err, res, cache) {
             if (err) {
                 console.error(err);
-                callback(err);
+                return callback(err);
             }
             
             checkPapers(date, res.idlist, function (err, papers) {
@@ -48,7 +48,7 @@ exports.getPapers = function (dateFrom, dateTo, doneCallback) {
 };
 
 
-exports.checkPapers = function (date, paperIds, callback) {
+checkPapers = function (date, paperIds, callback) {
     
     notProcessedPapers(paperIds, function (err, filteredPapers) {
         if (err) {
@@ -61,13 +61,20 @@ exports.checkPapers = function (date, paperIds, callback) {
 
 // Mock function, it needs to check if the paper is already
 // proccessed.
-exports.notProcessedPapers = function (paperIds, callback) {
+notProcessedPapers = function (paperIds, callback) {
     return callback(null, paperIds);
 };
 
 
 // Mock function, it needs to put the paperid in a queue to 
 // be downloaded and proccesed
-exports.enqueue = function (paperID) {
+enqueue = function (paperID) {
     console.log('enquee the pmc:', paperID);
+};
+
+module.exports = {
+    getPapers: getPapers,
+    checkPapers: checkPapers,
+    notProcessedPapers: notProcessedPapers,
+    enqueue: enqueue
 };

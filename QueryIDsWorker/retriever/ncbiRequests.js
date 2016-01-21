@@ -20,6 +20,7 @@ var searchRequest = function (database, terms, retmax, retStart, etype, reldate,
     if (reldate == -1) {
         delete query.reldate;
     }
+
     var urlRequest = host + path + services.search + '?' + queryString.stringify(query);
     console.log(urlRequest);
     request(urlRequest, function (err, resp, body) {

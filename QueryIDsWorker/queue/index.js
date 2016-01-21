@@ -25,21 +25,21 @@ var Queue = function (queueName, storageConfig) {
     this.getSingleMessage = function () {
         var deferred = Q.defer();
         _queueService.getMessages(_queueName, _singleMessageDefaults,
-            this.getSingleMessageComplete(deferred));
+            getSingleMessageComplete(deferred));
         return deferred.promise;
     };
     
     this.deleteMessage = function (message) {
         var deferred = Q.defer();
         _queueService.deleteMessage(_queueName, message.messageid,
-            message.popreceipt, this.deleteComplete(deferred));
+            message.popreceipt, deleteComplete(deferred));
         return deferred.promise;
     };
     
     this.sendMessage = function (message, onComplete) {
         onComplete = onComplete || Function();
         var deferred = Q.defer();
-        _queueService.createMessage(_queueName, JSON.stringify(message), this.sendMessageComplete(deferred, onComplete));
+        _queueService.createMessage(_queueName, JSON.stringify(message), sendMessageComplete(deferred, onComplete));
         return deferred.promise;
     };
     
