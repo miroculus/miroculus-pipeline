@@ -324,7 +324,3 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
-QueryIDsWorker/*.js
-QueryIDsWorker/*.js.map
-QueryIDsWorker/*/*.js
-QueryIDsWorker/*/*.js.map

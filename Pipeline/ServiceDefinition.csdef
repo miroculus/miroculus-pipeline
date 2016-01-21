@@ -55,6 +55,10 @@
       <Setting name="DB_PASSWORD" />
       <Setting name="DB_USER" />
       <Setting name="Microsoft.WindowsAzure.Plugins.RemoteForwarder.Enabled" />
+      <Setting name="STORAGE_ACCOUNT" />
+      <Setting name="STORAGE_KEY" />
+      <Setting name="QUEUE_SCORING" />
+      <Setting name="QUEUE_NEW_IDS" />
     </ConfigurationSettings>
     <Imports>
       <Import moduleName="RemoteAccess" />
@@ -87,6 +91,18 @@
         </Variable>
         <Variable name="DB_USER">
           <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='DB_USER']/@value" />
+        </Variable>
+        <Variable name="STORAGE_ACCOUNT">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='STORAGE_ACCOUNT']/@value" />
+        </Variable>
+        <Variable name="STORAGE_KEY">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='STORAGE_KEY']/@value" />
+        </Variable>
+        <Variable name="QUEUE_SCORING">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='QUEUE_SCORING']/@value" />
+        </Variable>
+        <Variable name="QUEUE_NEW_IDS">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='QUEUE_NEW_IDS']/@value" />
         </Variable>
       </Environment>
       <EntryPoint>
