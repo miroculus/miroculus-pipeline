@@ -1,4 +1,4 @@
-var ncbi = require('./ncbiRequests.js');
+var service = require('./ncbiService.js');
 var fs = require('fs');
 var moment = require('moment');
 var async = require('async');
@@ -21,7 +21,7 @@ getPapers = function (dateFrom, dateTo, doneCallback) {
     var searchOnDate = function (date, callback) {
         var pdaTimeSpan = moment(date).format('"YYYY/MM/DD"<<>> : "YYYY/MM/DD"<<>>').replace(/<<>>/g, '[EDAT]');
         console.log("Searching for papers in " + pdaTimeSpan);
-        ncbi.searchRequest('pmc', [pdaTimeSpan], 10000, 0, 'edat', -1, function (err, res, cache) {
+        service.searchRequest(service.dbs.pmc, [pdaTimeSpan], 10000, 0, service.etypes.edat, -1, function (err, res, cache) {
             if (err) {
                 console.error(err);
                 return callback(err);

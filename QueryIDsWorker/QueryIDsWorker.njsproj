@@ -36,7 +36,7 @@
   <ItemGroup>
     <Compile Include="common\index.js" />
     <Compile Include="common\log.js" />
-    <Compile Include="retriever\ncbiRequests.js" />
+    <Compile Include="retriever\ncbiService.js" />
     <Compile Include="retriever\pmcRetriever.js" />
     <Compile Include="retriever\pmcWrapper.js" />
     <Compile Include="server.js" />

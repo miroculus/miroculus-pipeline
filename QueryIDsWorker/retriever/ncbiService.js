@@ -1,12 +1,20 @@
 var request = require('request');
 var queryString = require('querystring');
+
 var host = 'http://eutils.ncbi.nlm.nih.gov/';
 var path = 'entrez/eutils/';
 var services = {
     search: 'esearch.fcgi',
     fetch: 'efetch.fcgi'
 };
+var dbs = {
+    pmc: 'pmc'
+};
+var etypes = {
+    edat: 'edat'
+};
 var _cache = undefined;
+
 var searchRequest = function (database, terms, retmax, retStart, etype, reldate, callback) {
     var query = {
         db: database,
@@ -101,5 +109,8 @@ module.exports = {
     fetchContent: fetchContent,
     fetchCachedContent: fetchCachedContent,
     configCache: configCache,
-    getCache: getCache
+    getCache: getCache,
+
+    dbs: dbs,
+    etypes: etypes
 };
