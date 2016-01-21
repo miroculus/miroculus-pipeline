@@ -1,7 +1,7 @@
 console.log('env variables', process.env);
 
 var common = require('./common/index.js');
-var retriever = require("./retriever/pmcWrapper.js");
+var retriever = require("./papersHandler");
 
 
 setInterval(function () {

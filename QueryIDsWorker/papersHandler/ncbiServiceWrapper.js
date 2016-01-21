@@ -47,7 +47,6 @@ getPapers = function (dateFrom, dateTo, doneCallback) {
     async.eachSeries(dates, searchOnDate, asyncDoneCallback);
 };
 
-
 checkPapers = function (date, paperIds, callback) {
     
     notProcessedPapers(paperIds, function (err, filteredPapers) {
@@ -64,7 +63,6 @@ checkPapers = function (date, paperIds, callback) {
 notProcessedPapers = function (paperIds, callback) {
     return callback(null, paperIds);
 };
-
 
 // Mock function, it needs to put the paperid in a queue to 
 // be downloaded and proccesed

@@ -36,9 +36,9 @@
   <ItemGroup>
     <Compile Include="common\index.js" />
     <Compile Include="common\log.js" />
-    <Compile Include="retriever\ncbiService.js" />
-    <Compile Include="retriever\pmcRetriever.js" />
-    <Compile Include="retriever\pmcWrapper.js" />
+    <Compile Include="papersHandler\ncbiService.js" />
+    <Compile Include="papersHandler\ncbiServiceWrapper.js" />
+    <Compile Include="papersHandler\index.js" />
     <Compile Include="server.js" />
     <Compile Include="startup.js" />
     <Content Include="download.ps1" />
@@ -50,7 +50,7 @@
   <ItemGroup>
     <Folder Include="common\" />
     <Folder Include="queue\" />
-    <Folder Include="retriever\" />
+    <Folder Include="papersHandler\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="common\config.js" />
