@@ -1,3 +1,2 @@
-exports.config = require('./config.js');
-exports.log = require('./log.js');
-exports.db = require('./db.js');
+module.exports.log = require('./log.js');
+module.exports.db = require('./db.js');

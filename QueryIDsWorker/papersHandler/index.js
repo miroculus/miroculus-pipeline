@@ -2,49 +2,66 @@ var moment = require('moment');
 var retriever = require('./ncbiServiceWrapper.js');
 var queue = require("../queue");
 
-var common = require("../common")
-var queueOut = new queue(common.config.queue.new_ids, common.config.storage);
+var common = require("../common");
+var config = require("../config");
+var log = common.log;
 
-function getPapers() {
-    var toDate = moment();
-    var fromDate = moment().add(-3, 'days');
-    console.log('getting papers from ' + fromDate.format('YYYY-MM-DD') + ' to ' + toDate.format('YYYY-MM-DD'));
+var papersHandler = (function () {
+    "use strict";
 
-    // processing commands, then ...        
-    retriever.getPapers(fromDate.toDate(), toDate.toDate(), function (papersData) {
-        if (papersData) {
-            var papers = papersData.papers;
-            if (Array.isArray(papers)) {
-                console.log('Found ' + papers.length + ' new documents');
-                papers.forEach(function (paperId) {
-                    console.log('Sending request for document with id: ' + paperId);
-                    queueOut.sendMessage({
-                        "requestType": "getDocument",
-                        "properties": {
-                            "documentId": paperId,
-                            "documentSource": "pmc"
-                        }
-                    })
-                        .then(function (obj) {
-                        return console.log('enqueued');
-                    })
-                        .catch(function (r) {
-                        return console.error('failed here', r);
-                    })
-                        .finally(function () {
-                        return console.log('done sending.....');
+    var queueOut = new queue.QueueHandler(config.queue.new_ids, config.storage);
+    // Todo: This property should be changes to make a check with DB
+    var _tempIDCache = {};
+    
+    var getPapers = function () {
+        var toDate = moment();
+        var fromDate = moment().add(-3, 'days');
+        log.info('getting papers from {} to {}', fromDate.format('YYYY-MM-DD'), toDate.format('YYYY-MM-DD'));
+        
+        // Run query for paperts in specific date
+        retriever.getPapers(fromDate.toDate(), toDate.toDate(), function (papersData) {
+            if (papersData) {
+                var papers = papersData.papers;
+                
+                if (Array.isArray(papers)) {
+                    log.info('Found {} new documents', papers.length);
+                    
+                    // Enqueuing each document as a pending request for processing
+                    papers.forEach(function (paperId) {
+                        
+                        if (_tempIDCache[paperId]) { return; }
+
+                        log.info('Enqueuing request for document with id: <{}>', paperId);
+
+                        queueOut.sendMessage({
+                            "requestType": "getDocument",
+                            "properties": {
+                                "documentId": paperId,
+                                "documentSource": "pmc"
+                            }
+                        }).then(function (obj) {
+                            _tempIDCache[paperId] = true;
+                            return log.info('enqueued: <{}>', obj);
+
+                        }).catch(function (r) {
+                            return log.error('failed to enqueu message: <{}>', r);
+
+                        }).finally(function () {
+                            return log.info('done sending.....');
+
+                        });
                     });
-                });
-                return console.log('Completed itterating through retrieved documents');
+                    return log.info('Completed itterating through retrieved documents');
+                } else {
+                    return log.error('Returned data is not an array');
+                }
+            } else {
+                return log.error('No data was returned when quering for new papers');
             }
-            else {
-                return console.error('Returned data is not an array');
-            }
-        }
-        else {
-            return console.error('error occured:');
-        }
-    });
-}
+        });
+    };
 
-exports.getPapers = getPapers;
+    return getPapers;
+}());
+
+exports.getPapers = papersHandler;

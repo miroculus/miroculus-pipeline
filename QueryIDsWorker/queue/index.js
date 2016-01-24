@@ -5,46 +5,55 @@
 var Q = require("q");
 var azure = require("azure-storage");
 
-var Queue = function (queueName, storageConfig) {
-    
+/**
+ * @typedef {Object} StorageConfig
+ * @property {string} key Storage account key
+ * @property {string} account Storage account name
+ */
+
+/**
+ * @typedef {Object} MessageDetails
+ * @property {string} messageid identification of the message
+ * @property {string} popreceipt ???
+ */
+
+/**
+* Creates a new Queue object.
+* Requires queue name to be provided and configuration for storage account
+ * 
+* @class
+* The Queue class is used to perform operations on the Microsoft Azure Queue Service.
+* 
+* @constructor
+* @augments {StorageServiceClient}
+*
+* @param {string}           [queueName]                 The name of the queue in the storage account.
+* @param {StorageConfig}    [storageConfig]             The storage configuration.
+*/
+var QueueHandler = function (queueName, storageConfig) {
+    "use strict";
+
     var _queueName = queueName;
     var _storageConfig = storageConfig;
     var _queueService = null;
-    var _singleMessageDefaults = null;
+    var _singleMessageDefaults = { numofmessages: 1, visibilitytimeout: 2 * 60 };
+    var _retryOperations = new azure.ExponentialRetryPolicyFilter();
     
-    var retryOperations = new azure.ExponentialRetryPolicyFilter();
-    var singleMessageDefaults = { numofmessages: 1, visibilitytimeout: 2 * 60 };
-    
-    _queueService = azure.createQueueService(_storageConfig.account, _storageConfig.key).withFilter(retryOperations);
+    _queueService = azure.createQueueService(_storageConfig.account, _storageConfig.key).withFilter(_retryOperations);
     _queueService.createQueueIfNotExists(_queueName, function (err) {
         if (err) {
             console.error(err);
         }
     });
     
+    /** 
+     * Get a single message from the queue
+     * 
+     * @returns {Promise<object>} with the data from the top of the queue
+     */
     this.getSingleMessage = function () {
         var deferred = Q.defer();
-        _queueService.getMessages(_queueName, _singleMessageDefaults,
-            getSingleMessageComplete(deferred));
-        return deferred.promise;
-    };
-    
-    this.deleteMessage = function (message) {
-        var deferred = Q.defer();
-        _queueService.deleteMessage(_queueName, message.messageid,
-            message.popreceipt, deleteComplete(deferred));
-        return deferred.promise;
-    };
-    
-    this.sendMessage = function (message, onComplete) {
-        onComplete = onComplete || Function();
-        var deferred = Q.defer();
-        _queueService.createMessage(_queueName, JSON.stringify(message), sendMessageComplete(deferred, onComplete));
-        return deferred.promise;
-    };
-    
-    getSingleMessageComplete = function (deferred) {
-        return function (error, messages) {
+        _queueService.getMessages(_queueName, _singleMessageDefaults, function (error, messages) {
             if (error) {
                 deferred.reject(error);
             } else {
@@ -54,22 +63,41 @@ var Queue = function (queueName, storageConfig) {
                     deferred.resolve();
                 }
             }
-        };
+        });
+        return deferred.promise;
     };
     
-    deleteComplete = function (deferred) {
-        return function (error) {
+    /** 
+     * Get a single message from the queue
+     * 
+     * @param {MessageDetails} message Message to delete details
+     * 
+     * @returns {Promise<object>} with the data from the top of the queue
+     */
+    this.deleteMessage = function (message) {
+        var deferred = Q.defer();
+        _queueService.deleteMessage(_queueName, message.messageid , message.popreceipt, function (error) {
             if (error) {
                 deferred.reject(error);
             } else {
                 deferred.resolve();
             }
-        };
+        });
+        return deferred.promise;
     };
     
-    sendMessageComplete = function (deferred, onComplete) {
-        onComplete = onComplete || Function();
-        return function (error) {
+    /** 
+     * Get a single message from the queue
+     * 
+     * @param {Object} message Message to queue
+     * @param {Object} onComplete Callback when the queuing was completed
+     * 
+     * @returns {Promise<object>} with the data from the top of the queue
+     */
+    this.sendMessage = function (message, onComplete) {
+        onComplete = onComplete || function () { };
+        var deferred = Q.defer();
+        _queueService.createMessage(_queueName, JSON.stringify(message), function (error) {
             if (error) {
                 deferred.reject(error);
             }
@@ -77,8 +105,9 @@ var Queue = function (queueName, storageConfig) {
                 deferred.resolve();
             }
             onComplete(error);
-        };
+        });
+        return deferred.promise;
     };
-}
+};
 
-module.exports = Queue;
+module.exports.QueueHandler = QueueHandler;
