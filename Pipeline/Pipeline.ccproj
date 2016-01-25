@@ -38,14 +38,6 @@
     <ServiceConfiguration Include="ServiceConfiguration.Cloud.cscfg" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PipelineWorker\PipelineWorker.njsproj">
-      <Name>PipelineWorker</Name>
-      <Project>{db8a4a68-4d80-48de-8098-44f76ff92573}</Project>
-      <Private>True</Private>
-      <RoleType>Worker</RoleType>
-      <RoleName>PipelineWorker</RoleName>
-      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
-    </ProjectReference>
     <ProjectReference Include="..\ScoringWorker\ScoringWorker.njsproj">
       <Name>ScoringWorker</Name>
       <Project>{be1c9924-224a-43d3-a8fd-3cf418820fa1}</Project>
@@ -73,4 +65,8 @@
     <CloudExtensionsDir Condition=" '$(CloudExtensionsDir)' == '' ">$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Windows Azure Tools\2.8\</CloudExtensionsDir>
   </PropertyGroup>
   <Import Project="$(CloudExtensionsDir)Microsoft.WindowsAzure.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)obj\$(ConfigurationName)\ScoringWorker\node_modules\ /EFY
+xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)csx\$(ConfigurationName)\roles\ScoringWorker\approot\node_modules\ /EFY</PostBuildEvent>
+  </PropertyGroup>
 </Project>

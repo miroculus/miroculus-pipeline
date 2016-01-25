@@ -32,7 +32,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="config\index.js" />
-    <Compile Include="queue.js" />
     <Compile Include="worker.js" />
     <Compile Include="startup.js" />
     <Content Include="download.ps1" />

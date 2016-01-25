@@ -18,6 +18,9 @@ var config = {
     storage: {
         account: process.env.STORAGE_ACCOUNT,
         key: process.env.STORAGE_KEY
+    },
+    queues: {
+        scoring: process.env.QUEUE_SCORING
     }
 };
 
@@ -26,9 +29,9 @@ if (!config.sql.userName) throw new Error('Sql user was not provided, please add
 if (!config.sql.password) throw new Error('password for db was not provided, please add DB_PASSWORD to environment variables');
 if (!config.sql.options.database) throw new Error('db name was not provided, please add DB_NAME to environment variables');
 
+if (!config.storage.account) throw new Error('storage account was not provided, please add STORAGE_ACCOUNT to environment variables');
+if (!config.storage.key) throw new Error('storage key was not provided, please add STORAGE_KEY to environment variables');
 
-//if (!config.storage.account) throw new Error('storage account was not provided, please add STORAGE_ACCOUNT to environment variables');
-//if (!config.storage.key) throw new Error('storage key was not provided, please add STORAGE_KEY to environment variables');
-
+if(!config.queues.scoring) throw new Error('scoring queue name was not provided, please add QUEUE_SCORING to environment variables');
 
 module.exports = config;
