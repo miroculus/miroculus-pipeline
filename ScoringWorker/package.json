@@ -1,13 +1,15 @@
 {
-  "name": "PipelineWorker",
+  "name": "ScoringWorker",
   "version": "0.0.0",
-  "description": "PipelineWorker",
+  "description": "ScoringWorker",
   "main": "worker.js",
   "author": {
     "name": "amitu",
     "email": "ami.turgman@microsoft.com"
   },
   "dependencies": {
+    "azure-storage": "^0.7.0",
+    "q": "^1.4.1",
     "tedious": "^1.13.2"
   }
 }

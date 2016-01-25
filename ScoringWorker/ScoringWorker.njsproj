@@ -3,14 +3,14 @@
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-    <Name>PipelineWorker</Name>
-    <RootNamespace>PipelineWorker</RootNamespace>
+    <Name>ScoringWorker</Name>
+    <RootNamespace>ScoringWorker</RootNamespace>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>db8a4a68-4d80-48de-8098-44f76ff92573</ProjectGuid>
+    <ProjectGuid>be1c9924-224a-43d3-a8fd-3cf418820fa1</ProjectGuid>
     <ProjectHome>.</ProjectHome>
     <StartupFile>worker.js</StartupFile>
     <SearchPath>
@@ -32,7 +32,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="config\index.js" />
-    <Compile Include="db.js" />
     <Compile Include="worker.js" />
     <Compile Include="startup.js" />
     <Content Include="download.ps1" />
