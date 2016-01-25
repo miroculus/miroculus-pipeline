@@ -1,10 +1,8 @@
 var constants = {
   DocumentStatus: {
-    Queued: 1,
-    Fetching: 2,
-    Split: 3,
-    Scoring: 4,
-    ProcessComplete: 5
+    Processing: 1,
+    Scoring: 2,
+    Processed: 3
   },
   Queues: {
     Action: {

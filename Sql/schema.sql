@@ -289,9 +289,7 @@ GO
 
 
 
-INSERT INTO DocumentStatus (Id,Name) VALUES (1, 'Queued')
-INSERT INTO DocumentStatus (Id,Name) VALUES (2, 'Fetching')
-INSERT INTO DocumentStatus (Id,Name) VALUES (3, 'Split')
-INSERT INTO DocumentStatus (Id,Name) VALUES (4, 'Scoring')
-INSERT INTO DocumentStatus (Id,Name) VALUES (5, 'Process Complete')
+INSERT INTO DocumentStatus (Id,Name) VALUES (1, 'Processing')
+INSERT INTO DocumentStatus (Id,Name) VALUES (2, 'Scoring')
+INSERT INTO DocumentStatus (Id,Name) VALUES (3, 'Processed')
 
