@@ -36,6 +36,7 @@ var ncbiServiceWrapper = (function () {
     var getPapers = function (dateFrom, dateTo, doneCallback) {
         var dates = createDateContinuum(dateFrom, dateTo);
         var papersData = { papers: [] };
+        var errors = [];
         
         var searchOnDate = function (date, callback) {
             var pdaTimeSpan = moment(date).format('"YYYY/MM/DD"<<>> : "YYYY/MM/DD"<<>>').replace(/<<>>/g, '[EDAT]');
@@ -43,14 +44,16 @@ var ncbiServiceWrapper = (function () {
             service.searchRequest(service.dbs.pmc, [pdaTimeSpan], 10000, 0, service.etypes.edat, -1, function (err, res, cache) {
                 if (err) {
                     console.error(err);
+                    errors.push(err);
                     return callback(err);
                 }
                 
                 checkPapers(date, res.idlist, function (err, papers) {
                     if (err) {
                         console.error(err);
+                        errors.push(err);
                         callback(err);
-                    };
+                    }
                     
                     papersData.papers = papersData.papers.concat(papers);
                     callback();
@@ -60,7 +63,7 @@ var ncbiServiceWrapper = (function () {
         
         var asyncDoneCallback = function () {
             console.log("Finished scanning all dates");
-            doneCallback(papersData);
+            doneCallback(errors, papersData);
         };
         
         async.eachSeries(dates, searchOnDate, asyncDoneCallback);

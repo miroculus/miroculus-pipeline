@@ -36,7 +36,8 @@ var ncbiService = (function () {
         
         var urlRequest = host + path + services.search + '?' + queryString.stringify(query);
         console.log(urlRequest);
-        request(urlRequest, function (err, resp, body) {
+
+        return request(urlRequest, function (err, resp, body) {
             if (err) {
                 return callback(err);
             }
@@ -53,7 +54,8 @@ var ncbiService = (function () {
                 WebEnv: body.esearchresult.webenv,
                 terms: terms.join(' ')
             };
-            callback(null, body.esearchresult, _cache);
+
+            return callback(null, body.esearchresult, _cache);
         });
     };
     

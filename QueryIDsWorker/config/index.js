@@ -1,3 +1,5 @@
+var format = require('string_format');
+
 var config = {
     sql: {
         server: process.env.DB_SERVER,
@@ -18,17 +20,18 @@ var config = {
     }
 };
 
-if (!config.sql.server) {
-    throw new Error('Sql server was not provided, please add DB_SERVER to environment variables');
+function checkParam(paramValue, paramInfo, paramKey) {
+    "use strict";
+
+    if (!paramValue) {
+        throw new Error(format('{} was not provided, please add {} to environment variables', paramInfo, paramKey));
+    }
 }
-if (!config.sql.userName) {
-    throw new Error('Sql user was not provided, please add DB_USER to environment variables');
-}
-if (!config.sql.password) {
-    throw new Error('password for db was not provided, please add DB_PASSWORD to environment variables');
-}
-if (!config.sql.options.database) {
-    throw new Error('db name was not provided, please add DB_NAME to environment variables');
-}
+
+checkParam(config.sql.server, 'Sql server', 'DB_SERVER');
+checkParam(config.sql.userName, 'Sql user', 'DB_USER');
+checkParam(config.sql.password, 'password for db', 'DB_PASSWORD');
+checkParam(config.sql.options.database, 'db name', 'DB_NAME');
+checkParam(config.sql.options.new_ids, 'new ids queue', 'QUEUE_NEW_IDS');
 
 module.exports = config;
