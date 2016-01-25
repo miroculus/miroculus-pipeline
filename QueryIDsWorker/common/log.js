@@ -1,12 +1,12 @@
+require("string_format");
 var moment = require("moment");
-var format = require("string_format");
 
 var log = (function () {
     "use strict";
     
     var createMessage = function (msg, params) {
         var timeString = moment().format('YYYY-MM-DD HH:mm:ss');
-        return timeString + ' ' + format(msg, params);
+        return timeString + ' ' + msg.format(params);
     };
 
     /**

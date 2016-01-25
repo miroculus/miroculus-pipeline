@@ -1,4 +1,4 @@
-var format = require('string_format');
+require("string_format");
 
 var config = {
     sql: {
@@ -24,14 +24,15 @@ function checkParam(paramValue, paramInfo, paramKey) {
     "use strict";
 
     if (!paramValue) {
-        throw new Error(format('{} was not provided, please add {} to environment variables', paramInfo, paramKey));
+        var errorFormat = '{} was not provided, please add {} to environment variables';
+        throw new Error(errorFormat.format(paramInfo, paramKey));
     }
 }
 
 checkParam(config.sql.server, 'Sql server', 'DB_SERVER');
 checkParam(config.sql.userName, 'Sql user', 'DB_USER');
 checkParam(config.sql.password, 'password for db', 'DB_PASSWORD');
-checkParam(config.queue.database, 'db name', 'DB_NAME');
+checkParam(config.sql.options.database, 'db name', 'DB_NAME');
 checkParam(config.queue.new_ids, 'new ids queue', 'QUEUE_NEW_IDS');
 
 module.exports = config;
