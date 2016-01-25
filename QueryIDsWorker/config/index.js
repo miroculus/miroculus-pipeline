@@ -31,7 +31,7 @@ function checkParam(paramValue, paramInfo, paramKey) {
 checkParam(config.sql.server, 'Sql server', 'DB_SERVER');
 checkParam(config.sql.userName, 'Sql user', 'DB_USER');
 checkParam(config.sql.password, 'password for db', 'DB_PASSWORD');
-checkParam(config.sql.options.database, 'db name', 'DB_NAME');
-checkParam(config.sql.options.new_ids, 'new ids queue', 'QUEUE_NEW_IDS');
+checkParam(config.queue.database, 'db name', 'DB_NAME');
+checkParam(config.queue.new_ids, 'new ids queue', 'QUEUE_NEW_IDS');
 
 module.exports = config;

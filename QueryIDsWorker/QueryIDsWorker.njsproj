@@ -38,7 +38,7 @@
     <Compile Include="papersHandler\index.js" />
     <Compile Include="server.js" />
     <Compile Include="startup.js" />
-    <Compile Include="constants.js" />
+    <Content Include="constants.json" />
     <Content Include="download.ps1" />
     <Content Include="JSLintNet.json" />
     <Content Include="setup_worker.cmd" />
