@@ -1,6 +1,7 @@
 var moment = require('moment');
 var retriever = require('./ncbiServiceWrapper.js');
 var queue = require("../queue");
+var paperUpserter = require("./paperUpserter");
 var constants = require('../constants.json');
 
 var common = require("../common");
@@ -8,24 +9,22 @@ var config = require("../config");
 var log = common.log;
 
 var papersHandler = (function () {
-    "use strict";
+    "use strict";    
 
     var queueOut = new queue.QueueHandler(config.queue.new_ids, config.storage);
     // Todo: This property should be changes to make a check with DB
     var _tempIDCache = {};
     
-    var getPapers = function () {
+    function getPapers() {
         var toDate = moment();
         var fromDate = moment().add(-3, 'days');
         log.info('getting papers from {} to {}', fromDate.format('YYYY-MM-DD'), toDate.format('YYYY-MM-DD'));
         
         // Run query for paperts in specific date
-        retriever.getPapers(fromDate.toDate(), toDate.toDate(), function (errors, papersData) {
+        retriever.getPapers(fromDate.toDate(), toDate.toDate(), function (error, papersData) {
             
-            if (errors && errors.length > 0) {
-                log.error('There were several errors while retreiving the papers.');
-            }
-
+            if (error) { return log.error('There were several errors while retreiving the papers.'); }
+            
             if (!papersData) { return log.error('No data was returned when quering for new papers'); }
 
             var papers = papersData.papers;
@@ -48,9 +47,16 @@ var papersHandler = (function () {
                 messageParams[queueProps.properties][new_ids_props.id] = paperId;
                 messageParams[queueProps.properties][new_ids_props.source] = new_ids_props.pmcSource;
 
-                queueOut.sendMessage(messageParams).then(function (obj) {
+                queueOut.sendMessage(messageParams).then(function () {
                     _tempIDCache[paperId] = true;
-                    return log.info('enqueued: <{}>', obj);
+                    log.info('enqueued: <{}>', paperId);
+
+                    // After queuing was successfull, add row to database
+                    paperUpserter.upsertPaper(paperId, '', new_ids_props.pmcSource, function (error, result) {
+                        if (error) { return log.error('There was an error inserting paper row into database.'); }
+
+                        log.info("Result from inserting to database: <{}>", result);
+                    });
 
                 }).catch(function (err) {
                     return log.error('failed to enqueu message: <{}>', err);
@@ -62,7 +68,7 @@ var papersHandler = (function () {
             });
             return log.info('Completed itterating through retrieved documents');
         });
-    };
+    }
 
     return getPapers;
 }());

@@ -7,8 +7,8 @@ var log = require('./log.js');
  */
 
 /**
- * @typedef {Object} DataSetOptions
- * @property {object} sproc     ???
+ * @typedef {object} DataSetOptions
+ * @property {string} sproc     ???
  * @property {object} sets      ???
  * @property {object} params    ???
  */
@@ -30,7 +30,7 @@ var db = (function () {
         var connection = new tedious.Connection(config);
         connection.on('connect', function (err) {
             if (err) {
-                log.error('error connecting to sql server <{}>', config.server);
+                log.error('error connecting to sql server <{}>: <{}>', config.server, err);
                 return callback(err);
             }
             log.info('connection established is {}', !(connection).closed);
@@ -53,10 +53,13 @@ var db = (function () {
             var request = new tedious.Request("INSERT test (Name) VALUES (@Name);", function (err) {
                 if (err) {
                     log.error(err);
+                    return callback(err);
                 }
+                return callback();
             });
             request.addParameter('Name', tedious.TYPES.NVarChar, 'tshello! ' + new Date().getTime());
-            connection.execSql(request);
+            
+            return connection.execSql(request);
         });
     };
     
@@ -68,9 +71,10 @@ var db = (function () {
      * @param {Object}          callback        Callback to call when dataset is available
      */
     var getDataSets = function (config, opts, callback) {
+        log.info("Opening connection to query for a dataset");
         connect(config, function (err, connection) {
             if (err) {
-                log.error(err);
+                log.error('There was an error opening a connection: <{0}>', err);
                 return callback(err);
             }
 
@@ -110,8 +114,7 @@ var db = (function () {
                 callback(null, result);
             });
             
-            connection.callProcedure(request);
-
+            return connection.callProcedure(request);
         });
     }
 

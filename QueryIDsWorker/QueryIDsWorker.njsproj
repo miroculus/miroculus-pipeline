@@ -36,6 +36,7 @@
     <Compile Include="papersHandler\ncbiService.js" />
     <Compile Include="papersHandler\ncbiServiceWrapper.js" />
     <Compile Include="papersHandler\index.js" />
+    <Compile Include="papersHandler\paperUpserter.js" />
     <Compile Include="server.js" />
     <Compile Include="startup.js" />
     <Content Include="constants.json" />

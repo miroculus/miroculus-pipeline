@@ -6,7 +6,14 @@ var log = (function () {
     
     var createMessage = function (msg, params) {
         var timeString = moment().format('YYYY-MM-DD HH:mm:ss');
-        return timeString + ' ' + msg.format(params);
+        var message = msg;
+
+        if (typeof message === 'string') {
+            message = timeString + ' ' + message.format(params);
+        } else {
+            message = timeString + ' ' + message + (params ? ' ' + params : '');
+        }
+        return message;
     };
 
     /**
