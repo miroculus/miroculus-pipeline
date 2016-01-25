@@ -1,12 +1,23 @@
 var constants = {
   DocumentStatus: {
-    Processing: 1,
-    Scoring: 2,
-    Processed: 3
+    PROCESSING: 1,
+    SCORING: 2,
+    PROCESSED: 3
+  },
+  Sources: {
+    PUBMED: 1,
+    PMC: 2
+  },
+  ConceptTypes: {
+    GENE: 1,
+    SPECIES: 2,
+    MIRNA: 3,
+    CHEMICAL: 4,
+    OTHER: 5,
   },
   Queues: {
     Action: {
-      Score: 'score'
+      SCORE: 'score'
     }
   }
 }

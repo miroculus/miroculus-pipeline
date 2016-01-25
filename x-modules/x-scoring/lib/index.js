@@ -51,7 +51,7 @@ function run(cb) {
       if (!data) return console.warn('message does not contain data field');
       
       // {"requestType":"score", "data": [{}]}
-      if (msgObject.requestType === constants.Queues.Action.Score) {
+      if (msgObject.requestType === constants.Queues.Action.SCORE) {
         var score = [0.3, 0.4, 0.2, 0.1]; // call score here
         console.log('score for messageid', message.messageid, score);
         
