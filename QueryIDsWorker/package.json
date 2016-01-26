@@ -1,8 +1,8 @@
 {
   "name": "Pipeline.Workers.QueryIDsFromService",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Pipeline.Workers.QueryIDsFromService",
-  "main": "server.js",
+  "main": "worker.js",
   "author": {
     "name": "morshe",
     "email": "morshe@microsoft.com"

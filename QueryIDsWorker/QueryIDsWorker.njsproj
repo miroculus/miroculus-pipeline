@@ -12,7 +12,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>0943f5b6-57b9-4f32-b477-3ed4c8d62475</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>server.js</StartupFile>
+    <StartupFile>worker.js</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -37,7 +37,7 @@
     <Compile Include="papersHandler\ncbiServiceWrapper.js" />
     <Compile Include="papersHandler\index.js" />
     <Compile Include="papersHandler\paperUpserter.js" />
-    <Compile Include="server.js" />
+    <Compile Include="worker.js" />
     <Compile Include="startup.js" />
     <Content Include="constants.json" />
     <Content Include="download.ps1" />
