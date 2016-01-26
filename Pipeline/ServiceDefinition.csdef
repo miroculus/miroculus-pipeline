@@ -133,9 +133,6 @@
         <ProgramEntryPoint commandLine="node.cmd .\worker.js" setReadyOnProcessStart="true" />
       </EntryPoint>
     </Runtime>
-    <Endpoints>
-      <InputEndpoint name="Endpoint1" protocol="tcp" port="10100" />
-    </Endpoints>
   </WorkerRole>
   <WorkerRole name="QueryIDsWorker" vmsize="Small">
     <ConfigurationSettings>
