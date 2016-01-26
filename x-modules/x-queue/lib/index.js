@@ -30,7 +30,7 @@ module.exports = function(config) {
 
     queueService.getMessages(config.queueName, { 
         numofmessages: 1, 
-        visibilitytimeout: 2 * 60 
+        visibilitytimeout: 2 * 60 /* 2 minutes - hide item from queue for processing */
       },
       function (err, messages) {
         if (err) return deferred.reject(err);

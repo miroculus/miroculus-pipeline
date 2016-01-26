@@ -1,27 +1,16 @@
-
-// TODO: remove fields
-
 var constants = {
+<<<<<<< HEAD
   documentStatus: {
-    PROCESSING: 1,
-    SCORING: 2,
-    PROCESSED: 3
-  },
-  sources: {
-    PUBMED: 1,
-    PMC: 2
-  },
-  ConceptTypes: {
-    GENE: 1,
-    MIRNA: 2,
-    SPECIES: 3,
-    CHEMICAL: 4,
-    OTHER: 5
+    queued: 1,
+    fetching: 2,
+    split: 3,
+    scoring: 4,
+    processComplete: 5
   },
   queues: {
     action: {
-      SCORE: 'score',
-      GET_DOCUMENT: 'getDocument'
+      score: 'score',
+      getPaper: 'getDocument'
     },
     fields: {
       type: "requestType",
@@ -38,6 +27,28 @@ var constants = {
       sentenceContent: "sentence"
     },
     modelVersion: "0.1.0.1"
+=======
+  DocumentStatus: {
+    PROCESSING: 1,
+    SCORING: 2,
+    PROCESSED: 3
+  },
+  Sources: {
+    PUBMED: 1,
+    PMC: 2
+  },
+  ConceptTypes: {
+    GENE: 1,
+    SPECIES: 2,
+    MIRNA: 3,
+    CHEMICAL: 4,
+    OTHER: 5,
+  },
+  Queues: {
+    Action: {
+      SCORE: 'score'
+    }
+>>>>>>> origin/master
   }
 }
 

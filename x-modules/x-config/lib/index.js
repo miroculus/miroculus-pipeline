@@ -1,10 +1,3 @@
-
-var fs = require('fs');
-var path = require('path');
-
-var localConfigPath = path.join(__dirname, "config.private.json");
-var localConfig = fs.existsSync(localConfigPath) && require(localConfigPath) || {};
-
 var config = {
     sql: {
         server: process.env.DB_SERVER,
@@ -20,18 +13,29 @@ var config = {
         key: process.env.STORAGE_KEY
     },
     queues: {
-        scoring: process.env.QUEUE_SCORING
+        scoring: process.env.QUEUE_SCORING,
+        new_ids: process.env.QUEUE_NEW_IDS,
+        papers_to_parse: process.env.QUEUE_PAPERS_TO_PARSE
     }
 };
 
-if (!config.sql.server) throw new Error('Sql server was not provided, please add DB_SERVER to environment variables');
-if (!config.sql.userName) throw new Error('Sql user was not provided, please add DB_USER to environment variables');
-if (!config.sql.password) throw new Error('password for db was not provided, please add DB_PASSWORD to environment variables');
-if (!config.sql.options.database) throw new Error('db name was not provided, please add DB_NAME to environment variables');
+function checkParam(paramValue, paramInfo, paramKey) {
+    "use strict";
+    
+    if (!paramValue) {
+        var errorFormat = '{} was not provided, please add {} to environment variables';
+        throw new Error(errorFormat.format(paramInfo, paramKey));
+    }
+}
 
-if (!config.storage.account) throw new Error('storage account was not provided, please add STORAGE_ACCOUNT to environment variables');
-if (!config.storage.key) throw new Error('storage key was not provided, please add STORAGE_KEY to environment variables');
-
-if(!config.queues.scoring) throw new Error('scoring queue name was not provided, please add QUEUE_SCORING to environment variables');
+checkParam(config.sql.server, 'Sql server', 'DB_SERVER');
+checkParam(config.sql.userName, 'Sql user', 'DB_USER');
+checkParam(config.sql.password, 'password for db', 'DB_PASSWORD');
+checkParam(config.sql.options.database, 'db name', 'DB_NAME');
+checkParam(config.storage.account, 'storage account', 'STORAGE_ACCOUNT');
+checkParam(config.storage.key, 'storage key', 'STORAGE_KEY');
+checkParam(config.queues.scoring, 'scoring queue name', 'QUEUE_SCORING');
+checkParam(config.queues.new_ids, 'new ids queue', 'QUEUE_NEW_IDS');
+checkParam(config.queues.papers_to_parse, 'papers to parse queue', 'QUEUE_PAPERS_TO_PARSE');
 
 module.exports = config;

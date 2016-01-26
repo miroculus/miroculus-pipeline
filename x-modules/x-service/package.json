@@ -1,0 +1,10 @@
+{
+  "name": "x-service",
+  "version": "1.0.0",
+  "description": "service module to talk to public api",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "mor shemesh"
+}
