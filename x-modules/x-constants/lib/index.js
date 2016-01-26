@@ -1,15 +1,31 @@
 var constants = {
-  DocumentStatus: {
-    Queued: 1,
-    Fetching: 2,
-    Split: 3,
-    Scoring: 4,
-    ProcessComplete: 5
+  documentStatus: {
+    queued: 1,
+    fetching: 2,
+    split: 3,
+    scoring: 4,
+    processComplete: 5
   },
-  Queues: {
-    Action: {
-      Score: 'score'
-    }
+  queues: {
+    action: {
+      score: 'score',
+      getPaper: 'getDocument'
+    },
+    fields: {
+      type: "requestType",
+      data: "properties",
+      docId: "paperId",
+      source: "documentSource",
+      sourceId: "sourceId",
+      sentenceIndex: "sentenceIndex",
+      fromConceptTypeId: "fromConceptTypeId",
+      fromConceptName: "fromConceptName",
+      toConceptTypeId: "toConceptTypeId",
+      toConceptName: "toConceptName",
+      modelVersion: "modelVersion",
+      sentenceContent: "sentence"
+    },
+    modelVersion: "0.1.0.1"
   }
 }
 
