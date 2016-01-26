@@ -38,6 +38,14 @@
     <ServiceConfiguration Include="ServiceConfiguration.Cloud.cscfg" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\PaperParserWorker\PaperParserWorker.njsproj">
+      <Name>PaperParserWorker</Name>
+      <Project>{bade8777-d7b4-471a-84c0-fc8833d42381}</Project>
+      <Private>True</Private>
+      <RoleType>Worker</RoleType>
+      <RoleName>PaperParserWorker</RoleName>
+      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
+    </ProjectReference>
     <ProjectReference Include="..\ScoringWorker\ScoringWorker.njsproj">
       <Name>ScoringWorker</Name>
       <Project>{be1c9924-224a-43d3-a8fd-3cf418820fa1}</Project>
@@ -46,15 +54,25 @@
       <RoleName>ScoringWorker</RoleName>
       <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
     </ProjectReference>
+    <ProjectReference Include="..\QueryIDsWorker\QueryIDsWorker.njsproj">
+      <Name>QueryIDsWorker</Name>
+      <Project>{0943f5b6-57b9-4f32-b477-3ed4c8d62475}</Project>
+      <Private>True</Private>
+      <RoleType>Worker</RoleType>
+      <RoleName>QueryIDsWorker</RoleName>
+      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="PipelineWorkerContent\" />
+    <Folder Include="PaperParserWorkerContent\" />
     <Folder Include="Profiles" />
     <Folder Include="ScoringWorkerContent\" />
+    <Folder Include="QueryIDsWorkerContent\" />
   </ItemGroup>
   <ItemGroup>
-    <DiagnosticsConfiguration Include="PipelineWorkerContent\diagnostics.wadcfgx" />
     <DiagnosticsConfiguration Include="ScoringWorkerContent\diagnostics.wadcfgx" />
+    <DiagnosticsConfiguration Include="PaperParserWorkerContent\diagnostics.wadcfgx" />
+    <DiagnosticsConfiguration Include="QueryIDsWorkerContent\diagnostics.wadcfgx" />
   </ItemGroup>
   <ItemGroup>
     <PublishProfile Include="Profiles\miroculus-pipelineProduction.azurePubxml" />
@@ -67,6 +85,9 @@
   <Import Project="$(CloudExtensionsDir)Microsoft.WindowsAzure.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)obj\$(ConfigurationName)\ScoringWorker\node_modules\ /EFY
-xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)csx\$(ConfigurationName)\roles\ScoringWorker\approot\node_modules\ /EFY</PostBuildEvent>
+xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)csx\$(ConfigurationName)\roles\ScoringWorker\approot\node_modules\ /EFY
+
+xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)obj\$(ConfigurationName)\PaperParserWorker\node_modules\ /EFY
+xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)csx\$(ConfigurationName)\roles\PaperParserWorker\approot\node_modules\ /EFY</PostBuildEvent>
   </PropertyGroup>
 </Project>
