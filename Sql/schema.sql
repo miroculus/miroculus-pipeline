@@ -1,81 +1,9 @@
-﻿USE [master]
+﻿/****** Object:  UserDefinedTableType [dbo].[UDT_IdList]    Script Date: 1/25/2016 9:26:44 PM ******/
+CREATE TYPE [dbo].[UDT_IdList] AS TABLE(
+	[Id] [varchar](50) NULL
+)
 GO
-/****** Object:  Database [miroculuspct]    Script Date: 1/18/2016 4:45:18 PM ******/
-CREATE DATABASE [miroculuspct]
- CONTAINMENT = NONE
- ON  PRIMARY 
-( NAME = N'miroculuspct', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQL\DATA\miroculuspct.mdf' , SIZE = 3072KB , MAXSIZE = UNLIMITED, FILEGROWTH = 1024KB )
- LOG ON 
-( NAME = N'miroculuspct_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQL\DATA\miroculuspct_log.ldf' , SIZE = 1024KB , MAXSIZE = 2048GB , FILEGROWTH = 10%)
-GO
-ALTER DATABASE [miroculuspct] SET COMPATIBILITY_LEVEL = 120
-GO
-IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
-begin
-EXEC [miroculuspct].[dbo].[sp_fulltext_database] @action = 'enable'
-end
-GO
-ALTER DATABASE [miroculuspct] SET ANSI_NULL_DEFAULT OFF 
-GO
-ALTER DATABASE [miroculuspct] SET ANSI_NULLS OFF 
-GO
-ALTER DATABASE [miroculuspct] SET ANSI_PADDING OFF 
-GO
-ALTER DATABASE [miroculuspct] SET ANSI_WARNINGS OFF 
-GO
-ALTER DATABASE [miroculuspct] SET ARITHABORT OFF 
-GO
-ALTER DATABASE [miroculuspct] SET AUTO_CLOSE OFF 
-GO
-ALTER DATABASE [miroculuspct] SET AUTO_SHRINK OFF 
-GO
-ALTER DATABASE [miroculuspct] SET AUTO_UPDATE_STATISTICS ON 
-GO
-ALTER DATABASE [miroculuspct] SET CURSOR_CLOSE_ON_COMMIT OFF 
-GO
-ALTER DATABASE [miroculuspct] SET CURSOR_DEFAULT  GLOBAL 
-GO
-ALTER DATABASE [miroculuspct] SET CONCAT_NULL_YIELDS_NULL OFF 
-GO
-ALTER DATABASE [miroculuspct] SET NUMERIC_ROUNDABORT OFF 
-GO
-ALTER DATABASE [miroculuspct] SET QUOTED_IDENTIFIER OFF 
-GO
-ALTER DATABASE [miroculuspct] SET RECURSIVE_TRIGGERS OFF 
-GO
-ALTER DATABASE [miroculuspct] SET  DISABLE_BROKER 
-GO
-ALTER DATABASE [miroculuspct] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
-GO
-ALTER DATABASE [miroculuspct] SET DATE_CORRELATION_OPTIMIZATION OFF 
-GO
-ALTER DATABASE [miroculuspct] SET TRUSTWORTHY OFF 
-GO
-ALTER DATABASE [miroculuspct] SET ALLOW_SNAPSHOT_ISOLATION OFF 
-GO
-ALTER DATABASE [miroculuspct] SET PARAMETERIZATION SIMPLE 
-GO
-ALTER DATABASE [miroculuspct] SET READ_COMMITTED_SNAPSHOT OFF 
-GO
-ALTER DATABASE [miroculuspct] SET HONOR_BROKER_PRIORITY OFF 
-GO
-ALTER DATABASE [miroculuspct] SET RECOVERY SIMPLE 
-GO
-ALTER DATABASE [miroculuspct] SET  MULTI_USER 
-GO
-ALTER DATABASE [miroculuspct] SET PAGE_VERIFY CHECKSUM  
-GO
-ALTER DATABASE [miroculuspct] SET DB_CHAINING OFF 
-GO
-ALTER DATABASE [miroculuspct] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
-GO
-ALTER DATABASE [miroculuspct] SET TARGET_RECOVERY_TIME = 0 SECONDS 
-GO
-ALTER DATABASE [miroculuspct] SET DELAYED_DURABILITY = DISABLED 
-GO
-USE [miroculuspct]
-GO
-/****** Object:  Table [dbo].[Concepts]    Script Date: 1/18/2016 4:45:18 PM ******/
+/****** Object:  Table [dbo].[Concepts]    Script Date: 1/25/2016 9:26:44 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -90,13 +18,13 @@ CREATE TABLE [dbo].[Concepts](
  CONSTRAINT [PK_Concepts] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)
 ) ON [PRIMARY]
 
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[ConceptTypes]    Script Date: 1/18/2016 4:45:18 PM ******/
+/****** Object:  Table [dbo].[ConceptTypes]    Script Date: 1/25/2016 9:26:44 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -104,18 +32,18 @@ GO
 SET ANSI_PADDING ON
 GO
 CREATE TABLE [dbo].[ConceptTypes](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Name] [varchar](100) NOT NULL,
+	[Id] [int] NOT NULL,
+	[Name] [varchar](50) NOT NULL,
  CONSTRAINT [PK_ConceptTypes] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)
 ) ON [PRIMARY]
 
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Documents]    Script Date: 1/18/2016 4:45:18 PM ******/
+/****** Object:  Table [dbo].[Documents]    Script Date: 1/25/2016 9:26:44 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -123,19 +51,40 @@ GO
 SET ANSI_PADDING ON
 GO
 CREATE TABLE [dbo].[Documents](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[SourceId] [int] NOT NULL,
+	[Id] [varchar](50) NOT NULL,
 	[Description] [varchar](1024) NULL,
-	[Source] [varchar](2048) NULL,
- CONSTRAINT [PK_Documents] PRIMARY KEY CLUSTERED 
+	[StatusId] [int] NOT NULL,
+ CONSTRAINT [PK_Documents_1] PRIMARY KEY CLUSTERED 
 (
+	[SourceId] ASC,
 	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)
 ) ON [PRIMARY]
 
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Graph]    Script Date: 1/18/2016 4:45:18 PM ******/
+/****** Object:  Table [dbo].[DocumentStatus]    Script Date: 1/25/2016 9:26:44 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[DocumentStatus](
+	[Id] [int] NOT NULL,
+	[Name] [varchar](50) NOT NULL,
+ CONSTRAINT [PK_DocumentStatus] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)
+) ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[Graph]    Script Date: 1/25/2016 9:26:44 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -143,7 +92,8 @@ GO
 SET ANSI_PADDING ON
 GO
 CREATE TABLE [dbo].[Graph](
-	[DocId] [int] NOT NULL,
+	[SourceId] [int] NOT NULL,
+	[DocId] [varchar](50) NOT NULL,
 	[SentenceIndex] [int] NOT NULL,
 	[FromConceptId] [int] NOT NULL,
 	[ToConceptId] [int] NOT NULL,
@@ -152,34 +102,61 @@ CREATE TABLE [dbo].[Graph](
 	[ModelVersion] [varchar](50) NOT NULL,
  CONSTRAINT [PK_Graph_1] PRIMARY KEY CLUSTERED 
 (
+	[SourceId] ASC,
 	[DocId] ASC,
 	[SentenceIndex] ASC,
 	[FromConceptId] ASC,
 	[ToConceptId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)
 ) ON [PRIMARY]
 
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Sentences]    Script Date: 1/18/2016 4:45:18 PM ******/
+/****** Object:  Table [dbo].[Sentences]    Script Date: 1/25/2016 9:26:44 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+SET ANSI_PADDING ON
+GO
 CREATE TABLE [dbo].[Sentences](
-	[DocId] [int] NOT NULL,
+	[SourceId] [int] NOT NULL,
+	[DocId] [varchar](50) NOT NULL,
 	[Index] [int] NOT NULL,
 	[Sentence] [text] NOT NULL,
  CONSTRAINT [PK_Sentences] PRIMARY KEY CLUSTERED 
 (
+	[SourceId] ASC,
 	[DocId] ASC,
 	[Index] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[test]    Script Date: 1/18/2016 4:45:18 PM ******/
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[Sources]    Script Date: 1/25/2016 9:26:44 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Sources](
+	[Id] [int] NOT NULL,
+	[name] [varchar](50) NOT NULL,
+	[Url] [varchar](1024) NULL,
+ CONSTRAINT [PK_Sources] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)
+) ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[test]    Script Date: 1/25/2016 9:26:44 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -191,7 +168,7 @@ CREATE TABLE [dbo].[test](
  CONSTRAINT [PK_Roles] PRIMARY KEY CLUSTERED 
 (
 	[Name] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)
 ) ON [PRIMARY]
 
 GO
@@ -200,16 +177,28 @@ GO
 SET ANSI_PADDING ON
 
 GO
-/****** Object:  Index [IX_Graph_ModelVersion]    Script Date: 1/18/2016 4:45:18 PM ******/
+/****** Object:  Index [IX_Graph_ModelVersion]    Script Date: 1/25/2016 9:26:44 PM ******/
 CREATE NONCLUSTERED INDEX [IX_Graph_ModelVersion] ON [dbo].[Graph]
 (
 	[ModelVersion] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
+ALTER TABLE [dbo].[Documents] ADD  CONSTRAINT [DF_Documents_StatusId]  DEFAULT ((1)) FOR [StatusId]
+GO
 ALTER TABLE [dbo].[Concepts]  WITH CHECK ADD  CONSTRAINT [FK_Concepts_ConceptTypes] FOREIGN KEY([ConceptTypeId])
 REFERENCES [dbo].[ConceptTypes] ([Id])
 GO
 ALTER TABLE [dbo].[Concepts] CHECK CONSTRAINT [FK_Concepts_ConceptTypes]
+GO
+ALTER TABLE [dbo].[Documents]  WITH CHECK ADD  CONSTRAINT [FK_Documents_DocumentStatus] FOREIGN KEY([StatusId])
+REFERENCES [dbo].[DocumentStatus] ([Id])
+GO
+ALTER TABLE [dbo].[Documents] CHECK CONSTRAINT [FK_Documents_DocumentStatus]
+GO
+ALTER TABLE [dbo].[Documents]  WITH CHECK ADD  CONSTRAINT [FK_Documents_Sources] FOREIGN KEY([SourceId])
+REFERENCES [dbo].[Sources] ([Id])
+GO
+ALTER TABLE [dbo].[Documents] CHECK CONSTRAINT [FK_Documents_Sources]
 GO
 ALTER TABLE [dbo].[Graph]  WITH CHECK ADD  CONSTRAINT [FK_Graph_Concepts_From] FOREIGN KEY([FromConceptId])
 REFERENCES [dbo].[Concepts] ([Id])
@@ -221,17 +210,127 @@ REFERENCES [dbo].[Concepts] ([Id])
 GO
 ALTER TABLE [dbo].[Graph] CHECK CONSTRAINT [FK_Graph_Concepts_To]
 GO
-ALTER TABLE [dbo].[Graph]  WITH CHECK ADD  CONSTRAINT [FK_Graph_Sentences] FOREIGN KEY([DocId], [SentenceIndex])
-REFERENCES [dbo].[Sentences] ([DocId], [Index])
+ALTER TABLE [dbo].[Graph]  WITH CHECK ADD  CONSTRAINT [FK_Graph_Sentences] FOREIGN KEY([SourceId], [DocId], [SentenceIndex])
+REFERENCES [dbo].[Sentences] ([SourceId], [DocId], [Index])
 GO
 ALTER TABLE [dbo].[Graph] CHECK CONSTRAINT [FK_Graph_Sentences]
 GO
-ALTER TABLE [dbo].[Sentences]  WITH CHECK ADD  CONSTRAINT [FK_Sentences_Documents] FOREIGN KEY([DocId])
-REFERENCES [dbo].[Documents] ([Id])
+ALTER TABLE [dbo].[Sentences]  WITH CHECK ADD  CONSTRAINT [FK_Sentences_Documents] FOREIGN KEY([SourceId], [DocId])
+REFERENCES [dbo].[Documents] ([SourceId], [Id])
 GO
 ALTER TABLE [dbo].[Sentences] CHECK CONSTRAINT [FK_Sentences_Documents]
 GO
-USE [master]
+/****** Object:  StoredProcedure [dbo].[FilterExistingDocuments]    Script Date: 1/25/2016 9:26:44 PM ******/
+SET ANSI_NULLS ON
 GO
-ALTER DATABASE [miroculuspct] SET  READ_WRITE 
+SET QUOTED_IDENTIFIER ON
 GO
+-- =============================================
+-- Author:		amitu
+-- Description:	Filter document Ids, returning Ids that are not found
+
+/*
+-- define an instance of your user-defined table type
+DECLARE @udtIds UDT_IdList
+
+-- fill some values into that table
+INSERT INTO @udtIds VALUES('One'), ('Two'), ('Three'), ('aaaaa1')
+
+-- call your stored proc
+DECLARE @return_value int
+EXEC    @return_value = [FilterExistingDocuments]
+        @Ids = @udtIds   -- pass in that UDT table type here!
+
+-- SELECT  'Return Value' = @return_value
+GO
+*/
+
+-- =============================================
+CREATE PROCEDURE [dbo].[FilterExistingDocuments]
+	@SourceId int,
+	@Ids UDT_IdList READONLY
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+	
+	SELECT i.Id FROM @Ids i
+	LEFT JOIN Documents d
+	ON d.SourceId = @SourceId AND i.Id = d.Id
+	WHERE d.Id IS NULL
+
+END
+
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[UpdateDocumentStatus]    Script Date: 1/25/2016 9:26:44 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[UpdateDocumentStatus]
+	@SourceId int,
+	@DocumentId VARCHAR(50),
+	@StatusId int
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+	
+	UPDATE Documents
+	SET StatusId = @StatusId
+	WHERE StatusId = @StatusId AND Id = @DocumentId
+
+END
+GO
+/****** Object:  StoredProcedure [dbo].[UpsertDocument]    Script Date: 1/25/2016 9:26:44 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		amitu
+-- Description:	Merge a document
+-- =============================================
+CREATE PROCEDURE [dbo].[UpsertDocument]
+	@SourceId int,
+	@Id varchar(50),
+	@Description varchar(1024),
+	@StatusId int
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+	MERGE 
+	   Documents
+	USING ( 
+		VALUES (@SourceId, @Id, @Description, @StatusId)
+	) AS source (SourceId, Id, Description, StatusId) 
+	ON Documents.SourceId = source.SourceId AND Documents.Id = source.Id 
+	WHEN MATCHED THEN
+	   UPDATE SET Description = source.Description, StatusId = source.StatusId
+	WHEN NOT MATCHED THEN
+	   INSERT (SourceId, Id, Description, StatusId)
+	   VALUES (SourceId, Id, Description, StatusId)
+	; --A MERGE statement must be terminated by a semi-colon (;).
+
+END
+GO
+
+
+
+
+INSERT INTO DocumentStatus (Id,Name) VALUES (1, 'Processing')
+INSERT INTO DocumentStatus (Id,Name) VALUES (2, 'Scoring')
+INSERT INTO DocumentStatus (Id,Name) VALUES (3, 'Processed')
+
+INSERT INTO Sources (Id ,name ,Url) VALUES (1, 'Pubmed', 'http://pubmed.com')
+INSERT INTO Sources (Id ,name ,Url) VALUES (2, 'PMC', 'http://pmc.com')
+
+INSERT INTO ConceptTypes (Id, Name) VALUES (1, 'Gene')
+INSERT INTO ConceptTypes (Id, Name) VALUES (2, 'Species')
+INSERT INTO ConceptTypes (Id, Name) VALUES (3, 'Mirna')
+INSERT INTO ConceptTypes (Id, Name) VALUES (4, 'Chemical')
+INSERT INTO ConceptTypes (Id, Name) VALUES (5, 'Other')

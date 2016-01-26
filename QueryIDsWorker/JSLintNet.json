@@ -1,0 +1,15 @@
+﻿{
+  "version": "2.1.0",
+  "output": "Warning",
+  "ignore": [],
+  "options": {
+    "browser": true,
+    "devel": true,
+    "for": true,
+    "node": true,
+    "this": true,
+    "white": true
+  },
+  "globalVariables": [],
+  "runOnSave": true
+}

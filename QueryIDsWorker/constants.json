@@ -1,0 +1,16 @@
+﻿{
+  "queue": {
+    "props": {
+      "requestType": "requestType",
+      "properties": "properties"
+    },
+    "requests": {
+      "getDocument": "getDocument"
+    },
+    "new_ids_props": {
+      "id": "paperId",
+      "source": "documentSource",
+      "pmcSource": "pmc"
+    }
+  }
+}
