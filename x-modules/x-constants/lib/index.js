@@ -8,7 +8,7 @@ var constants = {
     PUBMED: 1,
     PMC: 2
   },
-  ConceptTypes: {
+  conceptTypes: {
     GENE: 1,
     SPECIES: 2,
     MIRNA: 3,
@@ -17,22 +17,8 @@ var constants = {
   },
   queues: {
     action: {
-      SCORE: 'score'
+      SCORE: 'score',
       GET_DOCUMENT: 'getDocument'
-    },
-    fields: {
-      type: "requestType",
-      data: "properties",
-      docId: "paperId",
-      source: "documentSource",
-      sourceId: "sourceId",
-      sentenceIndex: "sentenceIndex",
-      fromConceptTypeId: "fromConceptTypeId",
-      fromConceptName: "fromConceptName",
-      toConceptTypeId: "toConceptTypeId",
-      toConceptName: "toConceptName",
-      modelVersion: "modelVersion",
-      sentenceContent: "sentence"
     },
     modelVersion: "0.1.0.1"
   }

@@ -4,6 +4,7 @@
 
 var Q = require("Q");
 var azure = require("azure-storage");
+var log = require("x-log");
 
 module.exports = function(config) {
 
@@ -14,7 +15,7 @@ module.exports = function(config) {
     
     queueService = azure.createQueueService(config.storageName, config.storageKey)
       .withFilter(new azure.ExponentialRetryPolicyFilter());
-    console.log('listening on queue', config.queueName);
+    log.info('listening on queue {}', config.queueName);
     queueService.createQueueIfNotExists(config.queueName, function(err) {
       if (err) return deferred.reject(err);
       deferred.resolve();

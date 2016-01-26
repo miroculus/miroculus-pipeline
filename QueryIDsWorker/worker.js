@@ -1,22 +1,7 @@
-console.log('env variables', process.env);
 
-var common = require('./common/index.js');
-var log = common.log;
-var retriever = require("./papersHandler");
-
-(function () {
-    "use strict";
-    
-    setInterval(function () {
-        log.info('====================================================');
-        log.info('Checking for new papers...');
-        log.info('====================================================');
-        
-        retriever.getPapers();
-        
-        log.info('====================================================');
-        log.info('Finished checking for new papers.');
-        log.info('====================================================');
-    }, 5000);
-
-}());
+console.log('query id worker.js start');
+var xQueryId = require('x-query-id');
+xQueryId.run(function (err) {
+    if (err) return console.error('error running query id worker:', err);
+    console.info('query id worker exit');
+});

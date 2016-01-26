@@ -37,7 +37,7 @@ function run(callback) {
     var queueOutConfig = {
         storageName: config.storage.account,
         storageKey: config.storage.key,
-        queueName: config.queues.papers_to_parse,
+        queueName: config.queues.scoring,
         checkFrequency: 1000
     };
 
@@ -75,9 +75,9 @@ function run(callback) {
         
         var fields = constants.queues.fields;
         var messageDetails = JSON.parse(message.messagetext);
-        var messageData = messageDetails[fields.data];
-        var docId = messageData[constants.queues.fields.docId];
-        var source = messageData[constants.queues.fields.source];
+        var messageData = messageDetails.data;
+        var docId = messageData.docId;
+        var source = messageData.sourceId == constants.sources.PMC ? 'pmc' : 'pubmed';
         
         log.info("Processing document id {} from {}...", docId, source);
         
@@ -92,18 +92,20 @@ function run(callback) {
                 var index = i;
                 
                 var fields = constants.queues.fields;
-                var message = {};
-                message[fields.type] = constants.queues.action.score;
-                message[fields.data] = {};
-                message[fields.data][fields.sourceId] = 1;
-                message[fields.data][fields.docId] = docId;
-                message[fields.data][fields.sentenceIndex] = index;
-                message[fields.data][fields.fromConceptTypeId] = 1;
-                message[fields.data][fields.fromConceptName] = 'geneX';
-                message[fields.data][fields.toConceptTypeId] = 2;
-                message[fields.data][fields.toConceptName] = 'mirnaY';
-                message[fields.data][fields.modelVersion] = constants.queues.modelVersion;
-                message[fields.data][fields.sentenceContent] = sentense;
+                var message = {
+                    "requestType": constants.queues.action.SCORE,
+                    "data": {
+                        "sourceId": constants.sources.PMC,
+                        "docId": docId,
+                        "sentenceIndex": index,
+                        "fromConceptTypeId": constants.conceptTypes.GENE,
+                        "fromConceptName": 'geneX',
+                        "toConceptTypeId": constants.conceptTypes.SPECIES,
+                        "toConceptName": 'mirnaY',
+                        "modelVersion": constants.queues.modelVersion,
+                        "sentenceContent": sentense
+                    }
+                };
                 
                 var promise = queueOut.sendMessage(message);
                 promise.catch(function (err) {

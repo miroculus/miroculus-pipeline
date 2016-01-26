@@ -31,34 +31,13 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="common\index.js" />
-    <Compile Include="common\log.js" />
-    <Compile Include="papersHandler\ncbiService.js" />
-    <Compile Include="papersHandler\ncbiServiceWrapper.js" />
-    <Compile Include="papersHandler\index.js" />
-    <Compile Include="papersHandler\paperUpserter.js" />
     <Compile Include="worker.js" />
     <Compile Include="startup.js" />
-    <Content Include="constants.json" />
     <Content Include="download.ps1" />
-    <Content Include="JSLintNet.json" />
     <Content Include="setup_worker.cmd" />
     <Content Include="node.cmd" />
     <Content Include="package.json" />
     <Content Include="README.md" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="common\" />
-    <Folder Include="config\" />
-    <Folder Include="queue\" />
-    <Folder Include="papersHandler\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="config\index.js" />
-    <Compile Include="common\db.js" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="queue\index.js" />
   </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />

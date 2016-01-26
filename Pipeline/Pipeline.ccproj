@@ -84,10 +84,16 @@
   </PropertyGroup>
   <Import Project="$(CloudExtensionsDir)Microsoft.WindowsAzure.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)obj\$(ConfigurationName)\ScoringWorker\node_modules\ /EFY
+    <PostBuildEvent>echo Copying x-modules to Scoring worker
+xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)obj\$(ConfigurationName)\ScoringWorker\node_modules\ /EFY
 xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)csx\$(ConfigurationName)\roles\ScoringWorker\approot\node_modules\ /EFY
 
+echo Copying x-modules to Paper Parser worker
 xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)obj\$(ConfigurationName)\PaperParserWorker\node_modules\ /EFY
-xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)csx\$(ConfigurationName)\roles\PaperParserWorker\approot\node_modules\ /EFY</PostBuildEvent>
+xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)csx\$(ConfigurationName)\roles\PaperParserWorker\approot\node_modules\ /EFY
+
+echo Copying x-modules to Query Id worker
+xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)obj\$(ConfigurationName)\QueryIDWorker\node_modules\ /EFY
+xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)csx\$(ConfigurationName)\roles\QueryIDWorker\approot\node_modules\ /EFY</PostBuildEvent>
   </PropertyGroup>
 </Project>
