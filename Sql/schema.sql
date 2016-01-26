@@ -1,10 +1,9 @@
-﻿
-/****** Object:  UserDefinedTableType [dbo].[UDT_IdList]    Script Date: 1/25/2016 1:12:20 PM ******/
+﻿/****** Object:  UserDefinedTableType [dbo].[UDT_IdList]    Script Date: 1/25/2016 9:26:44 PM ******/
 CREATE TYPE [dbo].[UDT_IdList] AS TABLE(
 	[Id] [varchar](50) NULL
 )
 GO
-/****** Object:  Table [dbo].[Concepts]    Script Date: 1/25/2016 1:12:20 PM ******/
+/****** Object:  Table [dbo].[Concepts]    Script Date: 1/25/2016 9:26:44 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -25,7 +24,7 @@ CREATE TABLE [dbo].[Concepts](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[ConceptTypes]    Script Date: 1/25/2016 1:12:20 PM ******/
+/****** Object:  Table [dbo].[ConceptTypes]    Script Date: 1/25/2016 9:26:44 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -33,8 +32,8 @@ GO
 SET ANSI_PADDING ON
 GO
 CREATE TABLE [dbo].[ConceptTypes](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Name] [varchar](100) NOT NULL,
+	[Id] [int] NOT NULL,
+	[Name] [varchar](50) NOT NULL,
  CONSTRAINT [PK_ConceptTypes] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
@@ -44,7 +43,7 @@ CREATE TABLE [dbo].[ConceptTypes](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Documents]    Script Date: 1/25/2016 1:12:20 PM ******/
+/****** Object:  Table [dbo].[Documents]    Script Date: 1/25/2016 9:26:44 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -52,12 +51,13 @@ GO
 SET ANSI_PADDING ON
 GO
 CREATE TABLE [dbo].[Documents](
+	[SourceId] [int] NOT NULL,
 	[Id] [varchar](50) NOT NULL,
 	[Description] [varchar](1024) NULL,
-	[Source] [varchar](2048) NULL,
 	[StatusId] [int] NOT NULL,
  CONSTRAINT [PK_Documents_1] PRIMARY KEY CLUSTERED 
 (
+	[SourceId] ASC,
 	[Id] ASC
 )
 ) ON [PRIMARY]
@@ -65,7 +65,7 @@ CREATE TABLE [dbo].[Documents](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[DocumentStatus]    Script Date: 1/25/2016 1:12:20 PM ******/
+/****** Object:  Table [dbo].[DocumentStatus]    Script Date: 1/25/2016 9:26:44 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -84,7 +84,7 @@ CREATE TABLE [dbo].[DocumentStatus](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Graph]    Script Date: 1/25/2016 1:12:20 PM ******/
+/****** Object:  Table [dbo].[Graph]    Script Date: 1/25/2016 9:26:44 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -92,6 +92,7 @@ GO
 SET ANSI_PADDING ON
 GO
 CREATE TABLE [dbo].[Graph](
+	[SourceId] [int] NOT NULL,
 	[DocId] [varchar](50) NOT NULL,
 	[SentenceIndex] [int] NOT NULL,
 	[FromConceptId] [int] NOT NULL,
@@ -101,6 +102,7 @@ CREATE TABLE [dbo].[Graph](
 	[ModelVersion] [varchar](50) NOT NULL,
  CONSTRAINT [PK_Graph_1] PRIMARY KEY CLUSTERED 
 (
+	[SourceId] ASC,
 	[DocId] ASC,
 	[SentenceIndex] ASC,
 	[FromConceptId] ASC,
@@ -111,7 +113,7 @@ CREATE TABLE [dbo].[Graph](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Sentences]    Script Date: 1/25/2016 1:12:20 PM ******/
+/****** Object:  Table [dbo].[Sentences]    Script Date: 1/25/2016 9:26:44 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -119,11 +121,13 @@ GO
 SET ANSI_PADDING ON
 GO
 CREATE TABLE [dbo].[Sentences](
+	[SourceId] [int] NOT NULL,
 	[DocId] [varchar](50) NOT NULL,
 	[Index] [int] NOT NULL,
 	[Sentence] [text] NOT NULL,
  CONSTRAINT [PK_Sentences] PRIMARY KEY CLUSTERED 
 (
+	[SourceId] ASC,
 	[DocId] ASC,
 	[Index] ASC
 )
@@ -132,7 +136,27 @@ CREATE TABLE [dbo].[Sentences](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[test]    Script Date: 1/25/2016 1:12:20 PM ******/
+/****** Object:  Table [dbo].[Sources]    Script Date: 1/25/2016 9:26:44 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Sources](
+	[Id] [int] NOT NULL,
+	[name] [varchar](50) NOT NULL,
+	[Url] [varchar](1024) NULL,
+ CONSTRAINT [PK_Sources] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)
+) ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[test]    Script Date: 1/25/2016 9:26:44 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -153,7 +177,7 @@ GO
 SET ANSI_PADDING ON
 
 GO
-/****** Object:  Index [IX_Graph_ModelVersion]    Script Date: 1/25/2016 1:12:20 PM ******/
+/****** Object:  Index [IX_Graph_ModelVersion]    Script Date: 1/25/2016 9:26:44 PM ******/
 CREATE NONCLUSTERED INDEX [IX_Graph_ModelVersion] ON [dbo].[Graph]
 (
 	[ModelVersion] ASC
@@ -171,6 +195,11 @@ REFERENCES [dbo].[DocumentStatus] ([Id])
 GO
 ALTER TABLE [dbo].[Documents] CHECK CONSTRAINT [FK_Documents_DocumentStatus]
 GO
+ALTER TABLE [dbo].[Documents]  WITH CHECK ADD  CONSTRAINT [FK_Documents_Sources] FOREIGN KEY([SourceId])
+REFERENCES [dbo].[Sources] ([Id])
+GO
+ALTER TABLE [dbo].[Documents] CHECK CONSTRAINT [FK_Documents_Sources]
+GO
 ALTER TABLE [dbo].[Graph]  WITH CHECK ADD  CONSTRAINT [FK_Graph_Concepts_From] FOREIGN KEY([FromConceptId])
 REFERENCES [dbo].[Concepts] ([Id])
 GO
@@ -181,17 +210,17 @@ REFERENCES [dbo].[Concepts] ([Id])
 GO
 ALTER TABLE [dbo].[Graph] CHECK CONSTRAINT [FK_Graph_Concepts_To]
 GO
-ALTER TABLE [dbo].[Graph]  WITH CHECK ADD  CONSTRAINT [FK_Graph_Sentences] FOREIGN KEY([DocId], [SentenceIndex])
-REFERENCES [dbo].[Sentences] ([DocId], [Index])
+ALTER TABLE [dbo].[Graph]  WITH CHECK ADD  CONSTRAINT [FK_Graph_Sentences] FOREIGN KEY([SourceId], [DocId], [SentenceIndex])
+REFERENCES [dbo].[Sentences] ([SourceId], [DocId], [Index])
 GO
 ALTER TABLE [dbo].[Graph] CHECK CONSTRAINT [FK_Graph_Sentences]
 GO
-ALTER TABLE [dbo].[Sentences]  WITH CHECK ADD  CONSTRAINT [FK_Sentences_Documents1] FOREIGN KEY([DocId])
-REFERENCES [dbo].[Documents] ([Id])
+ALTER TABLE [dbo].[Sentences]  WITH CHECK ADD  CONSTRAINT [FK_Sentences_Documents] FOREIGN KEY([SourceId], [DocId])
+REFERENCES [dbo].[Documents] ([SourceId], [Id])
 GO
-ALTER TABLE [dbo].[Sentences] CHECK CONSTRAINT [FK_Sentences_Documents1]
+ALTER TABLE [dbo].[Sentences] CHECK CONSTRAINT [FK_Sentences_Documents]
 GO
-/****** Object:  StoredProcedure [dbo].[FilterExistingDocuments]    Script Date: 1/25/2016 1:12:20 PM ******/
+/****** Object:  StoredProcedure [dbo].[FilterExistingDocuments]    Script Date: 1/25/2016 9:26:44 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -218,6 +247,7 @@ GO
 
 -- =============================================
 CREATE PROCEDURE [dbo].[FilterExistingDocuments]
+	@SourceId int,
 	@Ids UDT_IdList READONLY
 AS
 BEGIN
@@ -226,7 +256,7 @@ BEGIN
 	
 	SELECT i.Id FROM @Ids i
 	LEFT JOIN Documents d
-	ON i.Id = d.Id
+	ON d.SourceId = @SourceId AND i.Id = d.Id
 	WHERE d.Id IS NULL
 
 END
@@ -234,12 +264,13 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateDocumentStatus]    Script Date: 1/25/2016 1:12:20 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpdateDocumentStatus]    Script Date: 1/25/2016 9:26:44 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[UpdateDocumentStatus]
+	@SourceId int,
 	@DocumentId VARCHAR(50),
 	@StatusId int
 AS
@@ -249,11 +280,11 @@ BEGIN
 	
 	UPDATE Documents
 	SET StatusId = @StatusId
-	WHERE Id = @DocumentId
+	WHERE StatusId = @StatusId AND Id = @DocumentId
 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[UpsertDocument]    Script Date: 1/25/2016 1:12:20 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpsertDocument]    Script Date: 1/25/2016 9:26:44 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -263,9 +294,10 @@ GO
 -- Description:	Merge a document
 -- =============================================
 CREATE PROCEDURE [dbo].[UpsertDocument]
+	@SourceId int,
 	@Id varchar(50),
 	@Description varchar(1024),
-	@Source varchar(2048)
+	@StatusId int
 AS
 BEGIN
 
@@ -274,14 +306,14 @@ BEGIN
 	MERGE 
 	   Documents
 	USING ( 
-		VALUES (@Id, @Description, @Source)
-	) AS source (Id, Description, Source) 
-	ON Documents.Id = source.Id 
+		VALUES (@SourceId, @Id, @Description, @StatusId)
+	) AS source (SourceId, Id, Description, StatusId) 
+	ON Documents.SourceId = source.SourceId AND Documents.Id = source.Id 
 	WHEN MATCHED THEN
-	   UPDATE SET Description = source.Description
+	   UPDATE SET Description = source.Description, StatusId = source.StatusId
 	WHEN NOT MATCHED THEN
-	   INSERT (Id, Description, Source)
-	   VALUES (Id, Description, Source)
+	   INSERT (SourceId, Id, Description, StatusId)
+	   VALUES (SourceId, Id, Description, StatusId)
 	; --A MERGE statement must be terminated by a semi-colon (;).
 
 END
@@ -289,9 +321,16 @@ GO
 
 
 
-INSERT INTO DocumentStatus (Id,Name) VALUES (1, 'Queued')
-INSERT INTO DocumentStatus (Id,Name) VALUES (2, 'Fetching')
-INSERT INTO DocumentStatus (Id,Name) VALUES (3, 'Split')
-INSERT INTO DocumentStatus (Id,Name) VALUES (4, 'Scoring')
-INSERT INTO DocumentStatus (Id,Name) VALUES (5, 'Process Complete')
 
+INSERT INTO DocumentStatus (Id,Name) VALUES (1, 'Processing')
+INSERT INTO DocumentStatus (Id,Name) VALUES (2, 'Scoring')
+INSERT INTO DocumentStatus (Id,Name) VALUES (3, 'Processed')
+
+INSERT INTO Sources (Id ,name ,Url) VALUES (1, 'Pubmed', 'http://pubmed.com')
+INSERT INTO Sources (Id ,name ,Url) VALUES (2, 'PMC', 'http://pmc.com')
+
+INSERT INTO ConceptTypes (Id, Name) VALUES (1, 'Gene')
+INSERT INTO ConceptTypes (Id, Name) VALUES (2, 'Species')
+INSERT INTO ConceptTypes (Id, Name) VALUES (3, 'Mirna')
+INSERT INTO ConceptTypes (Id, Name) VALUES (4, 'Chemical')
+INSERT INTO ConceptTypes (Id, Name) VALUES (5, 'Other')
