@@ -7,7 +7,6 @@
       <Setting name="DB_NAME" />
       <Setting name="DB_PASSWORD" />
       <Setting name="DB_USER" />
-      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteForwarder.Enabled" />
       <Setting name="STORAGE_ACCOUNT" />
       <Setting name="STORAGE_KEY" />
       <Setting name="QUEUE_SCORING" />
@@ -75,7 +74,6 @@
       <Setting name="DB_NAME" />
       <Setting name="DB_PASSWORD" />
       <Setting name="DB_USER" />
-      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteForwarder.Enabled" />
       <Setting name="STORAGE_ACCOUNT" />
       <Setting name="STORAGE_KEY" />
       <Setting name="QUEUE_SCORING" />
@@ -143,7 +141,6 @@
       <Setting name="DB_NAME" />
       <Setting name="DB_PASSWORD" />
       <Setting name="DB_USER" />
-      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteForwarder.Enabled" />
       <Setting name="STORAGE_ACCOUNT" />
       <Setting name="STORAGE_KEY" />
       <Setting name="QUEUE_SCORING" />
