@@ -10,8 +10,8 @@ var constants = {
   },
   ConceptTypes: {
     GENE: 1,
-    SPECIES: 2,
-    MIRNA: 3,
+    MIRNA: 2,
+    SPECIES: 3,
     CHEMICAL: 4,
     OTHER: 5,
   },

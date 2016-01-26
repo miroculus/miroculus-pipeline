@@ -57,9 +57,11 @@ function run(cb) {
         
         data.scoring = getScoring(score);
         console.log('got scoring relation:', data.scoring);
-        // TODO: insert relation to db
         
-        return checkQueue();
+
+        db.upsertRelation(relation, function (err) { 
+          return checkQueue();  
+        });
       }
     });
   };
