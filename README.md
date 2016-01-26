@@ -21,13 +21,14 @@ TODO: Mor to edit how the message looks like in the queue
 {
   "requestType": "score",
   "data": {
-    "sourceId": "sourceId",
+    "sourceId": 1,
     "docId": "docId",
     "sentenceIndex": 1,
-    "fromConceptId": 1,
+    "fromConceptTypeId": 1,
     "fromConceptName": "geneX",
-    "toConceptId": 2,
+    "toConceptTypeId": 2,
     "toConceptName": "mirnaY",
+    "modelVersion": "0.1.0.1",
     "sentence": "the sentence text..."
   }
 }

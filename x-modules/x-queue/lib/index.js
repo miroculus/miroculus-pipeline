@@ -14,9 +14,11 @@ module.exports = function(config) {
     
     queueService = azure.createQueueService(config.storageName, config.storageKey)
       .withFilter(new azure.ExponentialRetryPolicyFilter());
-    console.log('listening on queue', config.queueName);
+    
     queueService.createQueueIfNotExists(config.queueName, function(err) {
       if (err) return deferred.reject(err);
+      
+      console.log('listening on queue', config.queueName);
       deferred.resolve();
     });
     
