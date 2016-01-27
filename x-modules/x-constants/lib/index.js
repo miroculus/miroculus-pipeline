@@ -1,3 +1,6 @@
+
+// TODO: remove fields
+
 var constants = {
   documentStatus: {
     PROCESSING: 1,
@@ -10,10 +13,10 @@ var constants = {
   },
   conceptTypes: {
     GENE: 1,
-    SPECIES: 2,
-    MIRNA: 3,
+    MIRNA: 2,
+    SPECIES: 3,
     CHEMICAL: 4,
-    OTHER: 5,
+    OTHER: 5
   },
   queues: {
     action: {
