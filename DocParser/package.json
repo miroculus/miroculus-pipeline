@@ -1,7 +1,7 @@
 {
-  "name": "PaperParserWorker",
+  "name": "DocParser",
   "version": "1.0.0",
-  "description": "PaperParserWorker",
+  "description": "DocParser",
   "main": "worker.js",
   "author": {
     "name": "mor shemesh",

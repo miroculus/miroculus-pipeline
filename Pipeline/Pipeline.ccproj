@@ -38,12 +38,12 @@
     <ServiceConfiguration Include="ServiceConfiguration.Cloud.cscfg" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PaperParserWorker\PaperParserWorker.njsproj">
-      <Name>PaperParserWorker</Name>
+    <ProjectReference Include="..\DocParser\DocParser.njsproj">
+      <Name>DocParser</Name>
       <Project>{bade8777-d7b4-471a-84c0-fc8833d42381}</Project>
       <Private>True</Private>
       <RoleType>Worker</RoleType>
-      <RoleName>PaperParserWorker</RoleName>
+      <RoleName>DocParser</RoleName>
       <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
     </ProjectReference>
     <ProjectReference Include="..\ScoringWorker\ScoringWorker.njsproj">
@@ -64,14 +64,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="PaperParserWorkerContent\" />
+    <Folder Include="DocParserContent\" />
     <Folder Include="Profiles" />
     <Folder Include="ScoringWorkerContent\" />
     <Folder Include="QueryIDsWorkerContent\" />
   </ItemGroup>
   <ItemGroup>
     <DiagnosticsConfiguration Include="ScoringWorkerContent\diagnostics.wadcfgx" />
-    <DiagnosticsConfiguration Include="PaperParserWorkerContent\diagnostics.wadcfgx" />
+    <DiagnosticsConfiguration Include="DocParserContent\diagnostics.wadcfgx" />
     <DiagnosticsConfiguration Include="QueryIDsWorkerContent\diagnostics.wadcfgx" />
   </ItemGroup>
   <ItemGroup>
@@ -89,11 +89,11 @@ xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)obj\$(ConfigurationName)\Scoring
 xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)csx\$(ConfigurationName)\roles\ScoringWorker\approot\node_modules\ /EFY
 
 echo Copying x-modules to Paper Parser worker
-xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)obj\$(ConfigurationName)\PaperParserWorker\node_modules\ /EFY
-xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)csx\$(ConfigurationName)\roles\PaperParserWorker\approot\node_modules\ /EFY
+xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)obj\$(ConfigurationName)\DocParser\node_modules\ /EFY
+xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)csx\$(ConfigurationName)\roles\DocParser\approot\node_modules\ /EFY
 
 echo Copying x-modules to Query Id worker
-xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)obj\$(ConfigurationName)\QueryIDWorker\node_modules\ /EFY
-xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)csx\$(ConfigurationName)\roles\QueryIDWorker\approot\node_modules\ /EFY</PostBuildEvent>
+xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)obj\$(ConfigurationName)\QueryIDsWorker\node_modules\ /EFY
+xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)csx\$(ConfigurationName)\roles\QueryIDsWorker\approot\node_modules\ /EFY</PostBuildEvent>
   </PropertyGroup>
 </Project>
