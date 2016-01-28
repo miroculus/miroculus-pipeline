@@ -7,9 +7,9 @@ Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "Pipeline", "Pipeline\Pipeli
 EndProject
 Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "ScoringWorker", "ScoringWorker\ScoringWorker.njsproj", "{BE1C9924-224A-43D3-A8FD-3CF418820FA1}"
 EndProject
-Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "QueryIDsWorker", "QueryIDsWorker\QueryIDsWorker.njsproj", "{0943F5B6-57B9-4F32-B477-3ED4C8D62475}"
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "QueryIDs", "QueryIDs\QueryIDs.njsproj", "{0943F5B6-57B9-4F32-B477-3ED4C8D62475}"
 EndProject
-Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "PaperParserWorker", "PaperParserWorker\PaperParserWorker.njsproj", "{BADE8777-D7B4-471A-84C0-FC8833D42381}"
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "DocParser", "DocParser\DocParser.njsproj", "{BADE8777-D7B4-471A-84C0-FC8833D42381}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -38,12 +38,12 @@
     <ServiceConfiguration Include="ServiceConfiguration.Cloud.cscfg" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PaperParserWorker\PaperParserWorker.njsproj">
-      <Name>PaperParserWorker</Name>
+    <ProjectReference Include="..\DocParser\DocParser.njsproj">
+      <Name>DocParser</Name>
       <Project>{bade8777-d7b4-471a-84c0-fc8833d42381}</Project>
       <Private>True</Private>
       <RoleType>Worker</RoleType>
-      <RoleName>PaperParserWorker</RoleName>
+      <RoleName>DocParser</RoleName>
       <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
     </ProjectReference>
     <ProjectReference Include="..\ScoringWorker\ScoringWorker.njsproj">
@@ -54,25 +54,25 @@
       <RoleName>ScoringWorker</RoleName>
       <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
     </ProjectReference>
-    <ProjectReference Include="..\QueryIDsWorker\QueryIDsWorker.njsproj">
-      <Name>QueryIDsWorker</Name>
+    <ProjectReference Include="..\QueryIDs\QueryIDs.njsproj">
+      <Name>QueryIDs</Name>
       <Project>{0943f5b6-57b9-4f32-b477-3ed4c8d62475}</Project>
       <Private>True</Private>
       <RoleType>Worker</RoleType>
-      <RoleName>QueryIDsWorker</RoleName>
+      <RoleName>QueryIDs</RoleName>
       <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="PaperParserWorkerContent\" />
+    <Folder Include="DocParserContent\" />
     <Folder Include="Profiles" />
     <Folder Include="ScoringWorkerContent\" />
-    <Folder Include="QueryIDsWorkerContent\" />
+    <Folder Include="QueryIDsContent\" />
   </ItemGroup>
   <ItemGroup>
     <DiagnosticsConfiguration Include="ScoringWorkerContent\diagnostics.wadcfgx" />
-    <DiagnosticsConfiguration Include="PaperParserWorkerContent\diagnostics.wadcfgx" />
-    <DiagnosticsConfiguration Include="QueryIDsWorkerContent\diagnostics.wadcfgx" />
+    <DiagnosticsConfiguration Include="DocParserContent\diagnostics.wadcfgx" />
+    <DiagnosticsConfiguration Include="QueryIDsContent\diagnostics.wadcfgx" />
   </ItemGroup>
   <ItemGroup>
     <PublishProfile Include="Profiles\miroculus-pipelineProduction.azurePubxml" />
@@ -84,10 +84,16 @@
   </PropertyGroup>
   <Import Project="$(CloudExtensionsDir)Microsoft.WindowsAzure.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)obj\$(ConfigurationName)\ScoringWorker\node_modules\ /EFY
+    <PostBuildEvent>echo Copying x-modules to Scoring worker
+xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)obj\$(ConfigurationName)\ScoringWorker\node_modules\ /EFY
 xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)csx\$(ConfigurationName)\roles\ScoringWorker\approot\node_modules\ /EFY
 
-xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)obj\$(ConfigurationName)\PaperParserWorker\node_modules\ /EFY
-xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)csx\$(ConfigurationName)\roles\PaperParserWorker\approot\node_modules\ /EFY</PostBuildEvent>
+echo Copying x-modules to Paper Parser worker
+xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)obj\$(ConfigurationName)\DocParser\node_modules\ /EFY
+xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)csx\$(ConfigurationName)\roles\DocParser\approot\node_modules\ /EFY
+
+echo Copying x-modules to Query Id worker
+xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)obj\$(ConfigurationName)\QueryIDs\node_modules\ /EFY
+xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)csx\$(ConfigurationName)\roles\QueryIDs\approot\node_modules\ /EFY</PostBuildEvent>
   </PropertyGroup>
 </Project>

@@ -23,20 +23,6 @@ var constants = {
       SCORE: 'score',
       GET_DOCUMENT: 'getDocument'
     },
-    fields: {
-      type: "requestType",
-      data: "properties",
-      docId: "paperId",
-      source: "documentSource",
-      sourceId: "sourceId",
-      sentenceIndex: "sentenceIndex",
-      fromConceptTypeId: "fromConceptTypeId",
-      fromConceptName: "fromConceptName",
-      toConceptTypeId: "toConceptTypeId",
-      toConceptName: "toConceptName",
-      modelVersion: "modelVersion",
-      sentenceContent: "sentence"
-    },
     modelVersion: "0.1.0.1"
   }
 }

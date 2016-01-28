@@ -3,6 +3,7 @@
   <WorkerRole name="ScoringWorker" vmsize="Small">
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteForwarder.Enabled" />
       <Setting name="DB_SERVER" />
       <Setting name="DB_NAME" />
       <Setting name="DB_PASSWORD" />
@@ -15,7 +16,6 @@
     </ConfigurationSettings>
     <Imports>
       <Import moduleName="RemoteAccess" />
-      <Import moduleName="RemoteForwarder" />
     </Imports>
     <Startup>
       <Task commandLine="setup_worker.cmd &gt; log.txt" executionContext="elevated" taskType="simple">
@@ -67,7 +67,7 @@
       </EntryPoint>
     </Runtime>
   </WorkerRole>
-  <WorkerRole name="PaperParserWorker" vmsize="Small">
+  <WorkerRole name="DocParser" vmsize="Small">
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" />
       <Setting name="Microsoft.WindowsAzure.Plugins.RemoteForwarder.Enabled" />
@@ -134,7 +134,7 @@
       </EntryPoint>
     </Runtime>
   </WorkerRole>
-  <WorkerRole name="QueryIDsWorker" vmsize="Small">
+  <WorkerRole name="QueryIDs" vmsize="Small">
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" />
       <Setting name="Microsoft.WindowsAzure.Plugins.RemoteForwarder.Enabled" />
