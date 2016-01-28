@@ -6,7 +6,7 @@ var config = require("x-config");
 var queue = require("x-queue");
 var service = require("x-service");
 
-var documentUpserter =  require("./documentUpserter")
+var documentUpserter =  require("./upserter")
 
 function run(callback) {
 

@@ -5,7 +5,7 @@ var config = require("x-config");
 var queue = require("x-queue");
 var service = require("x-service");
 
-var textParser = require("./textParser.js");
+var textParser = require("./parser.js");
 
 function run(callback) {
 

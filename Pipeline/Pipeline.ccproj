@@ -54,12 +54,12 @@
       <RoleName>ScoringWorker</RoleName>
       <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
     </ProjectReference>
-    <ProjectReference Include="..\QueryIDsWorker\QueryIDsWorker.njsproj">
-      <Name>QueryIDsWorker</Name>
+    <ProjectReference Include="..\QueryIDs\QueryIDs.njsproj">
+      <Name>QueryIDs</Name>
       <Project>{0943f5b6-57b9-4f32-b477-3ed4c8d62475}</Project>
       <Private>True</Private>
       <RoleType>Worker</RoleType>
-      <RoleName>QueryIDsWorker</RoleName>
+      <RoleName>QueryIDs</RoleName>
       <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
     </ProjectReference>
   </ItemGroup>
@@ -67,12 +67,12 @@
     <Folder Include="DocParserContent\" />
     <Folder Include="Profiles" />
     <Folder Include="ScoringWorkerContent\" />
-    <Folder Include="QueryIDsWorkerContent\" />
+    <Folder Include="QueryIDsContent\" />
   </ItemGroup>
   <ItemGroup>
     <DiagnosticsConfiguration Include="ScoringWorkerContent\diagnostics.wadcfgx" />
     <DiagnosticsConfiguration Include="DocParserContent\diagnostics.wadcfgx" />
-    <DiagnosticsConfiguration Include="QueryIDsWorkerContent\diagnostics.wadcfgx" />
+    <DiagnosticsConfiguration Include="QueryIDsContent\diagnostics.wadcfgx" />
   </ItemGroup>
   <ItemGroup>
     <PublishProfile Include="Profiles\miroculus-pipelineProduction.azurePubxml" />
@@ -93,7 +93,7 @@ xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)obj\$(ConfigurationName)\DocPars
 xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)csx\$(ConfigurationName)\roles\DocParser\approot\node_modules\ /EFY
 
 echo Copying x-modules to Query Id worker
-xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)obj\$(ConfigurationName)\QueryIDsWorker\node_modules\ /EFY
-xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)csx\$(ConfigurationName)\roles\QueryIDsWorker\approot\node_modules\ /EFY</PostBuildEvent>
+xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)obj\$(ConfigurationName)\QueryIDs\node_modules\ /EFY
+xcopy $(ProjectDir)\..\x-modules\* $(ProjectDir)csx\$(ConfigurationName)\roles\QueryIDs\approot\node_modules\ /EFY</PostBuildEvent>
   </PropertyGroup>
 </Project>
