@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "azure-storage": "^0.7.0",
-    "moment": "^2.10.6",
+    "moment": "^2.11.1",
     "q": "^1.4.1",
     "string_format": "0.0.6",
     "tedious": "^1.13.2"

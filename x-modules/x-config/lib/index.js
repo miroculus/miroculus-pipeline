@@ -14,8 +14,7 @@ var config = {
     },
     queues: {
         scoring: process.env.QUEUE_SCORING,
-        new_ids: process.env.QUEUE_NEW_IDS,
-        papers_to_parse: process.env.QUEUE_PAPERS_TO_PARSE
+        new_ids: process.env.QUEUE_NEW_IDS
     }
 };
 
@@ -36,6 +35,5 @@ checkParam(config.storage.account, 'storage account', 'STORAGE_ACCOUNT');
 checkParam(config.storage.key, 'storage key', 'STORAGE_KEY');
 checkParam(config.queues.scoring, 'scoring queue name', 'QUEUE_SCORING');
 checkParam(config.queues.new_ids, 'new ids queue', 'QUEUE_NEW_IDS');
-checkParam(config.queues.papers_to_parse, 'papers to parse queue', 'QUEUE_PAPERS_TO_PARSE');
 
 module.exports = config;

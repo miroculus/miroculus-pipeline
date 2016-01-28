@@ -1,15 +1,15 @@
 ﻿
 /**
-    * Get a text from a full document at return an array of sentenses
+    * Get a text from a full document at return an array of sentences
     * Todo: This should be turned to a query to giovanny's API 
     * 
     * @param   {string}      [text] - Text to parse
-    * @returns {string[]}           - sentenses array
+    * @returns {string[]}           - sentences array
     */
-var turnTextToSentenses = function (text) {
+var turnTextToSentences = function (text) {
     return text.match(/\S.*?\."?(?=\s|$)/g);
 };
 
 module.exports = {
-    turnTextToSentenses: turnTextToSentenses
+    turnTextToSentences: turnTextToSentences
 };

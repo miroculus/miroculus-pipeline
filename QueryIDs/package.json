@@ -10,10 +10,10 @@
   "dependencies": {
     "async": "^1.5.2",
     "azure-storage": "^0.6.0",
-    "moment": "^2.10.6",
+    "moment": "^2.11.1",
     "q": "^1.4.1",
     "querystring": "^0.2.0",
-    "request": "^2.67.0",
+    "request": "^2.69.0",
     "string_format": "0.0.6",
     "tedious": "^1.13.2"
   }
