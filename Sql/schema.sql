@@ -1,49 +1,20 @@
-﻿/****** Object:  UserDefinedTableType [dbo].[UDT_IdList]    Script Date: 1/26/2016 1:26:52 PM ******/
+﻿
+/****** Object:  UserDefinedTableType [dbo].[UDT_IdList]    Script Date: 1/28/2016 4:30:06 PM ******/
 CREATE TYPE [dbo].[UDT_IdList] AS TABLE(
 	[Id] [varchar](50) NULL
 )
 GO
-/****** Object:  Table [dbo].[Concepts]    Script Date: 1/26/2016 1:26:52 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-SET ANSI_PADDING ON
-GO
-CREATE TABLE [dbo].[Concepts](
-	[TypeId] [int] NOT NULL,
-	[Name] [varchar](100) NOT NULL,
-	[Description] [varchar](1024) NULL,
- CONSTRAINT [PK_Concepts_1] PRIMARY KEY CLUSTERED 
-(
-	[TypeId] ASC,
-	[Name] ASC
+/****** Object:  UserDefinedTableType [dbo].[UDT_Relations]    Script Date: 1/28/2016 4:30:06 PM ******/
+CREATE TYPE [dbo].[UDT_Relations] AS TABLE(
+	[Entity1TypeId] [int] NULL,
+	[Entity1Name] [varchar](100) NULL,
+	[Entity2TypeId] [int] NULL,
+	[Entity2Name] [varchar](100) NULL,
+	[Relation] [int] NULL,
+	[Score] [real] NULL
 )
-) ON [PRIMARY]
-
 GO
-SET ANSI_PADDING OFF
-GO
-/****** Object:  Table [dbo].[ConceptTypes]    Script Date: 1/26/2016 1:26:52 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-SET ANSI_PADDING ON
-GO
-CREATE TABLE [dbo].[ConceptTypes](
-	[Id] [int] NOT NULL,
-	[Name] [varchar](50) NOT NULL,
- CONSTRAINT [PK_ConceptTypes] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)
-) ON [PRIMARY]
-
-GO
-SET ANSI_PADDING OFF
-GO
-/****** Object:  Table [dbo].[Documents]    Script Date: 1/26/2016 1:26:52 PM ******/
+/****** Object:  Table [dbo].[Documents]    Script Date: 1/28/2016 4:30:06 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -65,7 +36,7 @@ CREATE TABLE [dbo].[Documents](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[DocumentStatus]    Script Date: 1/26/2016 1:26:52 PM ******/
+/****** Object:  Table [dbo].[DocumentStatus]    Script Date: 1/28/2016 4:30:06 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -84,7 +55,26 @@ CREATE TABLE [dbo].[DocumentStatus](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Graph]    Script Date: 1/26/2016 1:26:52 PM ******/
+/****** Object:  Table [dbo].[EntityTypes]    Script Date: 1/28/2016 4:30:06 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[EntityTypes](
+	[Id] [int] NOT NULL,
+	[Name] [varchar](50) NOT NULL,
+ CONSTRAINT [PK_ConceptTypes] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)
+) ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[Graph]    Script Date: 1/28/2016 4:30:06 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -95,30 +85,53 @@ CREATE TABLE [dbo].[Graph](
 	[SourceId] [int] NOT NULL,
 	[DocId] [varchar](50) NOT NULL,
 	[SentenceIndex] [int] NOT NULL,
-	[FromConceptTypeId] [int] NOT NULL,
-	[FromConceptName] [varchar](100) NOT NULL,
-	[ToConceptTypeId] [int] NOT NULL,
-	[ToConceptName] [varchar](100) NOT NULL,
+	[ModelVersion] [varchar](50) NOT NULL,
+	[Entity1TypeId] [int] NOT NULL,
+	[Entity1Name] [varchar](100) NOT NULL,
+	[Entity2TypeId] [int] NOT NULL,
+	[Entity2Name] [varchar](100) NOT NULL,
 	[Relation] [int] NOT NULL,
 	[Score] [real] NOT NULL,
-	[ModelVersion] [varchar](50) NOT NULL,
-	[Sentence] [text] NOT NULL,
- CONSTRAINT [PK_Graph_1] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_Graph] PRIMARY KEY CLUSTERED 
 (
 	[SourceId] ASC,
 	[DocId] ASC,
 	[SentenceIndex] ASC,
-	[FromConceptTypeId] ASC,
-	[FromConceptName] ASC,
-	[ToConceptTypeId] ASC,
-	[ToConceptName] ASC
+	[ModelVersion] ASC,
+	[Entity1TypeId] ASC,
+	[Entity1Name] ASC,
+	[Entity2TypeId] ASC,
+	[Entity2Name] ASC
+)
+) ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[Sentences]    Script Date: 1/28/2016 4:30:06 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Sentences](
+	[SourceId] [int] NOT NULL,
+	[DocId] [varchar](50) NOT NULL,
+	[SentenceIndex] [int] NOT NULL,
+	[Sentence] [text] NOT NULL,
+ CONSTRAINT [PK_Sentences] PRIMARY KEY CLUSTERED 
+(
+	[SourceId] ASC,
+	[DocId] ASC,
+	[SentenceIndex] ASC
 )
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Sources]    Script Date: 1/26/2016 1:26:52 PM ******/
+/****** Object:  Table [dbo].[Sources]    Script Date: 1/28/2016 4:30:06 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -138,39 +151,7 @@ CREATE TABLE [dbo].[Sources](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[test]    Script Date: 1/26/2016 1:26:52 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-SET ANSI_PADDING ON
-GO
-CREATE TABLE [dbo].[test](
-	[Name] [varchar](50) NOT NULL,
- CONSTRAINT [PK_Roles] PRIMARY KEY CLUSTERED 
-(
-	[Name] ASC
-)
-) ON [PRIMARY]
-
-GO
-SET ANSI_PADDING OFF
-GO
-SET ANSI_PADDING ON
-
-GO
-/****** Object:  Index [IX_Graph_ModelVersion]    Script Date: 1/26/2016 1:26:52 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Graph_ModelVersion] ON [dbo].[Graph]
-(
-	[ModelVersion] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
 ALTER TABLE [dbo].[Documents] ADD  CONSTRAINT [DF_Documents_StatusId]  DEFAULT ((1)) FOR [StatusId]
-GO
-ALTER TABLE [dbo].[Concepts]  WITH CHECK ADD  CONSTRAINT [FK_Concepts_ConceptTypes] FOREIGN KEY([TypeId])
-REFERENCES [dbo].[ConceptTypes] ([Id])
-GO
-ALTER TABLE [dbo].[Concepts] CHECK CONSTRAINT [FK_Concepts_ConceptTypes]
 GO
 ALTER TABLE [dbo].[Documents]  WITH CHECK ADD  CONSTRAINT [FK_Documents_DocumentStatus] FOREIGN KEY([StatusId])
 REFERENCES [dbo].[DocumentStatus] ([Id])
@@ -182,22 +163,27 @@ REFERENCES [dbo].[Sources] ([Id])
 GO
 ALTER TABLE [dbo].[Documents] CHECK CONSTRAINT [FK_Documents_Sources]
 GO
-ALTER TABLE [dbo].[Graph]  WITH CHECK ADD  CONSTRAINT [FK_Graph_Concepts_From] FOREIGN KEY([FromConceptTypeId], [FromConceptName])
-REFERENCES [dbo].[Concepts] ([TypeId], [Name])
+ALTER TABLE [dbo].[Graph]  WITH CHECK ADD  CONSTRAINT [FK_Graph_Entity2Types] FOREIGN KEY([Entity2TypeId])
+REFERENCES [dbo].[EntityTypes] ([Id])
 GO
-ALTER TABLE [dbo].[Graph] CHECK CONSTRAINT [FK_Graph_Concepts_From]
+ALTER TABLE [dbo].[Graph] CHECK CONSTRAINT [FK_Graph_Entity2Types]
 GO
-ALTER TABLE [dbo].[Graph]  WITH CHECK ADD  CONSTRAINT [FK_Graph_Concepts_To] FOREIGN KEY([ToConceptTypeId], [ToConceptName])
-REFERENCES [dbo].[Concepts] ([TypeId], [Name])
+ALTER TABLE [dbo].[Graph]  WITH CHECK ADD  CONSTRAINT [FK_Graph_EntityTypes1] FOREIGN KEY([Entity1TypeId])
+REFERENCES [dbo].[EntityTypes] ([Id])
 GO
-ALTER TABLE [dbo].[Graph] CHECK CONSTRAINT [FK_Graph_Concepts_To]
+ALTER TABLE [dbo].[Graph] CHECK CONSTRAINT [FK_Graph_EntityTypes1]
 GO
-ALTER TABLE [dbo].[Graph]  WITH CHECK ADD  CONSTRAINT [FK_Graph_Documents] FOREIGN KEY([SourceId], [DocId])
+ALTER TABLE [dbo].[Graph]  WITH CHECK ADD  CONSTRAINT [FK_Graph_Sentences] FOREIGN KEY([SourceId], [DocId], [SentenceIndex])
+REFERENCES [dbo].[Sentences] ([SourceId], [DocId], [SentenceIndex])
+GO
+ALTER TABLE [dbo].[Graph] CHECK CONSTRAINT [FK_Graph_Sentences]
+GO
+ALTER TABLE [dbo].[Sentences]  WITH CHECK ADD  CONSTRAINT [FK_Sentences_Documents] FOREIGN KEY([SourceId], [DocId])
 REFERENCES [dbo].[Documents] ([SourceId], [Id])
 GO
-ALTER TABLE [dbo].[Graph] CHECK CONSTRAINT [FK_Graph_Documents]
+ALTER TABLE [dbo].[Sentences] CHECK CONSTRAINT [FK_Sentences_Documents]
 GO
-/****** Object:  StoredProcedure [dbo].[FilterExistingDocuments]    Script Date: 1/26/2016 1:26:52 PM ******/
+/****** Object:  StoredProcedure [dbo].[FilterExistingDocuments]    Script Date: 1/28/2016 4:30:06 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -240,8 +226,9 @@ END
 
 
 
+
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateDocumentStatus]    Script Date: 1/26/2016 1:26:52 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpdateDocumentStatus]    Script Date: 1/28/2016 4:30:06 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -260,8 +247,9 @@ BEGIN
 	WHERE StatusId = @StatusId AND Id = @DocumentId
 
 END
+
 GO
-/****** Object:  StoredProcedure [dbo].[UpsertDocument]    Script Date: 1/26/2016 1:26:52 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpsertDocument]    Script Date: 1/28/2016 4:30:06 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -294,27 +282,23 @@ BEGIN
 	; --A MERGE statement must be terminated by a semi-colon (;).
 
 END
+
 GO
-/****** Object:  StoredProcedure [dbo].[UpsertRelation]    Script Date: 1/26/2016 1:26:52 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpsertRelation]    Script Date: 1/28/2016 4:30:06 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
 -- Author:		amitu
--- Description:	Merge a sentence
+-- Description:	Merge a sentence relations
 -- =============================================
 CREATE PROCEDURE [dbo].[UpsertRelation]
 	@SourceId int,
     @DocId varchar(50),
     @SentenceIndex int,
-    @FromConceptTypeId int,
-	@FromConceptName varchar(100),
-    @ToConceptTypeId int,
-	@ToConceptName varchar(100),
-    @Relation int,
-    @Score real,
-    @ModelVersion varchar(50) = null,
+    @relations UDT_Relations READONLY,
+    @ModelVersion varchar(50),
     @Sentence text
 
 AS
@@ -330,43 +314,50 @@ BEGIN
 	END
 
 
-	IF NOT EXISTS (SELECT * FROM Concepts WHERE TypeId = @FromConceptTypeId AND Name = @FromConceptName)
+	IF NOT EXISTS (SELECT * FROM Sentences WHERE SourceId = @SourceId AND DocId = @DocId AND SentenceIndex = @SentenceIndex)
 	BEGIN
-		INSERT INTO Concepts VALUES (@FromConceptTypeId, @FromConceptName, NULL);
+		INSERT INTO Sentences VALUES (@SourceId, @DocId, @SentenceIndex, @Sentence)
 	END
+	
 
-	IF NOT EXISTS (SELECT * FROM Concepts WHERE TypeId = @ToConceptTypeId AND Name = @ToConceptName)
-	BEGIN
-		INSERT INTO Concepts VALUES (@ToConceptTypeId, @ToConceptName, NULL);
-	END
+	-- delete previous relations for this sentence if any
+	DELETE FROM Graph 
+	WHERE Graph.SourceId = @SourceId 
+		AND Graph.DocId = @DocId 
+		AND Graph.SentenceIndex = @SentenceIndex
+		AND ModelVersion = @ModelVersion
 
+	-- insert updated relations
+	INSERT INTO Graph 
+	SELECT @SourceId, @DocId, @SentenceIndex, @ModelVersion, r.Entity1TypeId, r.Entity1Name, r.Entity2TypeId, r.Entity2Name, r.Relation, r.Score
+	FROM @relations r
+	
 
-
-	MERGE 
-	   Graph
-	USING ( 
-		VALUES (@SourceId, @DocId, @SentenceIndex, @FromConceptTypeId, @FromConceptName, @ToConceptTypeId, @ToConceptName, @Relation, @Score, @ModelVersion, @Sentence)
-	) AS source (SourceId, DocId, SentenceIndex, FromConceptTypeId, FromConceptName, ToConceptTypeId, ToConceptName, Relation, Score, ModelVersion, Sentence) 
+	/*
+	MERGE Graph 
+	USING ( SELECT @SourceId, @DocId, @SentenceIndex, r.Entity1TypeId, r.Entity1Name, r.Entity2TypeId, r.Entity2Name, r.Relation, r.Score, @ModelVersion
+			FROM @relations r) 
+	AS source (SourceId, DocId, SentenceIndex, Entity1TypeId, Entity1Name, Entity2TypeId, Entity2Name, Relation, Score, ModelVersion) 
 	ON	Graph.SourceId = source.SourceId 
 		AND Graph.DocId = source.DocId 
 		AND Graph.SentenceIndex = source.SentenceIndex
-		AND Graph.FromConceptTypeId = source.FromConceptTypeId
-		AND Graph.FromConceptName = source.FromConceptName
-		AND Graph.ToConceptTypeId = source.ToConceptTypeId
-		AND Graph.ToConceptName = source.ToConceptName
+		AND Graph.Entity1TypeId = source.Entity1TypeId
+		AND Graph.Entity1Name = source.Entity1Name
+		AND Graph.Entity2TypeId = source.Entity2TypeId
+		AND Graph.Entity2Name = source.Entity2Name
 	WHEN MATCHED THEN
-	   UPDATE SET Relation = source.Relation, Score = source.Score, ModelVersion = source.ModelVersion, Sentence = source.Sentence
+	   UPDATE SET Relation = source.Relation, Score = source.Score, ModelVersion = source.ModelVersion
 	WHEN NOT MATCHED THEN
-	   INSERT (SourceId, DocId, SentenceIndex, FromConceptTypeId, FromConceptName, ToConceptTypeId, ToConceptName, Relation, Score, ModelVersion, Sentence)
-	   VALUES (SourceId, DocId, SentenceIndex, FromConceptTypeId, FromConceptName, ToConceptTypeId, ToConceptName, Relation, Score, ModelVersion, Sentence)
+	   INSERT (SourceId, DocId, SentenceIndex, Entity1TypeId, Entity1Name, Entity2TypeId, Entity2Name, Relation, Score, ModelVersion)
+	   VALUES (SourceId, DocId, SentenceIndex, Entity1TypeId, Entity1Name, Entity2TypeId, Entity2Name, Relation, Score, ModelVersion)
 	; --A MERGE statement must be terminated by a semi-colon (;).
+	*/
 
 	COMMIT TRANSACTION T1
 
 	RETURN 1;
 
 END
-GO
 
 
 
@@ -379,8 +370,9 @@ INSERT INTO DocumentStatus (Id,Name) VALUES (3, 'Processed')
 INSERT INTO Sources (Id ,name ,Url) VALUES (1, 'Pubmed', 'http://pubmed.com')
 INSERT INTO Sources (Id ,name ,Url) VALUES (2, 'PMC', 'http://pmc.com')
 
-INSERT INTO ConceptTypes (Id, Name) VALUES (1, 'Gene')
-INSERT INTO ConceptTypes (Id, Name) VALUES (2, 'Mirna')
-INSERT INTO ConceptTypes (Id, Name) VALUES (3, 'Species')
-INSERT INTO ConceptTypes (Id, Name) VALUES (4, 'Chemical')
-INSERT INTO ConceptTypes (Id, Name) VALUES (5, 'Other')
+INSERT INTO EntityTypes (Id, Name) VALUES (1, 'Gene')
+INSERT INTO EntityTypes (Id, Name) VALUES (2, 'Mirna')
+INSERT INTO EntityTypes (Id, Name) VALUES (3, 'Species')
+INSERT INTO EntityTypes (Id, Name) VALUES (4, 'Chemical')
+INSERT INTO EntityTypes (Id, Name) VALUES (5, 'Other')
+

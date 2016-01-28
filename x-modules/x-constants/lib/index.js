@@ -11,7 +11,7 @@ var constants = {
     PUBMED: 1,
     PMC: 2
   },
-  ConceptTypes: {
+  conceptTypes: {
     GENE: 1,
     MIRNA: 2,
     SPECIES: 3,
