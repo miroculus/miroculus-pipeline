@@ -1,3 +1,4 @@
+/* global . */
 var tedious = require('tedious');
 var TYPES = tedious.TYPES;
 var configSql = require('x-config').sql;
@@ -16,24 +17,45 @@ function connect(cb) {
   });
 }
 
-function upsertRelation(relation, cb) {
+
+function upsertRelations(opts, cb) {
     
   return connect(function (err, connection) {
     if (err) return logError(err, cb);
     
     var request = new tedious.Request('UpsertRelation', cb);
     
-    request.addParameter('SourceId', TYPES.VarChar, relation.sourceId);
-    request.addParameter('DocId', TYPES.VarChar, relation.docId);
-    request.addParameter('SentenceIndex', TYPES.Int, relation.sentenceIndex);
-    request.addParameter('FromConceptTypeId', TYPES.Int, relation.fromConceptTypeId);
-    request.addParameter('FromConceptName', TYPES.VarChar, relation.fromConceptName);
-    request.addParameter('ToConceptTypeId', TYPES.Int, relation.toConceptTypeId);
-    request.addParameter('ToConceptName', TYPES.VarChar, relation.toConceptName);
-    request.addParameter('Relation', TYPES.Int, relation.scoring.relation);
-    request.addParameter('Score', TYPES.Real, relation.scoring.score);
-    request.addParameter('ModelVersion', TYPES.VarChar, relation.modelVersion);
-    request.addParameter('Sentence', TYPES.Text, relation.sentence);
+    request.addParameter('SourceId', TYPES.VarChar, opts.sourceId);
+    request.addParameter('DocId', TYPES.VarChar, opts.docId);
+    request.addParameter('SentenceIndex', TYPES.Int, opts.sentenceIndex);
+    request.addParameter('ModelVersion', TYPES.VarChar, opts.modelVersion);
+    request.addParameter('Sentence', TYPES.Text, opts.sentence);
+    
+    var relationsTable = {
+      columns: [
+        { name: 'Entity1TypeId', type: TYPES.Int },
+        { name: 'Entity1TypeName', type: TYPES.VarChar },
+        { name: 'Entity2TypeId', type: TYPES.Int },
+        { name: 'Entity2TypeName', type: TYPES.VarChar },
+        { name: 'Relation', type: TYPES.Int },
+        { name: 'Score', type: TYPES.Real }
+      ],
+      rows: []
+    };
+
+    var relations = opts.relations || [];
+    for (var i=0; i < relations.length; i++) {
+      var relation = relations[i];
+      relationsTable.rows.push([
+        relation.entity1.typeId,
+        relation.entity1.name,
+        relation.entity2.typeId,
+        relation.entity2.name,
+        relation.relation,
+        relation.score
+      ]);
+    }
+    request.addParameter('relations', TYPES.TVP, relationsTable);
     
     request.on('returnValue', function (parameterName, value, metadata) {
       console.log('returnValue', parameterName + ' = ' + value);
@@ -92,5 +114,5 @@ function logError(err, cb) {
 
 module.exports = {
   connect: connect,
-  upsertRelation: upsertRelation
+  upsertRelations: upsertRelations
 }

@@ -37,7 +37,7 @@ function run(cb) {
 
   var processMessage = function (message) {
     if (!message) return;
-    console.log('new message', message.messageid);
+    console.log('new message', message.messageid, message.messagetext);
     var msgObject = JSON.parse(message.messagetext);
 
     console.log('got a new message', msgObject);
@@ -45,7 +45,7 @@ function run(cb) {
     var data = msgObject.data && msgObject.data;
     if (!data) return console.warn('message does not contain data field');
     
-    if (msgObject.requestType === constants.Queues.Action.SCORE) {
+    if (msgObject.requestType === constants.queues.action.SCORE) {
       var score = [0.3, 0.4, 0.2, 0.1]; // call score here
       console.log('score for messageid', message.messageid, score);
       
@@ -53,7 +53,7 @@ function run(cb) {
       console.log('got scoring relation:', data.scoring);
 
       // insert relation into db
-      return db.upsertRelation(data, function (err) { 
+      return db.upsertRelations(data, function (err) { 
         if (err) return console.error('error updating relation in db', err);
           
         // delete message from queue

@@ -82,28 +82,49 @@ function run(callback) {
         log.info("Processing document id {} from {}...", docId, source);
         
         return service.getDocumentContent(docId, source).then(function (paperContent) {
-            var sentenses = textParser.turnTextToSentenses(paperContent);
+            var sentences = textParser.turnTextToSentences(paperContent);
 
-            log.info('Found {} sentenses', sentenses && sentenses.length || 0);
+            log.info('Found {} sentences', sentences && sentences.length || 0);
 
             var sendMessagePromises = [];
-            for (var i=0; i<=sentenses.length; i++) {
-                var sentense = sentenses[i];
+            for (var i=0; i<=sentences.length; i++) {
+                var sentence = sentences[i];
                 var index = i;
-                
-                var fields = constants.queues.fields;
+
                 var message = {
-                    "requestType": constants.queues.action.SCORE,
-                    "data": {
-                        "sourceId": constants.sources.PMC,
-                        "docId": docId,
-                        "sentenceIndex": index,
-                        "fromConceptTypeId": constants.conceptTypes.GENE,
-                        "fromConceptName": 'geneX',
-                        "toConceptTypeId": constants.conceptTypes.SPECIES,
-                        "toConceptName": 'mirnaY',
-                        "modelVersion": constants.queues.modelVersion,
-                        "sentenceContent": sentense
+                    requestType: constants.queues.action.SCORE,
+                    data: {
+                        sourceId: constants.sources.PMC,
+                        docId: docId,
+                        sentenceIndex: index,
+                        modelVersion: constants.queues.modelVersion,
+                        sentence: sentence,
+                        relations: [
+                          {
+                            entity1: {
+                              typeId: constants.conceptTypes.MIRNA,
+                              name: "mirnaX"
+                            },
+                            entity2: {
+                              typeId: constants.conceptTypes.GENE,
+                              name: "geneY"
+                            },
+                            relation: 2,
+                            score: 0.56
+                          },
+                          {
+                            entity1: {
+                              typeId: constants.conceptTypes.MIRNA,
+                              name: "mirnaX2"
+                            },
+                            entity2: {
+                              typeId: constants.conceptTypes.GENE,
+                              name: "geneY2"
+                            },
+                            relation: 1,
+                            score: 0.57
+                          }
+                        ]
                     }
                 };
                 

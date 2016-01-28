@@ -30,12 +30,46 @@ Miroculus pipeline components
     "sourceId": 1,
     "docId": "docId",
     "sentenceIndex": 1,
-    "fromConceptTypeId": 1,
-    "fromConceptName": "geneX",
-    "toConceptTypeId": 2,
-    "toConceptName": "mirnaY",
     "modelVersion": "0.1.0.1",
-    "sentence": "the sentence text..."
+    "sentence": "the sentence text...",
+    "relations": [
+      {
+        "entity1": {
+          "typeId": 2,
+          "name": "mirnaX"
+        },
+        "entity2": {
+          "typeId": 1,
+          "name": "geneY"
+        },
+        "relation": 2,
+        "score": 0.56
+      },
+      {
+        "entity1": {
+          "typeId": 2,
+          "name": "mirnaX1"
+        },
+        "entity2": {
+          "typeId": 1,
+          "name": "geneY1"
+        },
+        "relation": 2,
+        "score": 0.26
+      },
+      {
+        "entity1": {
+          "typeId": 2,
+          "name": "mirnaX2"
+        },
+        "entity2": {
+          "typeId": 1,
+          "name": "geneY2"
+        },
+        "relation": 3,
+        "score": 0.50
+      }
+    ]
   }
 }
 ```

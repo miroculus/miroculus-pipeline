@@ -12,7 +12,6 @@
       <Setting name="STORAGE_KEY" />
       <Setting name="QUEUE_SCORING" />
       <Setting name="QUEUE_NEW_IDS" />
-      <Setting name="QUEUE_PAPERS_TO_PARSE" />
     </ConfigurationSettings>
     <Imports>
       <Import moduleName="RemoteAccess" />
@@ -57,9 +56,6 @@
         </Variable>
         <Variable name="QUEUE_NEW_IDS">
           <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='QUEUE_NEW_IDS']/@value" />
-        </Variable>
-        <Variable name="QUEUE_PAPERS_TO_PARSE">
-          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='QUEUE_PAPERS_TO_PARSE']/@value" />
         </Variable>
       </Environment>
       <EntryPoint>
@@ -79,7 +75,6 @@
       <Setting name="STORAGE_KEY" />
       <Setting name="QUEUE_SCORING" />
       <Setting name="QUEUE_NEW_IDS" />
-      <Setting name="QUEUE_PAPERS_TO_PARSE" />
     </ConfigurationSettings>
     <Imports>
       <Import moduleName="RemoteAccess" />
@@ -124,9 +119,6 @@
         </Variable>
         <Variable name="QUEUE_NEW_IDS">
           <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='QUEUE_NEW_IDS']/@value" />
-        </Variable>
-        <Variable name="QUEUE_PAPERS_TO_PARSE">
-          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='QUEUE_PAPERS_TO_PARSE']/@value" />
         </Variable>
       </Environment>
       <EntryPoint>
@@ -146,7 +138,6 @@
       <Setting name="STORAGE_KEY" />
       <Setting name="QUEUE_SCORING" />
       <Setting name="QUEUE_NEW_IDS" />
-      <Setting name="QUEUE_PAPERS_TO_PARSE" />
     </ConfigurationSettings>
     <Imports>
       <Import moduleName="RemoteAccess" />
@@ -191,9 +182,6 @@
         </Variable>
         <Variable name="QUEUE_NEW_IDS">
           <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='QUEUE_NEW_IDS']/@value" />
-        </Variable>
-        <Variable name="QUEUE_PAPERS_TO_PARSE">
-          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='QUEUE_PAPERS_TO_PARSE']/@value" />
         </Variable>
       </Environment>
       <EntryPoint>
