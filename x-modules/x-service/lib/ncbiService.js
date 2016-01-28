@@ -1,6 +1,7 @@
 var log = require('x-log');
 var request = require('request');
 var queryString = require('querystring');
+var constants = require('x-constants');
 
 var ncbiService = (function () {
     "use strict";
@@ -13,8 +14,20 @@ var ncbiService = (function () {
     };
     
     var dbs = {
-        pmc: 'pmc'
+        pmc: 'pmc',
+        pubmed: 'pubmed'
     };
+    
+    function getDBId(dbName) {
+        switch (dbName) {
+            case dbs.pmc:
+                return constants.sources.PMC;
+            case dbs.pubmed:
+                return constants.sources.PUBMED;
+            default:
+                return -1;
+        }
+    }
     
     var etypes = {
         edat: 'edat'
@@ -121,6 +134,7 @@ var ncbiService = (function () {
         fetchCachedContent: fetchCachedContent,
         configCache: configCache,
         getCache: getCache,
+        getDBId: getDBId,
         
         dbs: dbs,
         etypes: etypes

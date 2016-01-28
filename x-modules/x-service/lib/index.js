@@ -6,6 +6,8 @@ var moment = require("moment");
 var service = require('./ncbiService.js');
 var async = require('async');
 
+var MAX_RESULTS = 10000;
+
 function getDocumentContent(docId, source) {
     var deferred = Q.defer();
 
@@ -20,76 +22,94 @@ function getDocumentContent(docId, source) {
     return deferred.promise;
 }
 
-var createDateContinuum = function (from, to) {
-    var dates = [];
-    var lastDate = from;
-    
-    while (lastDate <= to) {
-        dates.push(new Date(lastDate));
-        lastDate.setDate(lastDate.getDate() + 1);
-    }
-    return dates;
-}
-
- // Mock function, it needs to check if the paper is already
+// Mock function, it needs to check if the paper is already
 // proccessed.
-function notProcessedPapers (paperIds, callback) {
-    return callback(null, paperIds);
+function notProcessedPapers (database, paperIds, callback) {
+    return callback(null, database, paperIds);
 }
 
-function checkPapers(date, paperIds, callback) {
+function checkPapers(database, paperIds, callback) {
     
-    return notProcessedPapers(paperIds, function (err, filteredPapers) {
+    return notProcessedPapers(database, paperIds, function (err, database, filteredPapers) {
         if (err) {
             console.error(err);
             return callback(err);
         }
-        callback(null, filteredPapers);
+        callback(null, database, filteredPapers);
     });
 }
 
-function getPapers(dateFrom, dateTo, doneCallback) {
-    var dates = createDateContinuum(dateFrom, dateTo);
+function getPapers(dateFrom, dateTo, callback) {
+    var pdaTimeSpan = moment(dateFrom).format('"YYYY/MM/DD"') + '[EDAT] : ' + moment(dateTo).format('"YYYY/MM/DD"') + '[EDAT]';
     var papersData = { papers: [] };
-    var errors = [];
-    
-    function searchOnDate(date, callback) {
-        var pdaTimeSpan = moment(date).format('"YYYY/MM/DD"<<>> : "YYYY/MM/DD"<<>>').replace(/<<>>/g, '[EDAT]');
-        console.log("Searching for papers in " + pdaTimeSpan);
-        return service.searchRequest(service.dbs.pmc, [pdaTimeSpan], 10000, 0, service.etypes.edat, -1, function (err, res, cache) {
-            
-            // In case there were errors, stop processing
-            if (errors.length > 0) { return; }
+    var foundErrors = false;
 
+    function reviewReturnedResults(err, res, cache, resultCollection, callback) {
+
+        if (foundErrors > 0) { return; }
+
+        log.info('results return from db {} on dates {}', cache.database, pdaTimeSpan);
+        
+        if (err) {
+            foundErrors = true;
+            log.error(err);
+            return callback(err);
+        }
+        
+        // Needs to query further results
+        resultCollection = resultCollection.concat(res.idlist);
+        var resultCount = parseInt(res.retmax);
+        var startIndex = parseInt(res.retstart);
+        log.info('db {} on dates {} with current result count {}', cache.database, pdaTimeSpan, resultCollection.length);
+
+        if (resultCount >= MAX_RESULTS) {
+            log.info('Querying from db {} on dates {} with from index {}', cache.database, pdaTimeSpan, resultCount + startIndex);
+            return createSearchRequest(cache.database, resultCount + startIndex, resultCollection, callback);
+        }
+            
+        return checkPapers(cache.database, resultCollection, function (err, database, papers) {
             if (err) {
-                console.error(err);
-                errors.push(err);
+                foundErrors = true;
+                log.error(err);
                 return callback(err);
             }
             
-            return checkPapers(date, res.idlist, function (err, papers) {
-                if (err) {
-                    console.error(err);
-                    errors.push(err);
-                    callback(err);
-                }
-                
-                papersData.papers = papersData.papers.concat(papers);
-                callback();
+            var filteredDocuments = papers.map(function (paperId) {
+                return {
+                    docId: paperId,
+                    sourceId: service.getDBId(cache.database)
+                }                    
             });
+            log.info('filtered {} documents on {}', filteredDocuments.length, cache.database);
+            papersData.papers = papersData.papers.concat(filteredDocuments);
+            return callback();
         });
     }
     
-    function asyncDoneCallback() {
-        console.log("Finished scanning all dates");
-        
-        if (errors.length > 0) {
-            return doneCallback(new Error('There was an error querying on of the dates'));
-        }
-        return doneCallback(null, papersData);
-    }
+    function createSearchRequest(database, startIndex, resultCollection, callback) {
+        service.searchRequest(database, [pdaTimeSpan], MAX_RESULTS, startIndex, service.etypes.edat, -1, function (err, res, cache) {
+            reviewReturnedResults(err, res, cache, resultCollection, callback);
+        });
+    } 
     
-    return async.eachSeries(dates, searchOnDate, asyncDoneCallback);
+    log.info("Searching for papers in " + pdaTimeSpan);
+    
+    // Calling get papers from both pmc and pubmed dbs
+    return async.parallel([
+        function (callback) {
+            createSearchRequest(service.dbs.pmc, 0, [], callback);
+        },
+        function (callback) {
+            createSearchRequest(service.dbs.pubmed, 0, [], callback);
+        }
+    ], function (err) {
+        if (err) {
+            log.error('Completed retreiving db new ids. There was a problem scanning the {}\nError:\n{}', pdaTimeSpan, err); 
+            return callback(err); 
+        }
+        log.info('Completed retrieving db new ids on date span {}', pdaTimeSpan);
+        return callback(null, papersData);
+    });
 }
 
 module.exports = {

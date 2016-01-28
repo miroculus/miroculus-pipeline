@@ -2,12 +2,18 @@
 Miroculus pipeline components
 
 # Getting Documents ID Worker
-* Get Ids
-* Filter using filtering stored procedure
+* Get Ids of new documents from both pmc and pubmed databases
+* Filter new Ids using filtering stored procedure
 * Push all Ids to queue
 
 ```
-TODO: Mor to edit how the message looks like in the queue
+{
+  "requestType": "getDocument",
+  "data": {
+        "docId": "docId",
+        "sourceId": "pmc"
+    }
+}
 ```
 
 # Fetching documents Worker

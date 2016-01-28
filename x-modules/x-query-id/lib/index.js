@@ -32,7 +32,7 @@ function run(callback) {
         storageName: config.storage.account,
         storageKey: config.storage.key,
         queueName: config.queues.new_ids,
-        checkFrequency: 60 * 1000 /* every one minute */ 
+        checkFrequency: 10 * 60 * 1000 /* every one minute */ 
     };
     var queueOut = queue(queueOutConfig);
 
@@ -64,16 +64,17 @@ function run(callback) {
             if (!Array.isArray(papers)) { return log.error('Returned data is not an array'); }
 
             log.info('Found {} new documents', papers.length);
+            log.info('Enqueuing documents...');
                     
             // Enqueuing each document as a pending request for processing
             var sendMessagePromises = [];
-            papers.forEach(function (docId) {
-                        
+            papers.forEach(function (doc) {
+                
                 var message = {
                     "requestType": constants.queues.action.GET_DOCUMENT,
                     "data": {
-                        "docId": docId,
-                        "sourceId": constants.sources.PMC
+                        "docId": doc.docId,
+                        "sourceId": doc.sourceId
                     }
                 };
                 
@@ -99,7 +100,7 @@ function run(callback) {
                 return log.error('failed to enqueu messages for documents');
             });
             
-            return log.info('Completed itterating through retrieved documents');
+            return log.info('Completed itterating through retrieved documents, waiting for results to complete...');
         });
         
         setNextCheck();
