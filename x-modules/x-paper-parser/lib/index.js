@@ -3,9 +3,11 @@ var Q = require("q");
 var constants = require("x-constants");
 var config = require("x-config");
 var queue = require("x-queue");
-var service = require("x-service");
+var service = require("x-docServiceProxy");
+var async = require("async");
 
 var textParser = require("./parser.js");
+var documentUpserter =  require("./upserter")
 
 function run(callback) {
 
@@ -86,10 +88,8 @@ function run(callback) {
 
             log.info('Found {} sentences', sentences && sentences.length || 0);
 
-            var sendMessagePromises = [];
-            for (var i=0; i<=sentences.length; i++) {
-                var sentence = sentences[i];
-                var index = i;
+            function processSentence(sentence, cb) {
+                var index = sentences.indexOf(sentence);
 
                 var message = {
                     requestType: constants.queues.action.SCORE,
@@ -128,17 +128,30 @@ function run(callback) {
                     }
                 };
                 
-                var promise = queueOut.sendMessage(message);
-                promise.catch(function (err) {
-                    return log.error('failed to enqueu message: <{}> of paper <{}>', sentense, docId);
-                });
-                sendMessagePromises.push(promise);
+                queueOut.sendMessage(message, function (err) {
+                    
+                    if (err) {
+                        log.error('failed to enqueu message: <{}> of paper <{}>', sentense, docId);
+                        return cb(err);
+                    }
+                    
+                    return cb();
+                });                
             }
             
-            Q.all(sendMessagePromises).then(function () {
-                return log.info('done enqueuing messages for document <{}>', docId);
-            }).catch(function (err) {
-                return log.error('failed to enqueu messages for document <{}>', docId);
+            async.eachSeries(sentences, processSentence, function (err) {
+                
+                if (err) {
+                    return log.error(err);
+                }
+                
+                // When done with all sentenses in the document, add a "Processing" status to document
+                return documentUpserter.upsertDocument(docId, '', messageData.sourceId, function (error, result) {
+                        
+                    if (error) return log.error('There was an error inserting document row into database.');
+                    
+                    return log.info('done enqueuing messages for document <{}>', docId);
+                });
             });
             
         }).catch(function (err) {

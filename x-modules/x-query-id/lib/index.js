@@ -4,9 +4,8 @@ var moment = require("moment");
 var constants = require("x-constants");
 var config = require("x-config");
 var queue = require("x-queue");
-var service = require("x-service");
-
-var documentUpserter =  require("./upserter")
+var service = require("x-docServiceProxy");
+var async = require("async");
 
 function run(callback) {
 
@@ -35,17 +34,15 @@ function run(callback) {
         checkFrequency: 10 * 60 * 1000 /* every one minute */ 
     };
     var queueOut = queue(queueOutConfig);
-
-    queueOut.init().then(function () {
-
+    queueOut.init(function (err) {
+        if (err) {
+            log.error(err);
+            return callback(err);
+        }
         log.info('start processing new ids queue');
         checkForNewDocuments();
-        
-    }, function (err) {
-        log.error(err);
-        return callback(err);
     });
-
+    
     function checkForNewDocuments() {
         
         // Checking that a message returned from the queue
@@ -55,21 +52,16 @@ function run(callback) {
         log.info('getting papers from {} to {}', fromDate.format('YYYY-MM-DD'), toDate.format('YYYY-MM-DD'));
 
         // Run query for paperts in specific date
-        service.getPapers(fromDate.toDate(), toDate.toDate(), function (error, data) {
-            if (error) { return log.error('There were several errors while retreiving the papers.'); }
+        service.getPapers(fromDate.toDate(), toDate.toDate(), function (error, documents) {
+            if (error) return log.error('There were several errors while retreiving the papers.');
             
-            if (!data) { return log.error('No data was returned when quering for new papers'); }
+            if (!documents || !Array.isArray(documents)) return log.warning('Returned data is not an array');
 
-            var papers = data.papers;
-            if (!Array.isArray(papers)) { return log.error('Returned data is not an array'); }
-
-            log.info('Found {} new documents', papers.length);
+            log.info('Found {} new documents', documents.length);
             log.info('Enqueuing documents...');
                     
             // Enqueuing each document as a pending request for processing
-            var sendMessagePromises = [];
-            papers.forEach(function (doc) {
-                
+            function enqueueDocument(doc, cb) {
                 var message = {
                     "requestType": constants.queues.action.GET_DOCUMENT,
                     "data": {
@@ -77,27 +69,18 @@ function run(callback) {
                         "sourceId": doc.sourceId
                     }
                 };
-                
-                var promise = queueOut.sendMessage(message);
-                promise.then(function () {
-                    
-                    documentUpserter.upsertDocument(docId, '', constants.sources.PMC, function (error, result) {
-                        
-                        if (error) return log.error('There was an error inserting document row into database.');
-
-                        log.info("Result from inserting to database: <{}>", result);
-                    });
-                    
-                }).catch(function (err) {
-                    return log.error('failed to enqueu message: <{}> of paper <{}>', sentense, docId);
+                queueOut.sendMessage(message, function (err) {
+                    if (error) {
+                        log.error('There was an error enqueuing a document.');
+                        return cb(err);
+                    }
                 });
-                sendMessagePromises.push(promise);
-            });
+            }
             
-            Q.all(sendMessagePromises).then(function () {
+            async.each(documents, enqueueDocument, function (err) {
+                if (err) return log.error('failed to enqueu messages for documents.');
+                
                 return log.info('done enqueuing messages for all documents');
-            }).catch(function (err) {
-                return log.error('failed to enqueu messages for documents');
             });
             
             return log.info('Completed itterating through retrieved documents, waiting for results to complete...');

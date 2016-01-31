@@ -1,6 +1,7 @@
 var log = require('x-log');
 var db = require('x-db');
-var config = require('x-config');
+var constants = require('x-constants');
+
 var tedious = require('tedious');
 
 var TYPES = tedious.TYPES;
@@ -15,26 +16,24 @@ var TYPES = tedious.TYPES;
 * @param {string}      [paperSouce]    The web source for the document
 * @param {function}    [callback]      Callback for when the upsert was completed
 */
-function upsertDocument(docId, docName, docSouce, callback) {
+function upsertDocument(docId, docName, sourceId, callback) {
     
-    return db.getDataSets(config.sql, {
+    log.info('sending id {} source {} to db', docId, sourceId);
+    return db.getDataSets({
         sproc: 'UpsertDocument',
         sets: ['data'],
         params: [
             { name: 'Id', type: TYPES.VarChar, value: docId },
             { name: 'Description', type: TYPES.VarChar, value: docName },
-            { name: 'Source', type: TYPES.VarChar, value: docSouce }
+            { name: 'SourceId', type: TYPES.Int, value: sourceId },
+            { name: 'StatusId', type: TYPES.Int, value: constants.documentStatus.PROCESSING },
         ]
-    }, function (err, result) {
+    }, 
+    function (err, result) {
         
-        if (err) {
-            log.error(err);
-            return callback(err);
-        }
+        if (err) return callback(err);
 
-        log.info("Upserted document <{}> successfully", docId);
-        
-        return callback(result);
+        return callback(null, result);
     });
 }
 

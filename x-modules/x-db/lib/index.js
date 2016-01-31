@@ -1,6 +1,7 @@
 /* global . */
 var tedious = require('tedious');
 var TYPES = tedious.TYPES;
+var log = require('x-log');
 var configSql = require('x-config').sql;
 
 var DBErrors = {
@@ -10,6 +11,7 @@ var DBErrors = {
 function connect(cb) {
   var Connection = tedious.Connection;
   var connection = new Connection(configSql);
+  cb = cb || Function();
 
   return connection.on('connect', function(err) {
     if (err) return logError(err, cb);
@@ -58,7 +60,7 @@ function upsertRelations(opts, cb) {
     request.addParameter('relations', TYPES.TVP, relationsTable);
     
     request.on('returnValue', function (parameterName, value, metadata) {
-      console.log('returnValue', parameterName + ' = ' + value);
+      log.info('returnValue {}', parameterName + ' = ' + value);
     });
     
     return connection.callProcedure(request);
@@ -106,13 +108,46 @@ function getDataSets(opts, cb) {
   });
 }
 
+function getUnprocessedDocuments(ids, sourceId, cb) {
+
+    var table = {
+        columns: [
+            {name: 'Id', type: TYPES.Int}
+        ],
+        rows: []
+    };
+
+    for (var i=0; i < ids.length; i++)
+    {
+        table.rows.push([ids[i]]);
+    }
+
+    var params = [
+        { name: 'SourceId', type: TYPES.Int, value: sourceId },
+        { name: 'Ids', type: TYPES.TVP, value: table }
+    ];
+
+    return getDataSets({
+        sproc: 'FilterExistingDocuments',
+        sets: ['data'],
+        params: params
+    }, function(err, result) {
+        if (err) return cb(err);
+
+        var idsArray = result.data.map(function (id) { return id.Id; });
+        return cb(null, sourceId, idsArray);
+    });
+}
+
 function logError(err, cb) {
-  console.error('error:', err);
+  log.error('error: {}', err);
   return cb(err);
 }
 
 
 module.exports = {
   connect: connect,
-  upsertRelations: upsertRelations
+  getDataSets: getDataSets,
+  upsertRelations: upsertRelations,
+  getUnprocessedDocuments: getUnprocessedDocuments
 }

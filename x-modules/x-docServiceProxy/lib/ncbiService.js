@@ -18,15 +18,12 @@ var ncbiService = (function () {
         pubmed: 'pubmed'
     };
     
+    var dbMap = {};
+    dbMap[dbs.pmc] = constants.sources.PMC,
+    dbMap[dbs.pubmed] = constants.sources.PUBMED;
+    
     function getDBId(dbName) {
-        switch (dbName) {
-            case dbs.pmc:
-                return constants.sources.PMC;
-            case dbs.pubmed:
-                return constants.sources.PUBMED;
-            default:
-                return -1;
-        }
+        return dbMap[dbName];
     }
     
     var etypes = {

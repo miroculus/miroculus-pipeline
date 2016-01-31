@@ -10,48 +10,66 @@ module.exports = function(config) {
 
   var queueService;
 
-  function init() {
+  function init(cb) {
     var deferred = Q.defer();
+    var cb = cb || Function();
     
     queueService = azure.createQueueService(config.storageName, config.storageKey)
       .withFilter(new azure.ExponentialRetryPolicyFilter());
     
     queueService.createQueueIfNotExists(config.queueName, function(err) {
-      if (err) return deferred.reject(err);
+      if (err) {
+          cb(err);
+          return deferred.reject(err);
+      }
       
       log.info('listening on queue {}', config.queueName);
+      
+      cb();
       deferred.resolve();
     });
     
     return deferred.promise;    
   }
 
-  function getSingleMessage() {
+  function getSingleMessage(cb) {
     var deferred = Q.defer();
+    var cb = cb || Function();
 
     queueService.getMessages(config.queueName, { 
         numofmessages: 1, 
         visibilitytimeout: 2 * 60 /* 2 minutes - hide item from queue for processing */
       },
       function (err, messages) {
-        if (err) return deferred.reject(err);
-        if (messages.length)
-          deferred.resolve(messages[0]);
-        else 
-          deferred.resolve();
+        if (err) {
+            cb(err);
+            return deferred.reject(err);
+        }
+        
+        var message;
+        if (messages.length) message = messages[0];
+        
+        cb(message);
+        deferred.resolve(message);
       }
     );
 
     return deferred.promise;
   };
 
-  function deleteMessage(message) {
+  function deleteMessage(message, cb) {
     var deferred = Q.defer();
+    var cb = cb || Function();
 
     queueService.deleteMessage(config.queueName, message.messageid,
       message.popreceipt, 
       function (err) {
-        if (err) return deferred.reject(err);
+        if (err) {
+            cb(err);
+            return deferred.reject(err);
+        }
+        
+        cb();
         return deferred.resolve();
       }
     );
@@ -59,12 +77,18 @@ module.exports = function(config) {
     return deferred.promise;
   };
 
-  function sendMessage(message) {
+  function sendMessage(message, cb) {
     var deferred = Q.defer();
+    var cb = cb || Function();
 
     queueService.createMessage(config.queueName, JSON.stringify(message), 
       function (err) {
-        if (err) return deferred.reject(err);
+        if (err) {
+            cb(err);
+            return deferred.reject(err);
+        }
+        
+        cb();
         return deferred.resolve();
       }
     );

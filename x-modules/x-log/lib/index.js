@@ -16,6 +16,17 @@ function info (msg, params) {
     var args = [].splice.call(arguments, 1);
     console.log(createMessage(msg, args));
 }
+
+/**
+* Logging a warning message (using string-format to format messages)
+* 
+* @param {string|object} msg - message or object to log
+* @param {object} params - parameters to append to the message
+*/
+function warning(msg, params) {
+    var args = [].splice.call(arguments, 1);
+    console.warning(createMessage(msg, args));
+}
     
 /**
 * Logging an error message (using string-format to format messages)
@@ -25,10 +36,12 @@ function info (msg, params) {
 */
 function error(msg, params) {
     var args = [].splice.call(arguments, 1);
+    if (typeof(msg) === 'object') return console.error(msg);
     console.error(createMessage(msg, args));
 }
 
 module.exports = {
     info: info,
+    warning: warning,
     error: error
 };

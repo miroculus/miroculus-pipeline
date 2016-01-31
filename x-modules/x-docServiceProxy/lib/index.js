@@ -1,9 +1,8 @@
-// TODO: rename x-service
-
 var log = require("x-log");
 var Q = require("q");
 var moment = require("moment");
 var service = require('./ncbiService.js');
+var db = require('x-db');
 var async = require('async');
 
 var MAX_RESULTS = 10000;
@@ -22,20 +21,14 @@ function getDocumentContent(docId, source) {
     return deferred.promise;
 }
 
-// Mock function, it needs to check if the paper is already
-// proccessed.
-function notProcessedPapers (database, paperIds, callback) {
-    return callback(null, database, paperIds);
-}
-
-function checkPapers(database, paperIds, callback) {
+function checkPapers(sourceId, docIds, callback) {
     
-    return notProcessedPapers(database, paperIds, function (err, database, filteredPapers) {
+    db.getUnprocessedDocuments(docIds, sourceId, function (err, sourceId, filteredDocumentIds) {
         if (err) {
-            console.error(err);
+            log.error(err);
             return callback(err);
         }
-        callback(null, database, filteredPapers);
+        callback(null, sourceId, filteredDocumentIds);
     });
 }
 
@@ -46,7 +39,10 @@ function getPapers(dateFrom, dateTo, callback) {
 
     function reviewReturnedResults(err, res, cache, resultCollection, callback) {
 
-        if (foundErrors > 0) { return; }
+        // if there were any error in prior calls, do not keep processing
+        // further requests.
+        // callback will be called with the first error occurence
+        if (foundErrors > 0) return;
 
         log.info('results return from db {} on dates {}', cache.database, pdaTimeSpan);
         
@@ -67,7 +63,8 @@ function getPapers(dateFrom, dateTo, callback) {
             return createSearchRequest(cache.database, resultCount + startIndex, resultCollection, callback);
         }
             
-        return checkPapers(cache.database, resultCollection, function (err, database, papers) {
+        var sourceId = service.getDBId(cache.database);
+        return checkPapers(sourceId, resultCollection, function (err, sourceId, papers) {
             if (err) {
                 foundErrors = true;
                 log.error(err);
@@ -77,7 +74,7 @@ function getPapers(dateFrom, dateTo, callback) {
             var filteredDocuments = papers.map(function (paperId) {
                 return {
                     docId: paperId,
-                    sourceId: service.getDBId(cache.database)
+                    sourceId: sourceId
                 }                    
             });
             log.info('filtered {} documents on {}', filteredDocuments.length, cache.database);
@@ -108,7 +105,7 @@ function getPapers(dateFrom, dateTo, callback) {
             return callback(err); 
         }
         log.info('Completed retrieving db new ids on date span {}', pdaTimeSpan);
-        return callback(null, papersData);
+        return callback(null, papersData.papers);
     });
 }
 
