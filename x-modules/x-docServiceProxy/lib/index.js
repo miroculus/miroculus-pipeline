@@ -7,18 +7,8 @@ var async = require('async');
 
 var MAX_RESULTS = 10000;
 
-function getDocumentContent(docId, source) {
-    var deferred = Q.defer();
-
-    service.fetchContent(source, docId, function (error, content) {
-        if (error) {
-            deferred.reject(error);
-        } else {
-            deferred.resolve(content);
-        }
-    });
-
-    return deferred.promise;
+function getDocumentContent(docId, source, cb) {
+    return service.fetchContent(source, docId, cb);
 }
 
 function checkPapers(sourceId, docIds, callback) {

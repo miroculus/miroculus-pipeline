@@ -24,7 +24,6 @@ function run(callback) {
     //  2.3) parse paper into sentances
     //  2.4) insert each sentance into sentances queue
 
-    
     log.info('====================================================');
     log.info('Finished checking for new papers.');
     log.info('====================================================');
@@ -66,17 +65,26 @@ function run(callback) {
 
     function checkQueue () {
         log.info("Quering for next message in queue");
-        queueIn.getSingleMessage()
-            .then(processMessage)
-            .catch(processError)
-            .finally(setNextCheck);
+        queueIn.getSingleMessage(function (err, message) {
+            if (err) {
+                log.error(err);
+                return callback(err);
+            }
+            log.info('Start processing message from queue...');
+            
+            processMessage(message, function (err) {
+                if (err) log.error(err);
+                
+                setNextCheck();
+            });
+        });
     }
 
-    function processMessage(message) {
+    function processMessage(message, cb) {
         
         // Checking that a message returned from the queue
         // if no message was returned, the queue is empty
-        if (!message) { return; }
+        if (!message) { cb(); }
         
         var fields = constants.queues.fields;
         var messageDetails = JSON.parse(message.messagetext);
@@ -86,57 +94,33 @@ function run(callback) {
         
         log.info("Processing document id {} from {}...", docId, source);
         
-        return service.getDocumentContent(docId, source).then(function (paperContent) {
-            var sentences = textParser.turnTextToSentences(paperContent);
-
-            log.info('Found {} sentences', sentences && sentences.length || 0);
-
-            function processSentence(sentence, cb) {
-                var index = sentences.indexOf(sentence);
-
-                var outMessage = {
-                    requestType: constants.queues.action.SCORE,
-                    data: {
-                        sourceId: constants.sources.PMC,
-                        docId: docId,
-                        sentenceIndex: index,
-                        modelVersion: constants.queues.modelVersion,
-                        sentence: sentence,
-                        relations: [
-                          {
-                            entity1: {
-                              typeId: constants.conceptTypes.MIRNA,
-                              name: "mirnaX"
-                            },
-                            entity2: {
-                              typeId: constants.conceptTypes.GENE,
-                              name: "geneY"
-                            },
-                            relation: 2,
-                            score: 0.56
-                          },
-                          {
-                            entity1: {
-                              typeId: constants.conceptTypes.MIRNA,
-                              name: "mirnaX2"
-                            },
-                            entity2: {
-                              typeId: constants.conceptTypes.GENE,
-                              name: "geneY2"
-                            },
-                            relation: 1,
-                            score: 0.57
-                          }
-                        ]
-                    }
-                };
+        // Add a "Processing" status to document
+        return documentUpserter.upsertDocument(docId, '', messageData.sourceId, function (err, result) {
                 
-                return queueOut.sendMessage(outMessage, function (err) {
+            if (err) { 
+                log.error('There was an error inserting document row into database.');
+                return cb(err);
+            }
+            
+            return service.getDocumentContent(docId, source, function (err, paperContent) {
+                
+                if (err) {
+                    log.error(err); 
+                    cb(err);
+                }
+                
+                var sentences = textParser.turnTextToSentences(paperContent);
+
+                log.info('Found {} sentences', sentences && sentences.length || 0);
+
+                return async.eachSeries(sentences, processSentence, function (err) {
                     
-                    if (err) {
-                        log.error('failed to enqueu message: <{}> of paper <{}>', sentense, docId);
+                    if (err) { 
+                        log.error(err);
                         return cb(err);
                     }
+                    
+                    log.info('done enqueuing messages for document <{}>', docId);
                     
                     // delete message from queue
                     return queueIn.deleteMessage(message).then(function (err) {
@@ -148,30 +132,64 @@ function run(callback) {
                         log.info('item deleted from queue');
                         return cb();
                     });
-                });                
-            }
-            
-            async.eachSeries(sentences, processSentence, function (err) {
-                
-                if (err) return log.error(err);
-                
-                // When done with all sentenses in the document, add a "Processing" status to document
-                return documentUpserter.upsertDocument(docId, '', messageData.sourceId, function (error, result) {
-                        
-                    if (error) return log.error('There was an error inserting document row into database.');
-                    
-                    return log.info('done enqueuing messages for document <{}>', docId);
                 });
+                
+                /**
+                 * This method is used to process each sentence returned from the document.
+                 */
+                function processSentence(sentence, cb) {
+                    var index = sentences.indexOf(sentence);
+
+                    var outMessage = {
+                        requestType: constants.queues.action.SCORE,
+                        data: {
+                            sourceId: messageData.sourceId,
+                            docId: docId,
+                            sentenceIndex: index,
+                            modelVersion: constants.queues.modelVersion,
+                            sentence: sentence,
+                            relations: [
+                            {
+                                entity1: {
+                                typeId: constants.conceptTypes.MIRNA,
+                                name: "mirnaX"
+                                },
+                                entity2: {
+                                typeId: constants.conceptTypes.GENE,
+                                name: "geneY"
+                                },
+                                relation: 2,
+                                score: 0.56
+                            },
+                            {
+                                entity1: {
+                                typeId: constants.conceptTypes.MIRNA,
+                                name: "mirnaX2"
+                                },
+                                entity2: {
+                                typeId: constants.conceptTypes.GENE,
+                                name: "geneY2"
+                                },
+                                relation: 1,
+                                score: 0.57
+                            }
+                            ]
+                        }
+                    };
+                    
+                    return queueOut.sendMessage(outMessage, function (err) {
+                        
+                        if (err) {
+                            log.error('failed to enqueu message: <{}> of paper <{}>', sentense, docId);
+                            return cb(err);
+                        }
+                        
+                        log.info('Queued sentence {} in document {} from source {}', index, docId, messageData.sourceId)
+                        cb();
+                    });
+                }
             });
-            
-        }).catch(function (err) {
-            return log.error('failed to get content for message: \n{}\nError: \n{}', JSON.stringify(messageDetails), err);
         });
-    }
-    
-    function processError(err) {
-        log.error(err);
-        return callback(err);
     }
 
     function setNextCheck () {

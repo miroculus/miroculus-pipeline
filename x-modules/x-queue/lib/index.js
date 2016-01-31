@@ -49,7 +49,7 @@ module.exports = function(config) {
         var message;
         if (messages.length) message = messages[0];
         
-        cb(message);
+        cb(null, message);
         deferred.resolve(message);
       }
     );

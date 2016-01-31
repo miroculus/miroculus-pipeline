@@ -31,7 +31,7 @@ function run(callback) {
         storageName: config.storage.account,
         storageKey: config.storage.key,
         queueName: config.queues.new_ids,
-        checkFrequency: 10 * 60 * 1000 /* every one minute */ 
+        checkFrequency: 1000 /* every second */ 
     };
     var queueOut = queue(queueOutConfig);
     queueOut.init(function (err) {
@@ -44,6 +44,14 @@ function run(callback) {
     });
     
     function checkForNewDocuments() {
+        queryNewDocumentIDs(function (err) {
+           if (err) log.error(err);
+           
+           return setNextCheck(); 
+        });
+    }
+    
+    function queryNewDocumentIDs(cb) {
         
         // Checking that a message returned from the queue
         // if no message was returned, the queue is empty
@@ -52,14 +60,32 @@ function run(callback) {
         log.info('getting papers from {} to {}', fromDate.format('YYYY-MM-DD'), toDate.format('YYYY-MM-DD'));
 
         // Run query for paperts in specific date
-        service.getPapers(fromDate.toDate(), toDate.toDate(), function (error, documents) {
-            if (error) return log.error('There were several errors while retreiving the papers.');
+        return service.getPapers(fromDate.toDate(), toDate.toDate(), function (error, documents) {
+            if (error) {
+                log.error('There were several errors while retreiving the papers.');
+                return cb(error);
+            }
             
-            if (!documents || !Array.isArray(documents)) return log.warning('Returned data is not an array');
-
+            if (!documents || !Array.isArray(documents)) { 
+                log.warning('Returned data is not an array');
+                return cb();
+            }
+            
             log.info('Found {} new documents', documents.length);
             log.info('Enqueuing documents...');
                     
+            async.eachSeries(documents, enqueueDocument, function (err) {
+                if (err) { 
+                    log.error('failed to enqueu messages for documents.');
+                    cb(err);
+                }
+                
+                log.info('done enqueuing messages for all documents');
+                cb();
+            });
+            
+            return log.info('Completed itterating through retrieved documents, waiting for results to complete...');
+            
             // Enqueuing each document as a pending request for processing
             function enqueueDocument(doc, cb) {
                 var message = {
@@ -69,29 +95,16 @@ function run(callback) {
                         "sourceId": doc.sourceId
                     }
                 };
-                queueOut.sendMessage(message, function (err) {
+                log.info('Queuing document {} from source {}', doc.docId, doc.sourceId)
+                return queueOut.sendMessage(message, function (err) {
                     if (error) {
                         log.error('There was an error enqueuing a document.');
                         return cb(err);
                     }
+                    return cb();
                 });
             }
-            
-            async.each(documents, enqueueDocument, function (err) {
-                if (err) return log.error('failed to enqueu messages for documents.');
-                
-                return log.info('done enqueuing messages for all documents');
-            });
-            
-            return log.info('Completed itterating through retrieved documents, waiting for results to complete...');
         });
-        
-        setNextCheck();
-    }
-    
-    function processError(err) {
-        log.error(err);
-        return callback(err);
     }
 
     function setNextCheck () {
