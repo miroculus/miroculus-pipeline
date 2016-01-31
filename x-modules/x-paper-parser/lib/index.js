@@ -46,19 +46,22 @@ function run(callback) {
     var queueIn = queue(queueInConfig);
     var queueOut = queue(queueOutConfig);
 
-    queueOut.init().then(function () {
-
-        return queueIn.init().then(function () {
-            log.info('start processing new ids queue');
-            checkQueue();
-        }, function (err) {
+    queueOut.init(function (err) {
+        if (err) {
             log.error(err);
             return callback(err);
-        });
+        }
+        log.info('start processing scoring queue');
         
-    }, function (err) {
-        log.error(err);
-        return callback(err);
+        return queueIn.init(function (err) {
+            if (err) {
+                log.error(err);
+                return callback(err);
+            }
+            log.info('start processing new ids queue');
+            
+            checkQueue();
+        });
     });
 
     function checkQueue () {
@@ -91,7 +94,7 @@ function run(callback) {
             function processSentence(sentence, cb) {
                 var index = sentences.indexOf(sentence);
 
-                var message = {
+                var outMessage = {
                     requestType: constants.queues.action.SCORE,
                     data: {
                         sourceId: constants.sources.PMC,
@@ -128,22 +131,29 @@ function run(callback) {
                     }
                 };
                 
-                queueOut.sendMessage(message, function (err) {
+                return queueOut.sendMessage(outMessage, function (err) {
                     
                     if (err) {
                         log.error('failed to enqueu message: <{}> of paper <{}>', sentense, docId);
                         return cb(err);
                     }
                     
-                    return cb();
+                    // delete message from queue
+                    return queueIn.deleteMessage(message).then(function (err) {
+                        if (err) {
+                            log.error('error deleting item from queue {}', err);
+                            cb(err);
+                        }
+
+                        log.info('item deleted from queue');
+                        return cb();
+                    });
                 });                
             }
             
             async.eachSeries(sentences, processSentence, function (err) {
                 
-                if (err) {
-                    return log.error(err);
-                }
+                if (err) return log.error(err);
                 
                 // When done with all sentenses in the document, add a "Processing" status to document
                 return documentUpserter.upsertDocument(docId, '', messageData.sourceId, function (error, result) {
