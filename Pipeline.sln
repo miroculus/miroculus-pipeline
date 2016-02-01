@@ -11,6 +11,8 @@ Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "QueryIDs", "QueryIDs\QueryI
 EndProject
 Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "DocParser", "DocParser\DocParser.njsproj", "{BADE8777-D7B4-471A-84C0-FC8833D42381}"
 EndProject
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "NodeWorkersEditor", "NodeWorkersEditor\NodeWorkersEditor.njsproj", "{E5424372-3317-4E69-8AFB-128422CC1871}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{BADE8777-D7B4-471A-84C0-FC8833D42381}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BADE8777-D7B4-471A-84C0-FC8833D42381}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BADE8777-D7B4-471A-84C0-FC8833D42381}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5424372-3317-4E69-8AFB-128422CC1871}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5424372-3317-4E69-8AFB-128422CC1871}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5424372-3317-4E69-8AFB-128422CC1871}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5424372-3317-4E69-8AFB-128422CC1871}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

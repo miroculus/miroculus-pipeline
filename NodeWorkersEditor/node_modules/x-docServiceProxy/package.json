@@ -1,5 +1,5 @@
 {
-  "name": "x-service",
+  "name": "x-docServiceProxy",
   "version": "1.0.0",
   "description": "service module to talk to public api",
   "main": "lib/index.js",

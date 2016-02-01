@@ -1,3 +1,5 @@
+var format = require("string_format");
+
 var config = {
     sql: {
         server: process.env.DB_SERVER,
