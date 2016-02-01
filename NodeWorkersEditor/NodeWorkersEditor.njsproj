@@ -32,17 +32,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="app.js" />
-    <Compile Include="node_modules\string_format\Gruntfile.js" />
-    <Compile Include="node_modules\string_format\index.js" />
-    <Compile Include="node_modules\string_format\tasks\aliases.js" />
-    <Compile Include="node_modules\string_format\tasks\karma.js" />
-    <Compile Include="node_modules\string_format\tests\arrays.js" />
-    <Compile Include="node_modules\string_format\tests\escape.js" />
-    <Compile Include="node_modules\string_format\tests\format.js" />
-    <Compile Include="node_modules\string_format\tests\functions.js" />
-    <Compile Include="node_modules\string_format\tests\general.js" />
-    <Compile Include="node_modules\string_format\tests\methods.js" />
-    <Compile Include="node_modules\string_format\tests\undefined.js" />
     <Compile Include="node_modules\x-config\lib\index.js" />
     <Compile Include="node_modules\x-constants\lib\index.js" />
     <Compile Include="node_modules\x-db\lib\index.js" />
@@ -54,15 +43,6 @@
     <Compile Include="node_modules\x-query-id\lib\index.js" />
     <Compile Include="node_modules\x-queue\lib\index.js" />
     <Compile Include="node_modules\x-scoring\lib\index.js" />
-    <Content Include="node_modules\string_format\.editorconfig" />
-    <Content Include="node_modules\string_format\.jshintrc" />
-    <Content Include="node_modules\string_format\.npmignore" />
-    <Content Include="node_modules\string_format\.npmrc" />
-    <Content Include="node_modules\string_format\.travis.yml" />
-    <Content Include="node_modules\string_format\LICENSE.md" />
-    <Content Include="node_modules\string_format\package.json" />
-    <Content Include="node_modules\string_format\README.md" />
-    <Content Include="node_modules\string_format\tests\README.md" />
     <Content Include="node_modules\x-config\package.json" />
     <Content Include="node_modules\x-constants\package.json" />
     <Content Include="node_modules\x-db\package.json" />
@@ -77,9 +57,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="node_modules\" />
-    <Folder Include="node_modules\string_format\" />
-    <Folder Include="node_modules\string_format\tasks\" />
-    <Folder Include="node_modules\string_format\tests\" />
     <Folder Include="node_modules\x-config\" />
     <Folder Include="node_modules\x-config\lib\" />
     <Folder Include="node_modules\x-constants\" />
