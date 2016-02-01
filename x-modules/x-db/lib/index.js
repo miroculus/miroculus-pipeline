@@ -2,6 +2,7 @@
 var tedious = require('tedious');
 var TYPES = tedious.TYPES;
 var log = require('x-log');
+var constants = require("x-constants");
 var configSql = require('x-config').sql;
 
 var DBErrors = {
@@ -108,34 +109,72 @@ function getDataSets(opts, cb) {
   });
 }
 
-function getUnprocessedDocuments(ids, sourceId, cb) {
+/*
+req: {
+    docs: [
+        {
+            sourceId: 1,
+            docId: 'AAA'
+        }
+    ]
+}
+*/
+function getUnprocessedDocuments(req, cb) {
 
     var table = {
         columns: [
-            {name: 'Id', type: TYPES.Int}
+            {name: 'SourceId', type: TYPES.Int},
+            {name: 'DocId', type: TYPES.VarChar}
         ],
         rows: []
     };
 
-    for (var i=0; i < ids.length; i++)
-    {
-        table.rows.push([ids[i]]);
+    for (var i =0; i < req.docs.length; i++) {
+        var doc = req.docs[i];
+        table.rows.push([doc.sourceId, doc.docId]);
     }
 
     var params = [
-        { name: 'SourceId', type: TYPES.Int, value: sourceId },
-        { name: 'Ids', type: TYPES.TVP, value: table }
+        { name: 'Docs', type: TYPES.TVP, value: table }
     ];
-
+    
     return getDataSets({
         sproc: 'FilterExistingDocuments',
-        sets: ['data'],
+        sets: ['docs'],
         params: params
     }, function(err, result) {
-        if (err) return cb(err);
+        if (err) return logError(err, cb);
 
-        var idsArray = result.data.map(function (id) { return id.Id; });
-        return cb(null, sourceId, idsArray);
+        return cb(null, result);
+    });
+} 
+
+/**
+* Upload a document's content to the sql database and insert a new row to orepresent it
+* 
+* @param {string}      [paperId]       The id of the paper to insert
+* @param {string}      [paperName]     The web source for the document
+* @param {string}      [paperSouce]    The web source for the document
+* @param {function}    [callback]      Callback for when the upsert was completed
+*/
+function upsertDocument(docId, docName, sourceId, callback) {
+    
+    log.info('sending id {} source {} to db', docId, sourceId);
+    return getDataSets({
+        sproc: 'UpsertDocument',
+        sets: ['data'],
+        params: [
+            { name: 'Id', type: TYPES.VarChar, value: docId },
+            { name: 'Description', type: TYPES.VarChar, value: docName },
+            { name: 'SourceId', type: TYPES.Int, value: sourceId },
+            { name: 'StatusId', type: TYPES.Int, value: constants.documentStatus.PROCESSING },
+        ]
+    }, 
+    function (err, result) {
+        
+        if (err) return callback(err);
+
+        return callback(null, result);
     });
 }
 
@@ -149,5 +188,6 @@ module.exports = {
   connect: connect,
   getDataSets: getDataSets,
   upsertRelations: upsertRelations,
-  getUnprocessedDocuments: getUnprocessedDocuments
+  getUnprocessedDocuments: getUnprocessedDocuments,
+  upsertDocument: upsertDocument
 }

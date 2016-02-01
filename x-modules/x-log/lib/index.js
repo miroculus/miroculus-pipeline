@@ -25,7 +25,7 @@ function info (msg, params) {
 */
 function warning(msg, params) {
     var args = [].splice.call(arguments, 1);
-    console.warning(createMessage(msg, args));
+    console.warn(createMessage(msg, args));
 }
     
 /**

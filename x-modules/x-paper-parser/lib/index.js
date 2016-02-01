@@ -7,7 +7,7 @@ var service = require("x-docServiceProxy");
 var async = require("async");
 
 var textParser = require("./parser.js");
-var documentUpserter =  require("./upserter")
+var db =  require("x-db")
 
 function run(callback) {
 
@@ -23,10 +23,6 @@ function run(callback) {
     //  2.2) download paper with paper id
     //  2.3) parse paper into sentances
     //  2.4) insert each sentance into sentances queue
-
-    log.info('====================================================');
-    log.info('Finished checking for new papers.');
-    log.info('====================================================');
 
     // Initializing queues
     var queueInConfig = {
@@ -95,7 +91,7 @@ function run(callback) {
         log.info("Processing document id {} from {}...", docId, source);
         
         // Add a "Processing" status to document
-        return documentUpserter.upsertDocument(docId, '', messageData.sourceId, function (err, result) {
+        return db.upsertDocument(docId, '', messageData.sourceId, function (err, result) {
                 
             if (err) { 
                 log.error('There was an error inserting document row into database.');
@@ -113,7 +109,8 @@ function run(callback) {
 
                 log.info('Found {} sentences', sentences && sentences.length || 0);
 
-                return async.eachSeries(sentences, processSentence, function (err) {
+                // Asynchroneously queuing all sentenses in current document
+                return async.each(sentences, processSentence, function (err) {
                     
                     if (err) { 
                         log.error(err);

@@ -22,10 +22,6 @@ function run(callback) {
     //  2.3) parse paper into sentances
     //  2.4) insert each sentance into sentances queue
 
-    log.info('====================================================');
-    log.info('Finished checking for new papers.');
-    log.info('====================================================');
-
     // Initializing queues
     var queueOutConfig = {
         storageName: config.storage.account,
@@ -74,7 +70,8 @@ function run(callback) {
             log.info('Found {} new documents', documents.length);
             log.info('Enqueuing documents...');
                     
-            async.eachSeries(documents, enqueueDocument, function (err) {
+            // Queue all new document ids
+            async.each(documents, enqueueDocument, function (err) {
                 if (err) { 
                     log.error('failed to enqueu messages for documents.');
                     cb(err);
@@ -95,12 +92,14 @@ function run(callback) {
                         "sourceId": doc.sourceId
                     }
                 };
-                log.info('Queuing document {} from source {}', doc.docId, doc.sourceId)
+                
                 return queueOut.sendMessage(message, function (err) {
                     if (error) {
                         log.error('There was an error enqueuing a document.');
                         return cb(err);
                     }
+                    
+                    log.info('Queued document {} from source {}', doc.docId, doc.sourceId)
                     return cb();
                 });
             }
