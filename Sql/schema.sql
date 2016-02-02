@@ -1,10 +1,10 @@
-﻿
-/****** Object:  UserDefinedTableType [dbo].[UDT_IdList]    Script Date: 1/28/2016 4:30:06 PM ******/
-CREATE TYPE [dbo].[UDT_IdList] AS TABLE(
-	[Id] [varchar](50) NULL
+﻿/****** Object:  UserDefinedTableType [dbo].[UDT_DocIdList]    Script Date: 2/2/2016 6:31:27 PM ******/
+CREATE TYPE [dbo].[UDT_DocIdList] AS TABLE(
+	[SourceId] [int] NULL,
+	[DocId] [varchar](50) NULL
 )
 GO
-/****** Object:  UserDefinedTableType [dbo].[UDT_Relations]    Script Date: 1/28/2016 4:30:06 PM ******/
+/****** Object:  UserDefinedTableType [dbo].[UDT_Relations]    Script Date: 2/2/2016 6:31:27 PM ******/
 CREATE TYPE [dbo].[UDT_Relations] AS TABLE(
 	[Entity1TypeId] [int] NULL,
 	[Entity1Name] [varchar](100) NULL,
@@ -14,7 +14,7 @@ CREATE TYPE [dbo].[UDT_Relations] AS TABLE(
 	[Score] [real] NULL
 )
 GO
-/****** Object:  Table [dbo].[Documents]    Script Date: 1/28/2016 4:30:06 PM ******/
+/****** Object:  Table [dbo].[Documents]    Script Date: 2/2/2016 6:31:27 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -36,7 +36,7 @@ CREATE TABLE [dbo].[Documents](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[DocumentStatus]    Script Date: 1/28/2016 4:30:06 PM ******/
+/****** Object:  Table [dbo].[DocumentStatus]    Script Date: 2/2/2016 6:31:27 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -55,7 +55,7 @@ CREATE TABLE [dbo].[DocumentStatus](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[EntityTypes]    Script Date: 1/28/2016 4:30:06 PM ******/
+/****** Object:  Table [dbo].[EntityTypes]    Script Date: 2/2/2016 6:31:27 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -74,7 +74,7 @@ CREATE TABLE [dbo].[EntityTypes](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Graph]    Script Date: 1/28/2016 4:30:06 PM ******/
+/****** Object:  Table [dbo].[Graph]    Script Date: 2/2/2016 6:31:27 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -108,7 +108,7 @@ CREATE TABLE [dbo].[Graph](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Sentences]    Script Date: 1/28/2016 4:30:06 PM ******/
+/****** Object:  Table [dbo].[Sentences]    Script Date: 2/2/2016 6:31:27 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -131,7 +131,7 @@ CREATE TABLE [dbo].[Sentences](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Sources]    Script Date: 1/28/2016 4:30:06 PM ******/
+/****** Object:  Table [dbo].[Sources]    Script Date: 2/2/2016 6:31:27 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -183,11 +183,13 @@ REFERENCES [dbo].[Documents] ([SourceId], [Id])
 GO
 ALTER TABLE [dbo].[Sentences] CHECK CONSTRAINT [FK_Sentences_Documents]
 GO
-/****** Object:  StoredProcedure [dbo].[FilterExistingDocuments]    Script Date: 1/28/2016 4:30:06 PM ******/
+/****** Object:  StoredProcedure [dbo].[FilterExistingDocuments]    Script Date: 2/2/2016 6:31:27 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 -- =============================================
 -- Author:		amitu
 -- Description:	Filter document Ids, returning Ids that are not found
@@ -210,16 +212,15 @@ GO
 
 -- =============================================
 CREATE PROCEDURE [dbo].[FilterExistingDocuments]
-	@SourceId int,
-	@Ids UDT_IdList READONLY
+	@Docs UDT_DocIdList READONLY
 AS
 BEGIN
 
 	SET NOCOUNT ON;
 	
-	SELECT i.Id FROM @Ids i
+	SELECT i.SourceId as 'sourceId', i.DocId as 'docId' FROM @Docs i
 	LEFT JOIN Documents d
-	ON d.SourceId = @SourceId AND i.Id = d.Id
+	ON d.SourceId = i.SourceId AND d.Id = i.DocId
 	WHERE d.Id IS NULL
 
 END
@@ -227,8 +228,10 @@ END
 
 
 
+
+
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateDocumentStatus]    Script Date: 1/28/2016 4:30:06 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpdateDocumentStatus]    Script Date: 2/2/2016 6:31:27 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -249,7 +252,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[UpsertDocument]    Script Date: 1/28/2016 4:30:06 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpsertDocument]    Script Date: 2/2/2016 6:31:27 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -284,7 +287,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[UpsertRelation]    Script Date: 1/28/2016 4:30:06 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpsertRelation]    Script Date: 2/2/2016 6:31:27 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -358,7 +361,9 @@ BEGIN
 	RETURN 1;
 
 END
+
 GO
+
 
 
 
