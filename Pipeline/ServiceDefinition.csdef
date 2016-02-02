@@ -11,6 +11,9 @@
       <Setting name="STORAGE_KEY" />
       <Setting name="QUEUE_SCORING" />
       <Setting name="QUEUE_NEW_IDS" />
+      <Setting name="LOG_LEVEL" />
+      <Setting name="LOG_STORAGE_ACCOUNT" />
+      <Setting name="LOG_STORAGE_KEY" />
     </ConfigurationSettings>
     <Imports>
       <Import moduleName="RemoteAccess" />
@@ -57,6 +60,15 @@
         <Variable name="QUEUE_NEW_IDS">
           <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='QUEUE_NEW_IDS']/@value" />
         </Variable>
+        <Variable name="LOG_LEVEL">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='LOG_LEVEL']/@value" />
+        </Variable>
+        <Variable name="LOG_STORAGE_ACCOUNT">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='LOG_STORAGE_ACCOUNT']/@value" />
+        </Variable>
+        <Variable name="LOG_STORAGE_KEY">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='LOG_STORAGE_KEY']/@value" />
+        </Variable>
       </Environment>
       <EntryPoint>
         <ProgramEntryPoint commandLine="node.cmd .\worker.js" setReadyOnProcessStart="true" />
@@ -75,6 +87,9 @@
       <Setting name="STORAGE_KEY" />
       <Setting name="QUEUE_SCORING" />
       <Setting name="QUEUE_NEW_IDS" />
+      <Setting name="LOG_LEVEL" />
+      <Setting name="LOG_STORAGE_ACCOUNT" />
+      <Setting name="LOG_STORAGE_KEY" />
     </ConfigurationSettings>
     <Imports>
       <Import moduleName="RemoteAccess" />
@@ -120,7 +135,16 @@
         <Variable name="QUEUE_NEW_IDS">
           <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='QUEUE_NEW_IDS']/@value" />
         </Variable>
-      </Environment>
+        <Variable name="LOG_LEVEL">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='LOG_LEVEL']/@value" />
+        </Variable>
+        <Variable name="LOG_STORAGE_ACCOUNT">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='LOG_STORAGE_ACCOUNT']/@value" />
+        </Variable>
+        <Variable name="LOG_STORAGE_KEY">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='LOG_STORAGE_KEY']/@value" />
+        </Variable>
+   </Environment>
       <EntryPoint>
         <ProgramEntryPoint commandLine="node.cmd .\worker.js" setReadyOnProcessStart="true" />
       </EntryPoint>
@@ -138,6 +162,9 @@
       <Setting name="STORAGE_KEY" />
       <Setting name="QUEUE_SCORING" />
       <Setting name="QUEUE_NEW_IDS" />
+      <Setting name="LOG_LEVEL" />
+      <Setting name="LOG_STORAGE_ACCOUNT" />
+      <Setting name="LOG_STORAGE_KEY" />
     </ConfigurationSettings>
     <Imports>
       <Import moduleName="RemoteAccess" />
@@ -182,6 +209,15 @@
         </Variable>
         <Variable name="QUEUE_NEW_IDS">
           <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='QUEUE_NEW_IDS']/@value" />
+        </Variable>
+        <Variable name="LOG_LEVEL">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='LOG_LEVEL']/@value" />
+        </Variable>
+        <Variable name="LOG_STORAGE_ACCOUNT">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='LOG_STORAGE_ACCOUNT']/@value" />
+        </Variable>
+        <Variable name="LOG_STORAGE_KEY">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='LOG_STORAGE_KEY']/@value" />
         </Variable>
       </Environment>
       <EntryPoint>
