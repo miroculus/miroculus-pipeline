@@ -9,11 +9,19 @@
 DB_NAME=miroculuspct5
 DB_PASSWORD=Pa$$word1
 DB_USER=miroculus
+
 STORAGE_ACCOUNT=miroculusstorage
 STORAGE_KEY=PTaww2dICJXw4aCu1SX+0YMdpDL1cFVHHt6o37I9vEFdgQivu5eVxWEg2k48DWom9u8Pd+xKf4aj8d4eE4knGw==
-QUEUE_SCORING=scoring2
-QUEUE_NEW_IDS=newpaperids2
-BLOB_SENTENCES=sentences</Environment>
+
+QUEUE_SCORING=scoring-cloud
+QUEUE_NEW_IDS=newpaperids-cloud
+
+LOG_LEVEL=log
+LOG_STORAGE_ACCOUNT=miroculuslogslocal
+LOG_STORAGE_KEY=3nbbTJIhSvEHGFKkMs8hLEiTv3TrGTRsN7HVj0YT6xWebh6SncluiO4RzQFCBd6NXWpVbLJvnMU57Ap8Vo7BNA==
+
+BLOB_SENTENCES=sentences
+SERVICE_DOC_URL='http://104.197.190.17/doc'</Environment>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -22,7 +30,7 @@ BLOB_SENTENCES=sentences</Environment>
     <ProjectGuid>e5424372-3317-4e69-8afb-128422cc1871</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>node_modules\x-cmd-insertSentences\test.js</StartupFile>
+    <StartupFile>app.js</StartupFile>
     <StartWebBrowser>False</StartWebBrowser>
     <SearchPath>
     </SearchPath>
@@ -30,7 +38,7 @@ BLOB_SENTENCES=sentences</Environment>
     <OutputPath>.</OutputPath>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
-    <ProjectView>ProjectFiles</ProjectView>
+    <ProjectView>ShowAllFiles</ProjectView>
     <StartWebBrowser>False</StartWebBrowser>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -50,6 +58,96 @@ BLOB_SENTENCES=sentences</Environment>
     <Compile Include="node_modules\x-docServiceProxy\lib\index.js" />
     <Compile Include="node_modules\x-docServiceProxy\lib\ncbiService.js" />
     <Compile Include="node_modules\x-log\lib\index.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\lib\format.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\lib\formatters\html.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\lib\formatters\text.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\lib\interceptor.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\lib\levels.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\lib\params.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\lib\reader.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\lib\transporter.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\lib\transports\azuretable.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\lib\transports\console.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\lib\transports\mongo.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\lib\writer.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\main.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\async\dist\async.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\async\dist\async.min.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\async\lib\async.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\bin\base32.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\lib\base32.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\example\bool.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\example\boolean_double.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\example\boolean_single.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\example\default_hash.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\example\default_singles.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\example\divide.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\example\line_count.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\example\line_count_options.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\example\line_count_wrap.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\example\nonopt.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\example\reflect.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\example\short.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\example\string.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\example\usage-options.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\example\xup.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\index.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\minimist\example\parse.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\minimist\index.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\minimist\test\bool.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\minimist\test\dash.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\minimist\test\default_bool.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\minimist\test\dotted.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\minimist\test\long.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\minimist\test\num.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\minimist\test\parse.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\minimist\test\parse_modified.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\minimist\test\short.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\minimist\test\whitespace.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\wordwrap\example\center.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\wordwrap\example\meat.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\wordwrap\index.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\wordwrap\test\break.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\wordwrap\test\wrap.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\test\dash.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\test\parse.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\test\parse_modified.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\test\short.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\test\usage.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\test\whitespace.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\test\_.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\test\_\argv.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\test\_\bin.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\colors\examples\normal-usage.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\colors\examples\safe-string.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\colors\lib\colors.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\colors\lib\custom\trap.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\colors\lib\custom\zalgo.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\colors\lib\extendStringPrototype.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\colors\lib\index.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\colors\lib\maps\america.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\colors\lib\maps\rainbow.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\colors\lib\maps\random.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\colors\lib\maps\zebra.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\colors\lib\styles.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\colors\lib\system\supports-colors.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\colors\safe.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\colors\themes\generic-logging.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\validator\test\client-side.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\validator\test\exports.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\validator\test\sanitizers.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\validator\test\validators.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\validator\validator.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\validator\validator.min.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\wordwrap\example\center.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\wordwrap\example\meat.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\wordwrap\index.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\wordwrap\test\break.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\node_modules\wordwrap\test\wrap.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\test\interceptor.test.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\test\query.test.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\test\reader.test.js" />
+    <Compile Include="node_modules\x-log\node_modules\azure-logging\test\writer.test.js" />
     <Compile Include="node_modules\x-paper-parser\lib\index.js" />
     <Compile Include="node_modules\x-paper-parser\lib\parserUtils.js" />
     <Compile Include="node_modules\x-query-id\lib\index.js" />
@@ -61,6 +159,52 @@ BLOB_SENTENCES=sentences</Environment>
     <Content Include="node_modules\x-constants\package.json" />
     <Content Include="node_modules\x-db\package.json" />
     <Content Include="node_modules\x-docServiceProxy\package.json" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\bin\reader" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\mongologssetup.txt" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\.bin\base32" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\.bin\base32.cmd" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\async\CHANGELOG.md" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\async\LICENSE" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\async\package.json" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\async\README.md" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\.npmignore" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\.travis.yml" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\LICENSE" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\.travis.yml" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\LICENSE" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\minimist\.travis.yml" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\minimist\LICENSE" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\minimist\package.json" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\minimist\readme.markdown" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\wordwrap\LICENSE" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\wordwrap\package.json" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\wordwrap\README.markdown" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\wordwrap\test\idleness.txt" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\package.json" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\readme.markdown" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\package.json" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\README.md" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\test\base32-test.coffee" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\test\compare.coffee" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\test\index.html" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\colors\LICENSE" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\colors\package.json" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\colors\ReadMe.md" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\validator\.jshintrc" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\validator\.npmignore" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\validator\.travis.yml" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\validator\bower.json" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\validator\CHANGELOG.md" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\validator\LICENSE" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\validator\Makefile" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\validator\package.json" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\validator\README.md" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\wordwrap\LICENSE" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\wordwrap\package.json" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\wordwrap\README.markdown" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\wordwrap\test\idleness.txt" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\package.json" />
+    <Content Include="node_modules\x-log\node_modules\azure-logging\README.md" />
     <Content Include="node_modules\x-log\package.json" />
     <Content Include="node_modules\x-paper-parser\package.json" />
     <Content Include="node_modules\x-query-id\package.json" />
@@ -85,6 +229,46 @@ BLOB_SENTENCES=sentences</Environment>
     <Folder Include="node_modules\x-docServiceProxy\lib\" />
     <Folder Include="node_modules\x-log\" />
     <Folder Include="node_modules\x-log\lib\" />
+    <Folder Include="node_modules\x-log\node_modules\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\bin\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\lib\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\lib\formatters\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\lib\transports\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\.bin\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\async\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\async\dist\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\async\lib\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\bin\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\lib\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\example\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\minimist\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\minimist\example\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\minimist\test\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\wordwrap\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\wordwrap\example\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\node_modules\wordwrap\test\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\test\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\node_modules\optimist\test\_\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\base32\test\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\colors\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\colors\examples\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\colors\lib\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\colors\lib\custom\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\colors\lib\maps\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\colors\lib\system\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\colors\themes\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\validator\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\validator\test\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\wordwrap\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\wordwrap\example\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\node_modules\wordwrap\test\" />
+    <Folder Include="node_modules\x-log\node_modules\azure-logging\test\" />
     <Folder Include="node_modules\x-paper-parser\" />
     <Folder Include="node_modules\x-paper-parser\lib\" />
     <Folder Include="node_modules\x-query-id\" />
