@@ -5,23 +5,8 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <Name>NodeWorkersEditor</Name>
     <RootNamespace>NodejsConsoleApp1</RootNamespace>
-    <Environment>DB_SERVER=miroculuspct.database.windows.net
-DB_NAME=miroculuspct5
-DB_PASSWORD=Pa$$word1
-DB_USER=miroculus
-
-STORAGE_ACCOUNT=miroculusstorage
-STORAGE_KEY=PTaww2dICJXw4aCu1SX+0YMdpDL1cFVHHt6o37I9vEFdgQivu5eVxWEg2k48DWom9u8Pd+xKf4aj8d4eE4knGw==
-
-QUEUE_SCORING=scoring-cloud
-QUEUE_NEW_IDS=newpaperids-cloud
-
-LOG_LEVEL=log
-LOG_STORAGE_ACCOUNT=miroculuslogslocal
-LOG_STORAGE_KEY=3nbbTJIhSvEHGFKkMs8hLEiTv3TrGTRsN7HVj0YT6xWebh6SncluiO4RzQFCBd6NXWpVbLJvnMU57Ap8Vo7BNA==
-
-BLOB_SENTENCES=sentences
-SERVICE_DOC_URL='http://104.197.190.17/doc'</Environment>
+    <Environment>
+    </Environment>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -38,7 +23,7 @@ SERVICE_DOC_URL='http://104.197.190.17/doc'</Environment>
     <OutputPath>.</OutputPath>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
-    <ProjectView>ShowAllFiles</ProjectView>
+    <ProjectView>ProjectFiles</ProjectView>
     <StartWebBrowser>False</StartWebBrowser>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">

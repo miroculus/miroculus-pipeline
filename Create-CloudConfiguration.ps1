@@ -1,10 +1,12 @@
 #
 # Use this file to create a cloud configuration according to you setenv.cmd file
 #
-# Example:
-# .\Create-CloudConfiguration.ps1 -setenvPath .\setenv.cmd -roleNames "ScoringWorker,QueryIDs,DocParser" `
-#								  -configTemplatePath .\ServiceConfiguration.Template.cscfg -configOutputPath .\Pipeline\ServiceConfiguration.Cloud1.cscfg `
-#								  -definitionTemplatePath .\ServiceDefinition.Template.csdef -definitionOutputPath .\Pipeline\ServiceDefinition1.csdef
+# Example Cloud Config:
+# .\Create-CloudConfiguration.ps1 -setenvPath .\setenv.cmd -roleNames "ScoringWorker,QueryIDs,DocParser" -configTemplatePath .\ServiceConfiguration.Template.cscfg -configOutputPath .\Pipeline\ServiceConfiguration.Cloud.cscfg -definitionTemplatePath .\ServiceDefinition.Template.csdef -definitionOutputPath .\Pipeline\ServiceDefinition.csdef
+#
+# Example Local Config:
+# .\Create-CloudConfiguration.ps1 -setenvPath .\setenv.cmd -roleNames "ScoringWorker,QueryIDs,DocParser" -configTemplatePath .\ServiceConfiguration.Template.cscfg -configOutputPath .\Pipeline\ServiceConfiguration.Local.cscfg -definitionTemplatePath .\ServiceDefinition.Template.csdef -definitionOutputPath .\Pipeline\ServiceDefinition.csdef
+
 param($setenvPath, $roleNames, $configTemplatePath, $configOutputPath, $definitionTemplatePath, $definitionOutputPath)
 
 [xml]$config = Get-Content $configTemplatePath
