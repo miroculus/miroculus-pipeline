@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ServiceConfiguration serviceName="Pipeline" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="4" osVersion="*" schemaVersion="2015-04.2.6">
+  <Role name="RoleName">
+    <Instances count="1" />
+    <ConfigurationSettings>
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=miroculusstorage;AccountKey=PTaww2dICJXw4aCu1SX+0YMdpDL1cFVHHt6o37I9vEFdgQivu5eVxWEg2k48DWom9u8Pd+xKf4aj8d4eE4knGw==" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.Enabled" value="true" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.AccountUsername" value="miroculus" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.AccountEncryptedPassword" value="MIIBnQYJKoZIhvcNAQcDoIIBjjCCAYoCAQAxggFOMIIBSgIBADAyMB4xHDAaBgNVBAMME1dpbmRvd3MgQXp1cmUgVG9vbHMCECkm/tu6s06AQHr8yR8f0jowDQYJKoZIhvcNAQEBBQAEggEAWlO6B6rXQgLuym62SB8s7wpwzzLN+fqusttaLW045PnkHKkjUlN13JxJI6d1aQK/32UEoWb3U0zp3+iPslSROO/Jm6RDv8+2dC5c0yZAZMVlbO6wr2/HbnwoX7nsHD21yANtF79wrDLSSz9O1XIxFxGGao9wfk8v+Da8Hc8EWpuv8Q9kR48xsq1E+7lUfWq7bMTPBbEBInkQsBG0OzNAEHGU1q9c3GnA2HyQ9jGbakp0bl20AVNO0ebx+07Q0AeVlCmp9wbJsp9P+d7d6jWfiRf/MxK/keE7n54mhkR5Ly88szkj4TZHY0EhYxPfj0EVtgasSjVK9NW83pTF7PMxdjAzBgkqhkiG9w0BBwEwFAYIKoZIhvcNAwcECMj8C8MLUkd5gBC4fhHkic+X09V36sp1QOdX" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.AccountExpiration" value="2017-01-17T23:59:59.0000000+02:00" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteForwarder.Enabled" value="true" />
+    </ConfigurationSettings>
+    <Certificates>
+      <Certificate name="Microsoft.WindowsAzure.Plugins.RemoteAccess.PasswordEncryption" thumbprint="6D756B6F8DFCE3FBF917D30625C4A7E52823C779" thumbprintAlgorithm="sha1" />
+    </Certificates>
+  </Role>
+</ServiceConfiguration>
