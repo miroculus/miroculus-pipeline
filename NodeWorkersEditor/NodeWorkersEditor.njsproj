@@ -5,8 +5,15 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <Name>NodeWorkersEditor</Name>
     <RootNamespace>NodejsConsoleApp1</RootNamespace>
-    <Environment>
-    </Environment>
+    <Environment>DB_SERVER=miroculuspct.database.windows.net
+DB_NAME=miroculuspct5
+DB_PASSWORD=Pa$$word1
+DB_USER=miroculus
+STORAGE_ACCOUNT=miroculusstorage
+STORAGE_KEY=PTaww2dICJXw4aCu1SX+0YMdpDL1cFVHHt6o37I9vEFdgQivu5eVxWEg2k48DWom9u8Pd+xKf4aj8d4eE4knGw==
+QUEUE_SCORING=scoring2
+QUEUE_NEW_IDS=newpaperids2
+BLOB_SENTENCES=sentences</Environment>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -15,7 +22,7 @@
     <ProjectGuid>e5424372-3317-4e69-8afb-128422cc1871</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>app.js</StartupFile>
+    <StartupFile>node_modules\x-cmd-insertSentences\test.js</StartupFile>
     <StartWebBrowser>False</StartWebBrowser>
     <SearchPath>
     </SearchPath>
