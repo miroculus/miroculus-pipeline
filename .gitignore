@@ -93,6 +93,7 @@ fabric.properties
 ## Visual Studio
 ## Ignore configuration files
 *.cscfg
+!ServiceConfiguration.Template.cscfg
 
 
 ## Ignore Visual Studio temporary files, build results, and
