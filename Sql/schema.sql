@@ -1,10 +1,10 @@
-﻿/****** Object:  UserDefinedTableType [dbo].[UDT_DocIdList]    Script Date: 2/2/2016 6:31:27 PM ******/
+﻿/****** Object:  UserDefinedTableType [dbo].[UDT_DocIdList]    Script Date: 2/10/2016 9:01:03 PM ******/
 CREATE TYPE [dbo].[UDT_DocIdList] AS TABLE(
 	[SourceId] [int] NULL,
 	[DocId] [varchar](50) NULL
 )
 GO
-/****** Object:  UserDefinedTableType [dbo].[UDT_Relations]    Script Date: 2/2/2016 6:31:27 PM ******/
+/****** Object:  UserDefinedTableType [dbo].[UDT_Relations]    Script Date: 2/10/2016 9:01:03 PM ******/
 CREATE TYPE [dbo].[UDT_Relations] AS TABLE(
 	[Entity1TypeId] [int] NULL,
 	[Entity1Name] [varchar](100) NULL,
@@ -14,7 +14,7 @@ CREATE TYPE [dbo].[UDT_Relations] AS TABLE(
 	[Score] [real] NULL
 )
 GO
-/****** Object:  Table [dbo].[Documents]    Script Date: 2/2/2016 6:31:27 PM ******/
+/****** Object:  Table [dbo].[Documents]    Script Date: 2/10/2016 9:01:03 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -36,7 +36,7 @@ CREATE TABLE [dbo].[Documents](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[DocumentStatus]    Script Date: 2/2/2016 6:31:27 PM ******/
+/****** Object:  Table [dbo].[DocumentStatus]    Script Date: 2/10/2016 9:01:03 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -55,7 +55,7 @@ CREATE TABLE [dbo].[DocumentStatus](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[EntityTypes]    Script Date: 2/2/2016 6:31:27 PM ******/
+/****** Object:  Table [dbo].[EntityTypes]    Script Date: 2/10/2016 9:01:03 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -74,7 +74,7 @@ CREATE TABLE [dbo].[EntityTypes](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Graph]    Script Date: 2/2/2016 6:31:27 PM ******/
+/****** Object:  Table [dbo].[Graph]    Script Date: 2/10/2016 9:01:03 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -108,7 +108,7 @@ CREATE TABLE [dbo].[Graph](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Sentences]    Script Date: 2/2/2016 6:31:27 PM ******/
+/****** Object:  Table [dbo].[Sentences]    Script Date: 2/10/2016 9:01:03 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -131,7 +131,7 @@ CREATE TABLE [dbo].[Sentences](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Sources]    Script Date: 2/2/2016 6:31:27 PM ******/
+/****** Object:  Table [dbo].[Sources]    Script Date: 2/10/2016 9:01:03 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -183,7 +183,7 @@ REFERENCES [dbo].[Documents] ([SourceId], [Id])
 GO
 ALTER TABLE [dbo].[Sentences] CHECK CONSTRAINT [FK_Sentences_Documents]
 GO
-/****** Object:  StoredProcedure [dbo].[FilterExistingDocuments]    Script Date: 2/2/2016 6:31:27 PM ******/
+/****** Object:  StoredProcedure [dbo].[FilterExistingDocuments]    Script Date: 2/10/2016 9:01:03 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -231,7 +231,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateDocumentStatus]    Script Date: 2/2/2016 6:31:27 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpdateDocumentStatus]    Script Date: 2/10/2016 9:01:03 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -247,12 +247,16 @@ BEGIN
 	
 	UPDATE Documents
 	SET StatusId = @StatusId
-	WHERE StatusId = @StatusId AND Id = @DocumentId
+	WHERE Id = @DocumentId
 
 END
 
+
+
+
+
 GO
-/****** Object:  StoredProcedure [dbo].[UpsertDocument]    Script Date: 2/2/2016 6:31:27 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpsertDocument]    Script Date: 2/10/2016 9:01:03 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -287,7 +291,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[UpsertRelation]    Script Date: 2/2/2016 6:31:27 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpsertRelation]    Script Date: 2/10/2016 9:01:03 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -370,6 +374,7 @@ GO
 INSERT INTO DocumentStatus (Id,Name) VALUES (1, 'Processing')
 INSERT INTO DocumentStatus (Id,Name) VALUES (2, 'Scoring')
 INSERT INTO DocumentStatus (Id,Name) VALUES (3, 'Processed')
+INSERT INTO DocumentStatus (Id,Name) VALUES (4, 'NotAccessible')
 
 INSERT INTO Sources (Id ,name ,Url) VALUES (1, 'Pubmed', 'http://pubmed.com')
 INSERT INTO Sources (Id ,name ,Url) VALUES (2, 'PMC', 'http://pmc.com')
