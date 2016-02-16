@@ -1,6 +1,25 @@
 # miroculus-pipeline
 Miroculus pipeline components
 
+# Trigger New Document ID Check
+* Push the following message to the trigger queue to initiate a new check
+```
+{
+  "requestType": "trigger"
+}
+```
+
+* If you want to specify a date range to check documents, use the following format
+```
+{
+  "requestType": "trigger",
+  "data": {
+        "fromDate": "2014-02-01",
+        "toDate": "2014-02-14"
+    }
+}
+```
+
 # Getting Documents ID Worker
 * Get Ids of new documents from both pmc and pubmed databases
 * Filter new Ids using filtering stored procedure
