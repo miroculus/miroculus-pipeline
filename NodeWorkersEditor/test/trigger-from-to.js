@@ -8,12 +8,11 @@ var moment = require('moment');
 var azure = require('azure-storage');
 var tedious = require('tedious');
 
+var log = require('x-log');
 var utils = require('./utils.js');
 
-var DATE_TO_CHECK = '2015-01-05';
-var LINES_EXPECTED = 143;
-
-var child;
+var DATE_TO_CHECK = '2007-10-10';
+var DOCUMENT_ID_TO_MONITOR = '2000354';
 
 // TODO:
 // move major method into separate file
@@ -23,109 +22,248 @@ var child;
 var config;
 var queueService;
 
-var date = moment();
-var logFileName = __dirname + '\\' + date.format('YYYY-MM-DD_hh-mm-ss') + '.log';
-var testFileName = __dirname + '\\' + date.format('YYYY-MM-DD_hh-mm-ss') + '.test.log';
-var relativePath = '..\\';
-console.log('logging to:');
-console.log(logFileName);
-console.log(testFileName);
-
-function log(msg) {
-    fs.appendFile(testFileName, msg);
-    fs.appendFile(testFileName, '\n');
-}
+var time = moment();
+var solutionRelativePath = '..\\';
 
 describe('Whole Pipeline', function () {
     
-    this.timeout(5 * 60 * 1000); // 5 minute timeout
-        
-    it('Suite Initialization', function (done) {
+    this.timeout(15 * 60 * 1000); // 10 minute timeout
+    
+    // Initializing environment
+    it('Processing and Scoring', function (done) {
         
         async.series([
 
             // Setting environment variables
             function (cb) {
-                utils.setEnvironmentVariables(relativePath + 'setenv.test.cmd', log, cb);
-            }, 
+                utils.setEnvironmentVariables(solutionRelativePath + 'setenv.test.cmd', function (error) {
+                    
+                    if (error) return cb(error);
+                    
+                    config = require('x-config');
+                    return cb();
+                });
+            },
+
+            // Initialize log
+            function (cb) {
+                log.init({
+                    domain: process.env.COMPUTERNAME || '',
+                    instanceId: log.getInstanceId(),
+                    app: 'ci-testing',
+                    level: config.log.level,
+                    transporters: config.log.transporters
+                }, cb);
+            },
 
             // Initializing config and queue service
             function (cb) {
-                config = require('x-config');
                 queueService = azure.createQueueService(config.storage.account, config.storage.key)
                     .withFilter(new azure.ExponentialRetryPolicyFilter());
                 return cb();
             },
-            function (cb) {                
 
-                return utils.deleteCreateQueue(queueService, config.queues.trigger_query, log, function (error) {
+            // Empty database schema from data
+            function (cb) {
+                var emptyScript = solutionRelativePath + 'Sql\\emptytables.sql';
+                utils.runDBScript(emptyScript, cb);
+            },
+
+            // Recreate queues
+            function (cb) {
+                async.parallel([
+                    function (cb) {
+                        return utils.deleteCreateQueue(queueService, config.queues.trigger_query, cb);
+                    },
+                    function (cb) {
+                        return utils.deleteCreateQueue(queueService, config.queues.new_ids, cb);
+                    },
+                    function (cb) {
+                        return utils.deleteCreateQueue(queueService, config.queues.scoring, cb);
+                    }
+                ], cb);
+            },
+
+            // Trigger a new happy flow
+            function (cb) {
+                
+                // After recreating all queues, trigger a pipeline happy flow
+                console.info('listening on queue', config.queues.trigger_query);
+                    
+                var message = {
+                    "requestType": "trigger",
+                    "data": {
+                        "fromDate": DATE_TO_CHECK,
+                        "toDate": DATE_TO_CHECK
+                    }
+                };
+                queueService.createMessage(config.queues.trigger_query, JSON.stringify(message), function (error) {
                     if (error) return cb(error);
-                    
-                    log('listening on queue', config.queues.trigger_query);
-                    
-                    var message = {
-                        "requestType": "trigger",
-                        "data": {
-                            "fromDate": DATE_TO_CHECK,
-                            "toDate": DATE_TO_CHECK
-                        }
-                    };
-                    queueService.createMessage(config.queues.trigger_query, JSON.stringify(message), function (error) {
-                        if (error) return cb(error);
-                        log('trigger message successfully on ' + DATE_TO_CHECK);
-                        cb();
-                    });
+                    console.info('trigger message successfully on ' + DATE_TO_CHECK);
+                    cb();
                 });
 
             }
         ], function (error) {
-            done(error);
-        });
-
-    });
-
-    it('Query ID worker test', function (done) {
-        
-        var commands = 'cd ' + relativePath + 'QueryIDs & run.cmd ..\\setenv.test.cmd >> ' + logFileName;
-        
-        child = exec(commands);
-        
-        child.stdout.on('data', function (data) {
-            process.stdout.write(".");
-        });
-        
-        child.stderr.on('data', function (data) {
-            console.error(data);
-            done(data);
-        });
-        
-        child.on('close', function (code) {
-            log('closing code: ' + code);
-            setTimeout(function () {
+            
+            if (error) return done(error);
+            done();
+            
+            // Running query ID worker from Query ID folder
+            console.info('starting worker query id');
+            var commands = 'cd ' + solutionRelativePath + ' & run.cmd setenv.test.cmd';
+            
+            var child = exec(commands);
+            
+            child.stderr.on('data', function (error) {
+                console.info("Error: " + error);
+                return done(error);
+            });
+            
+            child.on('close', function (code) {
+                console.info('closing code: ' + code);
                 return done(code);
-            }, 1000);
-        });
-        
-        // Periodic check if trigger queue is empty
-        var interval = setInterval(function () {
-            queueService.getQueueMetadata(config.queues.trigger_query, function (error, data) {
+            });
+
+            async.parallel([
+                
+                // Check for proper log lines
+                function (cb) {
+                    utils.waitForLogMessage({
+                        message: 'done queuing messages for all documents', 
+                        app: 'doc-query',
+                        since: time
+                    }, function (error) {
+                        if (error) return cb(error);
+                        
+                        // Check for specific document in DB
+                        utils.countLogMessages({
+                            message: 'Queued document ' + DOCUMENT_ID_TO_MONITOR,
+                            app: 'doc-query',
+                            since: time
+                        }, function (error, count) {
+                            if (error) return cb(error);
+                            
+                            if (count == 0) {
+                                var docError = new Error('could not find document ' + DOCUMENT_ID_TO_MONITOR + ' in log');
+                                console.error(docError)
+                                return cb(docError);
+                            }
+                            
+                            return cb();
+                        })
+                    })
+                },
+
+                // Periodic check that document was parsed for sentences
+                function (cb) {
+                    
+                    utils.waitForLogMessage({
+                        message: 'done queuing messages for document <' + DOCUMENT_ID_TO_MONITOR + '>', 
+                        app: 'paper-parser',
+                        since: time
+                    }, function (error) {
+                        if (error) return done(error);
+                        
+                        // Check DB has appropriate document
+                        utils.checkTableRowCount('Documents', 'Id=' + DOCUMENT_ID_TO_MONITOR, function (error, count) {
+                            if (error) return done(error);
+                            
+                            if (count == 0) {
+                                var countError = new Error('could not find document ' + DOCUMENT_ID_TO_MONITOR + ' in DB');
+                                console.error(countError);
+                                return done(countError);
+                            }
+                            
+                            return done();
+                        })
+                    });
+                },
+
+                // Periodic check that all sentences were
+                function (cb) {
+                    
+                    utils.waitForLogMessage({
+                        message: 'done queuing messages for document <' + DOCUMENT_ID_TO_MONITOR + '>', 
+                        app: 'paper-parser',
+                        since: time
+                    }, function (error) {
+                        if (error) return done(error);
+                        
+                        // Check DB has appropriate document
+                        utils.checkTableRowCount('Documents', 'Id=' + DOCUMENT_ID_TO_MONITOR, function (error, count) {
+                            if (error) return done(error);
+                            
+                            if (count == 0) {
+                                var countError = new Error('could not find document ' + DOCUMENT_ID_TO_MONITOR + ' in DB');
+                                console.error(countError);
+                                return done(countError);
+                            }
+                            
+                            return done();
+                        })
+                    });
+                }
+
+            ], function (error) {
+
                 if (error) return done(error);
                 
-                if (data && data.approximatemessagecount && parseInt(data.approximatemessagecount) === 0) {
-                    clearInterval(interval);
-                    
-                    return utils.checkTableRowCount(config.sql, 'Documents', 143, log, done);
-                }
-            })
-        }, 5 * 1000);
+                // Cleanup
+                queueService.deleteQueueIfExists(config.queues.trigger_query, function () { });
+                queueService.deleteQueueIfExists(config.queues.new_ids, function () { });
+                queueService.deleteQueueIfExists(config.queues.scoring, function () { });
+                
+                console.info('killing process', child.pid);
+                process.kill(pid);
+                
+                done();
+            });
+
+        });
+
     });
 
-    it('Suite Cleanup', function () {
-        assert.doesNotThrow(function () {
-            queueService.deleteQueueIfExists(config.queues.trigger_query, function () { });
-        }, 'fail to delete trigger queue');
-        assert.doesNotThrow(function () {
-            process.kill(child.pid);
-        }, 'fail to kill child process');
-    })
+    //it('Query ID worker test', function (done) {
+        
+    //    // Running query ID worker from Query ID folder
+    //    console.info('starting worker query id');
+    //    var commands = 'cd ' + solutionRelativePath + 'QueryIDs & run.cmd ..\\setenv.test.cmd';
+        
+    //    var child = exec(commands);
+    //    processIDs.push(child.pid);
+        
+    //    child.stderr.on('data', function (error) {
+    //        console.info("Error: " + error);
+    //        return done(error);
+    //    });
+        
+    //    child.on('close', function (code) {
+    //        console.info('closing code: ' + code);
+    //        return done(code);
+    //    });
+        
+        
+    //});
+    
+    //it('Doc parser worker test', function (done) {
+        
+    //    // Running query ID worker from Query ID folder
+    //    console.info('starting worker doc parser');
+    //    var commands = 'cd ' + solutionRelativePath + 'DocParser & run.cmd ..\\setenv.test.cmd';
+        
+    //    var child = exec(commands);
+    //    processIDs.push(child.pid);
+
+    //    child.stderr.on('data', function (error) {
+    //        console.info("Error: " + error);
+    //        return done(error);
+    //    });
+        
+    //    child.on('close', function (code) {
+    //        console.info('closing code: ' + code);
+    //        return done(code);
+    //    });
+        
+    //});
 })

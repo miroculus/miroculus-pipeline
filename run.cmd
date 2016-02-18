@@ -1,14 +1,17 @@
+SET setenvpath=%1
+
+IF NOT [%setenvpath%]==[] SET setenvpath=..\%setenvpath%
 
 cd ScoringWorker
-start run.cmd
+start run.cmd %setenvpath%
 cd ..
 
 cd QueryIDs
-start run.cmd
+start run.cmd %setenvpath%
 cd ..
 
 cd DocParser
-start run.cmd
+start run.cmd %setenvpath%
 cd ..
 
 

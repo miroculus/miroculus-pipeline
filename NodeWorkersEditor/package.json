@@ -19,9 +19,10 @@
     "request": "^2.69.0",
     "string_format": "0.0.6",
     "tedious": "^1.13.2",
-    "tedious-connection-pool": "^0.3.9"
+    "tedious-connection-pool": "^0.3.9",
+    "mssql": "^3.1.0"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha --recursive --bail -R xunit test/ > test-reports.xml"
+    "test": "./node_modules/.bin/mocha --bail -R xunit test/ > test-reports.xml"
   }
 }

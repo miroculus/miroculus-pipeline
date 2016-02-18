@@ -16,5 +16,10 @@
     "string_format": "0.0.6",
     "tedious": "^1.13.2",
     "tedious-connection-pool": "^0.3.9"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/CatalystCode/miroculus-pipeline"
+  },
+  "license": "Apache-2.0"
 }

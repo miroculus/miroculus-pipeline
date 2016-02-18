@@ -1,5 +1,0 @@
-<Playlist Version="1.0">
-  <Add Test="C:\git\miroculus-pipeline\NodeWorkersEditor\test\trigger-from-to.js::Whole Pipeline Suite Initialization::Mocha" />
-  <Add Test="C:\git\miroculus-pipeline\NodeWorkersEditor\test\trigger-from-to.js::Whole Pipeline Query ID worker test::Mocha" />
-  <Add Test="C:\git\miroculus-pipeline\NodeWorkersEditor\test\trigger-from-to.js::Whole Pipeline Suite Cleanup::Mocha" />
-</Playlist>

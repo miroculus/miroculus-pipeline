@@ -3,9 +3,12 @@ var lr = require('readline');
 
 var azure = require('azure-storage');
 var tedious = require('tedious');
+var mssql = require('mssql');
 
-function setEnvironmentVariables(setenvPath, log, cb) {
-    log('Setting environment variables');
+var logger = require('azure-logging');
+var log = require('x-log');
+
+function setEnvironmentVariables(setenvPath, cb) {
     var reader = lr.createInterface({
         input: fs.createReadStream(setenvPath)
     });
@@ -13,7 +16,6 @@ function setEnvironmentVariables(setenvPath, log, cb) {
     reader.on('line', function (line) {
         if (line && line.toLowerCase().startsWith('set ')) {
             process.env[line.substring(4, line.indexOf('='))] = line.substring(line.indexOf('=') + 1);
-            log(line);
         }
     });
     
@@ -22,7 +24,7 @@ function setEnvironmentVariables(setenvPath, log, cb) {
     });
 }
 
-function deleteCreateQueue(queueService, queueName, log, cb) {
+function deleteCreateQueue(queueService, queueName, cb) {
     return queueService.deleteQueueIfExists(queueName, function (error) {
         if (error) return cb(error);
         
@@ -50,16 +52,17 @@ function deleteCreateQueue(queueService, queueName, log, cb) {
     });
 }
 
-function checkTableRowCount(sqlConfig, tableName, linesExpected, log, cb) {
+function checkTableRowCount(tableName, where, cb) {
+    
+    var sqlConfig = require('x-config').sql;
     var connection = new tedious.Connection(sqlConfig);
     connection.on('connect', function (err) {
         // If no error, then good to proceed.
-        log("Connected to DB");
+        console.info("Connected to DB");
         var request = new tedious.Request("SELECT COUNT(*) FROM " + tableName + ";", function (error) {
             if (error) return cb(error);
         });
         
-        var result = "";
         request.on('row', function (columns) {
             var result = 0;
             if (columns && columns.length > 0 && columns[0].value) {
@@ -67,16 +70,15 @@ function checkTableRowCount(sqlConfig, tableName, linesExpected, log, cb) {
                 if (isNaN(result)) result = 0;
             }
             
-            if (result < linesExpected) {
-                return cb(new Error('Not enough rows found in DB'));
-            }
-            return cb();
+            return cb(null, result);
         });
+        request.on('error', cb);
+
         connection.execSql(request);
     });
 }
 
-function checkQueueMessageCount(queueService, queueName, count, log, cb) {
+function checkQueueMessageCount(queueService, queueName, count, cb) {
     return queueService.getQueueMetadata(queueName, function (error, data) {
         if (error) return cb(error);
         
@@ -86,9 +88,80 @@ function checkQueueMessageCount(queueService, queueName, count, log, cb) {
     })
 }
 
+function runDBScript(dbScript, cb) {
+    
+    var sqlConfig = require('x-config').sql;
+    var connection = new tedious.Connection(sqlConfig);
+    
+    // Notice: this script will not run with complex scripts like DB creation or 
+    // scripts with GO statements
+    var dbScriptSQL = fs.readFileSync(dbScript, 'utf8');
+    
+    connection.on('connect', function (err) {
+        
+        var request = new tedious.Request(dbScriptSQL, function (error) {
+            if (error) return cb(error);
+            
+            return cb();
+        });
+        connection.execSql(request);
+    });
+}
+
+function countLogMessages(options, cb) {
+
+    // output format (text | html | json)
+    options.format = 'json';
+    options.nocolors = true;
+    
+    // maximum level ('log' < 'info' < 'warn' < 'error')
+    options.level = options.level || 'info';
+    options.farm = options.farm || 'MORSHE-X1';
+    options.limit = options.limit || '100';
+    options.top = options.top || '100';
+    options.transporters = require('x-config').log.transporters;
+    
+    // This doesn't work now, need to wait for work
+    //options.since = "Wed Feb 17 2016 16:24:08 GMT+0200 (Jerusalem Standard Time)"
+    
+    logger.reader(options, function (error, r) {
+        if (error) return cb(error);
+            
+        var results = [];
+        r.on('line', function (data) { results.push(data); });
+        r.on('end', function () {
+                
+            // TODO:
+            // when 'since' option works, remove this code
+            var sinceResults = results.filter(function (result) {
+                return result.meta.time >= options.since
+            });
+                
+            return cb(null, sinceResults.length);
+        });
+        r.on('error', cb);
+    });
+}
+function waitForLogMessage(options, cb) {
+    
+    setTimeout(function () {
+        return countLogMessages(options, function (error, count) {
+            if (error) return cb(error);
+
+            if (count == 0) return waitForLogMessage(options, cb);
+
+            return cb();
+        });
+        
+    }, 5000);
+}
+
 module.exports = {
     setEnvironmentVariables: setEnvironmentVariables,
     deleteCreateQueue: deleteCreateQueue,
     checkTableRowCount: checkTableRowCount,
-    checkQueueMessageCount: checkQueueMessageCount
+    checkQueueMessageCount: checkQueueMessageCount,
+    runDBScript: runDBScript,
+    waitForLogMessage: waitForLogMessage,
+    countLogMessages: countLogMessages
 };
