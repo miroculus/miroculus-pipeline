@@ -32,6 +32,7 @@ describe('Whole Pipeline', function () {
                     
                     if (error) return cb(error);
                     
+                    // Loading config now that the environment variables have been loaded
                     config = require('x-config');
                     return cb();
                 });
@@ -40,15 +41,7 @@ describe('Whole Pipeline', function () {
             // Initialize log
             function (cb) {
                 
-                console._log = console.log;
-                console._error = console.error;
-                console._warn = console.warn;
-                console._info = console.info;
-                
-                console.log = console.error = console.warn = console.info = function () { 
-                };
-                
-                log.init({
+                return log.init({
                     domain: process.env.COMPUTERNAME || '',
                     instanceId: log.getInstanceId(),
                     app: 'ci-testing',
@@ -57,7 +50,7 @@ describe('Whole Pipeline', function () {
                 }, cb);
             },
 
-            // Initializing config and queue service
+            // Initializing queue service
             function (cb) {
                 queueService = azure.createQueueService(config.storage.account, config.storage.key)
                     .withFilter(new azure.ExponentialRetryPolicyFilter());
@@ -67,12 +60,12 @@ describe('Whole Pipeline', function () {
             // Empty database schema from data
             function (cb) {
                 var emptyScript = solutionRelativePath + 'Sql\\emptytables.sql';
-                utils.runDBScript(emptyScript, cb);
+                return utils.runDBScript(emptyScript, cb);
             },
 
-            // Recreate queues
+            // Recreate queues in pipeline
             function (cb) {
-                async.parallel([
+                return async.parallel([
                     function (cb) {
                         return utils.deleteCreateQueue(queueService, config.queues.trigger_query, cb);
                     },
@@ -85,9 +78,10 @@ describe('Whole Pipeline', function () {
                 ], cb);
             },
 
-            // Starting all three workers
+            // Starting all three workers in pipeline
             function (cb) {
                 
+                // If one of the workers throws an error, log the error message
                 var queryWorker = exec('node ./test/worker-runners/query-worker.js', function (err, stdout, stderr) {
                     if (err) return console.error('Error in Query worker', err);
                 });
@@ -102,7 +96,7 @@ describe('Whole Pipeline', function () {
                 workers.push(parserWorker);
                 workers.push(scorerWorker);
                 
-                // If once of the workers close, it logs an error message which will
+                // If one of the workers close, it logs an error message which will
                 // be monitored by the tests and cause failure
                 queryWorker.on('close', function (code) {
                     console.error('Query ID worker closing code: ' + code);
@@ -125,11 +119,10 @@ describe('Whole Pipeline', function () {
         
         async.series([
 
-            // Trigger a new happy flow
+            // After recreating all queues, trigger a pipeline happy flow
             function (cb) {
                 
-                // After recreating all queues, trigger a pipeline happy flow
-                console.info('listening on queue', config.queues.trigger_query);
+                console.info('triggering a new process through queue', config.queues.trigger_query);
                     
                 var message = {
                     "requestType": "trigger",
@@ -138,10 +131,10 @@ describe('Whole Pipeline', function () {
                         "toDate": DATE_TO_CHECK
                     }
                 };
-                queueService.createMessage(config.queues.trigger_query, JSON.stringify(message), function (error) {
+                return queueService.createMessage(config.queues.trigger_query, JSON.stringify(message), function (error) {
                     if (error) return cb(error);
                     console.info('trigger message successfully on ' + DATE_TO_CHECK);
-                    cb();
+                    return cb();
                 });
 
             }
@@ -153,27 +146,33 @@ describe('Whole Pipeline', function () {
             if (error) return done(error);
             
             // Periodic check for errors in the pipeline
+            // The monitored errors will only be errors created by the testing process
+            // which means any errors aggregated back from the processes of worker roles
             utils.checkForErrorsInLog(startTime, function (error) {
                 
                 if (error) {
                     console.error(error);
                     return done(error);
                 }
-            });
 
-            async.parallel([
+                return;
+            });
+            
+            // Parallel check of all three worker roles.
+            // If one role fails, the failure will fail the entire test immediately
+            return async.parallel([
                 
                 // Periodic check that document was queried from service
                 function (cb) {
-                    utils.waitForLogMessage({
+                    return utils.waitForLogMessage({
                         message: 'done queuing messages for all documents', 
                         app: 'doc-query',
                         since: startTime
                     }, function (error) {
                         if (error) return cb(error);
                         
-                        // Check for specific document in DB
-                        utils.countLogMessages({
+                        // Check the specific document we expect in the pipeline was processed
+                        return utils.countLogMessages({
                             message: 'Queued document ' + DOCUMENT_ID_TO_MONITOR,
                             app: 'doc-query',
                             since: startTime
@@ -188,14 +187,14 @@ describe('Whole Pipeline', function () {
                             
                             console.info('Query ID worker test completed successfully');
                             return cb();
-                        })
-                    })
+                        });
+                    });
                 },
 
                 // Periodic check that document was parsed for sentences
                 function (cb) {
                     
-                    utils.waitForLogMessage({
+                    return utils.waitForLogMessage({
                         message: 'done queuing messages for document <' + DOCUMENT_ID_TO_MONITOR + '>', 
                         app: 'paper-parser',
                         since: startTime
@@ -203,7 +202,7 @@ describe('Whole Pipeline', function () {
                         if (error) return cb(error);
                         
                         // Check DB has appropriate document
-                        utils.checkTableRowCount('Documents', 'Id=' + DOCUMENT_ID_TO_MONITOR, function (error, count) {
+                        return utils.checkTableRowCount('Documents', 'Id=' + DOCUMENT_ID_TO_MONITOR, function (error, count) {
                             if (error) return cb(error);
                             
                             if (count == 0) {
@@ -214,16 +213,16 @@ describe('Whole Pipeline', function () {
                             
                             console.info('Paper parser worker test completed successfully');
                             return cb();
-                        })
+                        });
                     });
                 },
 
                 // Periodic check that all sentences were scored
                 function (cb) {
                     
-                    // Todo:
+                    // TODO:
                     // Update 40 sentences to X sentences from the following document were scored
-                    utils.waitForTableRowCount({
+                    return utils.waitForTableRowCount({
                         tableName: 'Sentences', 
                         where: 'DocId=' + DOCUMENT_ID_TO_MONITOR,
                         expectedCount: 40
@@ -240,18 +239,19 @@ describe('Whole Pipeline', function () {
 
     });
     
-    it('Rescoring and Remodeling', function (done) {
+    it('Re-scoring and Remodeling', function (done) {
         // FFU
-        done();
+        return done();
     });
 
     // Cleanup
     after(function (done) {
         
+        // Request deletion of all queues so the recreation of the next test will take less time
         queueService.deleteQueueIfExists(config.queues.trigger_query, function () { });
         queueService.deleteQueueIfExists(config.queues.new_ids, function () { });
         queueService.deleteQueueIfExists(config.queues.scoring, function () { });
         
-        done();
+        return done();
     });
 })
