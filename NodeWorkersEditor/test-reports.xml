@@ -1,8 +1,0 @@
-logging to:
-c:\git\miroculus-pipeline\NodeWorkersEditor\test\2016-02-16_02-53-15.log
-c:\git\miroculus-pipeline\NodeWorkersEditor\test\2016-02-16_02-53-15.test.log
-<testsuite name="Mocha Tests" tests="3" failures="0" errors="0" skipped="0" timestamp="Tue, 16 Feb 2016 12:53:37 GMT" time="22.2">
-<testcase classname="Whole Pipeline" name="Suite Initialization" time="4.529"/>
-<testcase classname="Whole Pipeline" name="Query ID worker test" time="17.65"/>
-<testcase classname="Whole Pipeline" name="Suite Cleanup" time="0.002"/>
-</testsuite>
