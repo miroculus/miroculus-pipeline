@@ -156,6 +156,27 @@ function waitForLogMessage(options, cb) {
     }, 5000);
 }
 
+function checkForErrorsInLog(since, cb) {
+    
+    setTimeout(function () {
+        countLogMessages({
+            app: 'ci-testing',
+            level: 'error',
+            since: since
+        }, function (error, count) {
+            if (error) return cb(error);
+            
+            if (count > 0) {
+                var countError = new Error('Found errors through the log in the pipeline');
+                console.error(countError);
+                return cb(countError);
+            }
+
+            return checkForErrorsInLog(since);
+        });
+    }, 5000);
+}
+
 module.exports = {
     setEnvironmentVariables: setEnvironmentVariables,
     deleteCreateQueue: deleteCreateQueue,
@@ -163,5 +184,6 @@ module.exports = {
     checkQueueMessageCount: checkQueueMessageCount,
     runDBScript: runDBScript,
     waitForLogMessage: waitForLogMessage,
-    countLogMessages: countLogMessages
+    countLogMessages: countLogMessages,
+    checkForErrorsInLog: checkForErrorsInLog
 };

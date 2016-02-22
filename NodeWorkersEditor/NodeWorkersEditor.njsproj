@@ -40,8 +40,6 @@
     <Compile Include="node_modules\x-config\lib\index.js" />
     <Compile Include="node_modules\x-constants\lib\index.js" />
     <Compile Include="node_modules\x-db\lib\index.js" />
-    <Compile Include="node_modules\x-docServiceProxy\lib\index.js" />
-    <Compile Include="node_modules\x-docServiceProxy\lib\ncbiService.js" />
     <Compile Include="node_modules\x-log\lib\index.js" />
     <Compile Include="node_modules\x-log\node_modules\azure-logging\lib\format.js" />
     <Compile Include="node_modules\x-log\node_modules\azure-logging\lib\formatters\html.js" />
@@ -232,13 +230,19 @@
       <SubType>Code</SubType>
       <TestFramework>Mocha</TestFramework>
     </Compile>
+    <Compile Include="test\UnitTest1.js">
+      <SubType>Code</SubType>
+      <TestFramework>Mocha</TestFramework>
+    </Compile>
     <Compile Include="test\utils.js" />
+    <Compile Include="test\worker-runners\query-worker.js" />
+    <Compile Include="test\worker-runners\scorer-worker.js" />
+    <Compile Include="test\worker-runners\parser-worker.js" />
     <Content Include="node_modules\x-blob\package.json" />
     <Content Include="node_modules\x-cmd-insertSentences\package.json" />
     <Content Include="node_modules\x-config\package.json" />
     <Content Include="node_modules\x-constants\package.json" />
     <Content Include="node_modules\x-db\package.json" />
-    <Content Include="node_modules\x-docServiceProxy\package.json" />
     <Content Include="node_modules\x-log\node_modules\azure-logging\bin\reader" />
     <Content Include="node_modules\x-log\node_modules\azure-logging\mongologssetup.txt" />
     <Content Include="node_modules\x-log\node_modules\azure-logging\node_modules\.bin\base32" />
@@ -353,8 +357,6 @@
     <Folder Include="node_modules\x-constants\lib\" />
     <Folder Include="node_modules\x-db\" />
     <Folder Include="node_modules\x-db\lib\" />
-    <Folder Include="node_modules\x-docServiceProxy\" />
-    <Folder Include="node_modules\x-docServiceProxy\lib\" />
     <Folder Include="node_modules\x-log\" />
     <Folder Include="node_modules\x-log\lib\" />
     <Folder Include="node_modules\x-log\node_modules\" />
@@ -445,6 +447,7 @@
     <Folder Include="test\node_modules\azure-logging\node_modules\wordwrap\example\" />
     <Folder Include="test\node_modules\azure-logging\node_modules\wordwrap\test\" />
     <Folder Include="test\node_modules\azure-logging\test\" />
+    <Folder Include="test\worker-runners\" />
   </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
