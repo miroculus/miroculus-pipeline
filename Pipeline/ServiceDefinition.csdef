@@ -16,6 +16,8 @@
       <Setting name="LOG_LEVEL" />
       <Setting name="LOG_STORAGE_ACCOUNT" />
       <Setting name="LOG_STORAGE_KEY" />
+      <Setting name="SK_SCORING_URL" />
+      <Setting name="TLC_SCORING_URL" />
     </ConfigurationSettings>
     <Imports>
       <Import moduleName="RemoteAccess" />
@@ -65,6 +67,12 @@
         <Variable name="SERVICE_DOC_URL">
           <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='SERVICE_DOC_URL']/@value" />
         </Variable>
+        <Variable name="SK_SCORING_URL">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='SK_SCORING_URL']/@value" />
+        </Variable>
+        <Variable name="TLC_SCORING_URL">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='TLC_SCORING_URL']/@value" />
+        </Variable>
         <Variable name="QUEUE_TRIGGER_QUERY">
           <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='QUEUE_TRIGGER_QUERY']/@value" />
         </Variable>
@@ -100,6 +108,8 @@
       <Setting name="LOG_LEVEL" />
       <Setting name="LOG_STORAGE_ACCOUNT" />
       <Setting name="LOG_STORAGE_KEY" />
+      <Setting name="SK_SCORING_URL" />
+      <Setting name="TLC_SCORING_URL" />
     </ConfigurationSettings>
     <Imports>
       <Import moduleName="RemoteAccess" />
@@ -148,6 +158,12 @@
         <Variable name="SERVICE_DOC_URL">
           <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='SERVICE_DOC_URL']/@value" />
         </Variable>
+        <Variable name="SK_SCORING_URL">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='SK_SCORING_URL']/@value" />
+        </Variable>
+        <Variable name="TLC_SCORING_URL">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='TLC_SCORING_URL']/@value" />
+        </Variable>
         <Variable name="QUEUE_TRIGGER_QUERY">
           <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='QUEUE_TRIGGER_QUERY']/@value" />
         </Variable>
@@ -160,7 +176,7 @@
         <Variable name="LOG_STORAGE_KEY">
           <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='LOG_STORAGE_KEY']/@value" />
         </Variable>
-   </Environment>
+      </Environment>
       <EntryPoint>
         <ProgramEntryPoint commandLine="node.cmd .\worker.js" setReadyOnProcessStart="true" />
       </EntryPoint>
@@ -183,6 +199,8 @@
       <Setting name="LOG_LEVEL" />
       <Setting name="LOG_STORAGE_ACCOUNT" />
       <Setting name="LOG_STORAGE_KEY" />
+      <Setting name="SK_SCORING_URL" />
+      <Setting name="TLC_SCORING_URL" />
     </ConfigurationSettings>
     <Imports>
       <Import moduleName="RemoteAccess" />
@@ -230,6 +248,12 @@
         </Variable>
         <Variable name="SERVICE_DOC_URL">
           <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='SERVICE_DOC_URL']/@value" />
+        </Variable>
+        <Variable name="SK_SCORING_URL">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='SK_SCORING_URL']/@value" />
+        </Variable>
+        <Variable name="TLC_SCORING_URL">
+          <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='TLC_SCORING_URL']/@value" />
         </Variable>
         <Variable name="QUEUE_TRIGGER_QUERY">
           <RoleInstanceValue xpath="/RoleEnvironment/CurrentInstance/ConfigurationSettings/ConfigurationSetting[@name='QUEUE_TRIGGER_QUERY']/@value" />
