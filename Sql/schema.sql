@@ -1,28 +1,29 @@
-﻿/****** Object:  UserDefinedTableType [dbo].[UDT_DocIdList]    Script Date: 2/16/2016 2:24:35 PM ******/
+﻿
+/****** Object:  UserDefinedTableType [dbo].[UDT_DocIdList]    Script Date: 2/22/2016 12:06:28 PM ******/
 CREATE TYPE [dbo].[UDT_DocIdList] AS TABLE(
 	[SourceId] [int] NULL,
 	[DocId] [varchar](50) NULL
 )
 GO
-/****** Object:  UserDefinedTableType [dbo].[UDT_EntityList]    Script Date: 2/16/2016 2:24:35 PM ******/
+/****** Object:  UserDefinedTableType [dbo].[UDT_EntityList]    Script Date: 2/22/2016 12:06:28 PM ******/
 CREATE TYPE [dbo].[UDT_EntityList] AS TABLE(
 	[TypeId] [int] NULL,
-	[Id] [int] NULL,
+	[Id] [varchar](50) NULL,
 	[Name] [varchar](50) NULL
 )
 GO
-/****** Object:  UserDefinedTableType [dbo].[UDT_Relations]    Script Date: 2/16/2016 2:24:35 PM ******/
+/****** Object:  UserDefinedTableType [dbo].[UDT_Relations]    Script Date: 2/22/2016 12:06:28 PM ******/
 CREATE TYPE [dbo].[UDT_Relations] AS TABLE(
 	[ModelVersion] [varchar](50) NULL,
 	[Entity1TypeId] [int] NULL,
-	[Entity1Id] [int] NULL,
+	[Entity1Id] [varchar](50) NULL,
 	[Entity2TypeId] [int] NULL,
-	[Entity2Id] [int] NULL,
+	[Entity2Id] [varchar](50) NULL,
 	[Relation] [varchar](50) NULL,
 	[Score] [real] NULL
 )
 GO
-/****** Object:  Table [dbo].[Documents]    Script Date: 2/16/2016 2:24:35 PM ******/
+/****** Object:  Table [dbo].[Documents]    Script Date: 2/22/2016 12:06:28 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -44,7 +45,7 @@ CREATE TABLE [dbo].[Documents](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[DocumentStatus]    Script Date: 2/16/2016 2:24:35 PM ******/
+/****** Object:  Table [dbo].[DocumentStatus]    Script Date: 2/22/2016 12:06:28 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -63,7 +64,7 @@ CREATE TABLE [dbo].[DocumentStatus](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Entities]    Script Date: 2/16/2016 2:24:35 PM ******/
+/****** Object:  Table [dbo].[Entities]    Script Date: 2/22/2016 12:06:28 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -72,10 +73,8 @@ SET ANSI_PADDING ON
 GO
 CREATE TABLE [dbo].[Entities](
 	[TypeId] [int] NOT NULL,
-	[Id] [int] NOT NULL,
+	[Id] [varchar](50) NOT NULL,
 	[Name] [varchar](50) NOT NULL,
-	[GenericNameIndex] [int] NULL,
-	[GenericName] [varchar](50) NULL,
  CONSTRAINT [PK_Entities] PRIMARY KEY CLUSTERED 
 (
 	[TypeId] ASC,
@@ -86,7 +85,7 @@ CREATE TABLE [dbo].[Entities](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[EntityTypes]    Script Date: 2/16/2016 2:24:35 PM ******/
+/****** Object:  Table [dbo].[EntityTypes]    Script Date: 2/22/2016 12:06:28 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -105,7 +104,7 @@ CREATE TABLE [dbo].[EntityTypes](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Relations]    Script Date: 2/16/2016 2:24:35 PM ******/
+/****** Object:  Table [dbo].[Relations]    Script Date: 2/22/2016 12:06:28 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -118,9 +117,9 @@ CREATE TABLE [dbo].[Relations](
 	[SentenceIndex] [int] NOT NULL,
 	[ModelVersion] [varchar](50) NOT NULL,
 	[Entity1TypeId] [int] NOT NULL,
-	[Entity1Id] [int] NOT NULL,
+	[Entity1Id] [varchar](50) NOT NULL,
 	[Entity2TypeId] [int] NOT NULL,
-	[Entity2Id] [int] NOT NULL,
+	[Entity2Id] [varchar](50) NOT NULL,
 	[Relation] [varchar](50) NULL,
 	[Score] [real] NOT NULL,
  CONSTRAINT [PK_Graph] PRIMARY KEY CLUSTERED 
@@ -139,7 +138,7 @@ CREATE TABLE [dbo].[Relations](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Sentences]    Script Date: 2/16/2016 2:24:35 PM ******/
+/****** Object:  Table [dbo].[Sentences]    Script Date: 2/22/2016 12:06:28 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -158,7 +157,7 @@ CREATE TABLE [dbo].[Sentences](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Sources]    Script Date: 2/16/2016 2:24:35 PM ******/
+/****** Object:  Table [dbo].[Sources]    Script Date: 2/22/2016 12:06:28 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -215,7 +214,7 @@ REFERENCES [dbo].[Documents] ([SourceId], [Id])
 GO
 ALTER TABLE [dbo].[Sentences] CHECK CONSTRAINT [FK_Sentences_Documents]
 GO
-/****** Object:  StoredProcedure [dbo].[FilterExistingDocuments]    Script Date: 2/16/2016 2:24:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[FilterExistingDocuments]    Script Date: 2/22/2016 12:06:28 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -263,16 +262,18 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[GetEntitiesGenericNames]    Script Date: 2/16/2016 2:24:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[GetEntitiesGenericNames]    Script Date: 2/22/2016 12:06:28 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
 
+
 CREATE PROCEDURE [dbo].[GetEntitiesGenericNames]
-	@entities UDT_EntityList READONLY
+	--@entities UDT_EntityList READONLY
 AS
+/*
 BEGIN
 	
 	
@@ -364,9 +365,10 @@ BEGIN
 	SELECT * FROM #LocalTempTable
 	
 END
+*/
 
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateDocumentStatus]    Script Date: 2/16/2016 2:24:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpdateDocumentStatus]    Script Date: 2/22/2016 12:06:28 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -391,7 +393,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[UpsertDocument]    Script Date: 2/16/2016 2:24:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpsertDocument]    Script Date: 2/22/2016 12:06:28 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -426,11 +428,12 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[UpsertEntities]    Script Date: 2/16/2016 2:24:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpsertEntities]    Script Date: 2/22/2016 12:06:28 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 CREATE PROCEDURE [dbo].[UpsertEntities]
@@ -459,12 +462,14 @@ BEGIN
 END
 
 
+
 GO
-/****** Object:  StoredProcedure [dbo].[UpsertRelations]    Script Date: 2/16/2016 2:24:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpsertRelations]    Script Date: 2/22/2016 12:06:28 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 -- =============================================
 -- Author:		amitu
 -- Description:	Merge a sentence relations
@@ -545,8 +550,8 @@ BEGIN
 
 END
 
-GO
 
+GO
 
 INSERT INTO DocumentStatus (Id,Name) VALUES (1, 'Processing')
 INSERT INTO DocumentStatus (Id,Name) VALUES (2, 'Scoring')
