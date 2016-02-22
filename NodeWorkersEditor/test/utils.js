@@ -11,7 +11,8 @@ var log = require('x-log');
 
 var pool;
 
-function init() {
+// Ensure DB connection pool object is initialized (singleton)
+function initDB() {
     
     if (pool) return;
 
@@ -31,10 +32,12 @@ function init() {
     });
 }
 
+// Request a new connection from the connection pool
 function connect(cb) {
     return pool.acquire(cb);
 }
 
+// Read environment variable settings file, and set all relevant variables in current process
 function setEnvironmentVariables(setenvPath, cb) {
     var reader = lr.createInterface({
         input: fs.createReadStream(setenvPath)
@@ -51,6 +54,7 @@ function setEnvironmentVariables(setenvPath, cb) {
     });
 }
 
+// Send a delete request for azure queue, and wait until creation is enabled and perform it
 function deleteCreateQueue(queueService, queueName, cb) {
     return queueService.deleteQueueIfExists(queueName, function (error) {
         if (error) return cb(error);
@@ -79,9 +83,9 @@ function deleteCreateQueue(queueService, queueName, cb) {
     });
 }
 
-function checkTableRowCount(tableName, where, cb) {
+function getTableRowCount(tableName, where, cb) {
     
-    init();
+    initDB();
     
     return connect(function (err, connection) {
         if (err) return console.error(err, connection, cb);
@@ -108,10 +112,12 @@ function checkTableRowCount(tableName, where, cb) {
     });
 }
 
+// Wait for table row count to reach a minimum of an expected count
+// options: { tableName: string, where: string, expectedCount: number }
 function waitForTableRowCount(options, cb) {
     
     setTimeout(function () {
-        return checkTableRowCount(options.tableName, options.where, function (error, count) {
+        return getTableRowCount(options.tableName, options.where, function (error, count) {
             if (error) return cb(error);
             
             if (count < options.expectedCount) return waitForTableRowCount(options, cb);
@@ -122,19 +128,9 @@ function waitForTableRowCount(options, cb) {
     }, 5000);
 }
 
-function checkQueueMessageCount(queueService, queueName, count, cb) {
-    return queueService.getQueueMetadata(queueName, function (error, data) {
-        if (error) return cb(error);
-        
-        if (data && data.approximatemessagecount && parseInt(data.approximatemessagecount) === count) {
-            return cb();
-        }
-    })
-}
-
 function runDBScript(dbScript, cb) {
     
-    init();
+    initDB();
     
     // Notice: this script will not run with complex scripts like DB creation or 
     // scripts with GO statements
@@ -165,23 +161,13 @@ function countLogMessages(options, cb) {
     options.top = options.top || '100';
     options.transporters = require('x-config').log.transporters;
     
-    // This doesn't work now, need to wait for work
-    //options.since = "Wed Feb 17 2016 16:24:08 GMT+0200 (Jerusalem Standard Time)"
-    
-    logger.reader(options, function (error, r) {
+    return logger.reader(options, function (error, r) {
         if (error) return cb(error);
             
         var results = [];
         r.on('line', function (data) { results.push(data); });
         r.on('end', function () {
-                
-            // TODO:
-            // when 'since' option works, remove this code
-            var sinceResults = results.filter(function (result) {
-                return result.meta.time >= options.since
-            });
-                
-            return cb(null, sinceResults.length);
+            return cb(null, results.length);
         });
         r.on('error', cb);
     });
@@ -189,7 +175,7 @@ function countLogMessages(options, cb) {
 
 function waitForLogMessage(options, cb) {
     
-    setTimeout(function () {
+    return setTimeout(function () {
         return countLogMessages(options, function (error, count) {
             if (error) return cb(error);
 
@@ -203,7 +189,7 @@ function waitForLogMessage(options, cb) {
 
 function checkForErrorsInLog(since, cb) {
     
-    setTimeout(function () {
+    return setTimeout(function () {
         countLogMessages({
             app: 'ci-testing',
             level: 'error',
@@ -225,9 +211,8 @@ function checkForErrorsInLog(since, cb) {
 module.exports = {
     setEnvironmentVariables: setEnvironmentVariables,
     deleteCreateQueue: deleteCreateQueue,
-    checkTableRowCount: checkTableRowCount,
+    getTableRowCount: getTableRowCount,
     waitForTableRowCount: waitForTableRowCount,
-    checkQueueMessageCount: checkQueueMessageCount,
     runDBScript: runDBScript,
     waitForLogMessage: waitForLogMessage,
     countLogMessages: countLogMessages,

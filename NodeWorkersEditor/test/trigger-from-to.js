@@ -202,7 +202,7 @@ describe('Whole Pipeline', function () {
                         if (error) return cb(error);
                         
                         // Check DB has appropriate document
-                        return utils.checkTableRowCount('Documents', 'Id=' + DOCUMENT_ID_TO_MONITOR, function (error, count) {
+                        return utils.getTableRowCount('Documents', 'Id=' + DOCUMENT_ID_TO_MONITOR, function (error, count) {
                             if (error) return cb(error);
                             
                             if (count == 0) {

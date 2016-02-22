@@ -22,6 +22,6 @@
     "tedious-connection-pool": "^0.3.9"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha --bail -R xunit test/ > test-reports.xml"
+    "test": "./node_modules/.bin/mocha -R xunit test/ > test-reports.xml"
   }
 }
