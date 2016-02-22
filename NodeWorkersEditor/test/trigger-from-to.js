@@ -13,6 +13,7 @@ var DOCUMENT_ID_TO_MONITOR = '2000354';
 var config;
 var queueService;
 var workers = [];
+var logMessages = [];
 
 var startTime = moment();
 var solutionRelativePath = '..\\';
@@ -38,6 +39,15 @@ describe('Whole Pipeline', function () {
 
             // Initialize log
             function (cb) {
+                
+                console._log = console.log;
+                console._error = console.error;
+                console._warn = console.warn;
+                console._info = console.info;
+                
+                console.log = console.error = console.warn = console.info = function () { 
+                };
+                
                 log.init({
                     domain: process.env.COMPUTERNAME || '',
                     instanceId: log.getInstanceId(),
@@ -78,9 +88,15 @@ describe('Whole Pipeline', function () {
             // Starting all three workers
             function (cb) {
                 
-                var queryWorker = exec('node ./test/worker-runners/query-worker.js');
-                var parserWorker = exec('node ./test/worker-runners/parser-worker.js');
-                var scorerWorker = exec('node ./test/worker-runners/scorer-worker.js');
+                var queryWorker = exec('node ./test/worker-runners/query-worker.js', function (err, stdout, stderr) {
+                    if (err) return console.error('Error in Query worker', err);
+                });
+                var parserWorker = exec('node ./test/worker-runners/parser-worker.js', function (err, stdout, stderr) {
+                    if (err) return console.error('Error in Parser worker', err);
+                });
+                var scorerWorker = exec('node ./test/worker-runners/scorer-worker.js', function (err, stdout, stderr) {
+                    if (err) return console.error('Error in Scorer worker', err);
+                });
 
                 workers.push(queryWorker);
                 workers.push(parserWorker);
@@ -97,7 +113,7 @@ describe('Whole Pipeline', function () {
                 scorerWorker.on('close', function (code) {
                     console.error('Scorer worker closing code: ' + code);
                 });
-          
+
                 return cb();
             }
         ], done);
@@ -205,26 +221,17 @@ describe('Whole Pipeline', function () {
                 // Periodic check that all sentences were scored
                 function (cb) {
                     
-                    utils.waitForLogMessage({
-                        message: 'done queuing messages for document <' + DOCUMENT_ID_TO_MONITOR + '>', 
-                        app: 'scorer',
-                        since: startTime
+                    // Todo:
+                    // Update 40 sentences to X sentences from the following document were scored
+                    utils.waitForTableRowCount({
+                        tableName: 'Sentences', 
+                        where: 'DocId=' + DOCUMENT_ID_TO_MONITOR,
+                        expectedCount: 40
                     }, function (error) {
                         if (error) return cb(error);
                         
-                        // Check DB has appropriate document
-                        utils.checkTableRowCount('Documents', 'Id=' + DOCUMENT_ID_TO_MONITOR, function (error, count) {
-                            if (error) return cb(error);
-                            
-                            if (count == 0) {
-                                var countError = new Error('could not find document ' + DOCUMENT_ID_TO_MONITOR + ' in DB');
-                                console.error(countError);
-                                return cb(countError);
-                            }
-                            
-                            console.info('Scorer worker test completed successfully');
-                            return cb();
-                        })
+                        console.info('Scorer worker test completed successfully');
+                        return cb();
                     });
                 }
             ], done);

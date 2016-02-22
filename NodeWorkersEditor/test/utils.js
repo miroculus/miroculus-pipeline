@@ -3,10 +3,37 @@ var lr = require('readline');
 
 var azure = require('azure-storage');
 var tedious = require('tedious');
-var mssql = require('mssql');
+var Connection = tedious.Connection;
+var ConnectionPool = require('tedious-connection-pool');
 
 var logger = require('azure-logging');
 var log = require('x-log');
+
+var pool;
+
+function init() {
+    
+    if (pool) return;
+
+    var configSql = require('x-config').sql;
+    
+    // TODO: move to configuration
+    var poolConfig = {
+        min: 2,
+        max: 5,
+        idleTimeout: 10000,
+        log: false
+    };
+    
+    pool = new ConnectionPool(poolConfig, configSql);
+    pool.on('error', function (err) {
+        console.error('error connecting to sql', err);
+    });
+}
+
+function connect(cb) {
+    return pool.acquire(cb);
+}
 
 function setEnvironmentVariables(setenvPath, cb) {
     var reader = lr.createInterface({
@@ -54,12 +81,15 @@ function deleteCreateQueue(queueService, queueName, cb) {
 
 function checkTableRowCount(tableName, where, cb) {
     
-    var sqlConfig = require('x-config').sql;
-    var connection = new tedious.Connection(sqlConfig);
-    connection.on('connect', function (err) {
+    init();
+    
+    return connect(function (err, connection) {
+        if (err) return console.error(err, connection, cb);
+
         // If no error, then good to proceed.
         console.info("Connected to DB");
-        var request = new tedious.Request("SELECT COUNT(*) FROM " + tableName + ";", function (error) {
+        var query = "SELECT COUNT(*) FROM " + tableName + (where ? " WHERE " + where : "") + ";";
+        var request = new tedious.Request(query, function (error) {
             if (error) return cb(error);
         });
         
@@ -73,9 +103,23 @@ function checkTableRowCount(tableName, where, cb) {
             return cb(null, result);
         });
         request.on('error', cb);
-
+        
         connection.execSql(request);
     });
+}
+
+function waitForTableRowCount(options, cb) {
+    
+    setTimeout(function () {
+        return checkTableRowCount(options.tableName, options.where, function (error, count) {
+            if (error) return cb(error);
+            
+            if (count < options.expectedCount) return waitForTableRowCount(options, cb);
+            
+            return cb();
+        });
+        
+    }, 5000);
 }
 
 function checkQueueMessageCount(queueService, queueName, count, cb) {
@@ -90,15 +134,15 @@ function checkQueueMessageCount(queueService, queueName, count, cb) {
 
 function runDBScript(dbScript, cb) {
     
-    var sqlConfig = require('x-config').sql;
-    var connection = new tedious.Connection(sqlConfig);
+    init();
     
     // Notice: this script will not run with complex scripts like DB creation or 
     // scripts with GO statements
     var dbScriptSQL = fs.readFileSync(dbScript, 'utf8');
     
-    connection.on('connect', function (err) {
-        
+    return connect(function (err, connection) {
+        if (err) return console.error(err, connection, cb);
+
         var request = new tedious.Request(dbScriptSQL, function (error) {
             if (error) return cb(error);
             
@@ -142,6 +186,7 @@ function countLogMessages(options, cb) {
         r.on('error', cb);
     });
 }
+
 function waitForLogMessage(options, cb) {
     
     setTimeout(function () {
@@ -181,9 +226,10 @@ module.exports = {
     setEnvironmentVariables: setEnvironmentVariables,
     deleteCreateQueue: deleteCreateQueue,
     checkTableRowCount: checkTableRowCount,
+    waitForTableRowCount: waitForTableRowCount,
     checkQueueMessageCount: checkQueueMessageCount,
     runDBScript: runDBScript,
     waitForLogMessage: waitForLogMessage,
     countLogMessages: countLogMessages,
-    checkForErrorsInLog: checkForErrorsInLog
+    checkForErrorsInLog: checkForErrorsInLog,
 };

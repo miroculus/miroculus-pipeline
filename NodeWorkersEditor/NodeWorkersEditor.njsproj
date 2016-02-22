@@ -230,10 +230,6 @@
       <SubType>Code</SubType>
       <TestFramework>Mocha</TestFramework>
     </Compile>
-    <Compile Include="test\UnitTest1.js">
-      <SubType>Code</SubType>
-      <TestFramework>Mocha</TestFramework>
-    </Compile>
     <Compile Include="test\utils.js" />
     <Compile Include="test\worker-runners\query-worker.js" />
     <Compile Include="test\worker-runners\scorer-worker.js" />
