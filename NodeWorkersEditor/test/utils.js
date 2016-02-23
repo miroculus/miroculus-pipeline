@@ -203,7 +203,7 @@ function checkForErrorsInLog(since, cb) {
                 return cb(countError);
             }
 
-            return checkForErrorsInLog(since);
+            return checkForErrorsInLog(since, cb);
         });
     }, 5000);
 }
