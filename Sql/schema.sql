@@ -1,19 +1,19 @@
-﻿
-/****** Object:  UserDefinedTableType [dbo].[UDT_DocIdList]    Script Date: 2/22/2016 12:06:28 PM ******/
+﻿/****** Object:  UserDefinedTableType [dbo].[UDT_DocIdList]    Script Date: 2/24/2016 10:11:26 PM ******/
 CREATE TYPE [dbo].[UDT_DocIdList] AS TABLE(
 	[SourceId] [int] NULL,
 	[DocId] [varchar](50) NULL
 )
 GO
-/****** Object:  UserDefinedTableType [dbo].[UDT_EntityList]    Script Date: 2/22/2016 12:06:28 PM ******/
+/****** Object:  UserDefinedTableType [dbo].[UDT_EntityList]    Script Date: 2/24/2016 10:11:27 PM ******/
 CREATE TYPE [dbo].[UDT_EntityList] AS TABLE(
 	[TypeId] [int] NULL,
 	[Id] [varchar](50) NULL,
 	[Name] [varchar](50) NULL
 )
 GO
-/****** Object:  UserDefinedTableType [dbo].[UDT_Relations]    Script Date: 2/22/2016 12:06:28 PM ******/
+/****** Object:  UserDefinedTableType [dbo].[UDT_Relations]    Script Date: 2/24/2016 10:11:27 PM ******/
 CREATE TYPE [dbo].[UDT_Relations] AS TABLE(
+	[ScoringServiceId] [varchar](50) NULL,
 	[ModelVersion] [varchar](50) NULL,
 	[Entity1TypeId] [int] NULL,
 	[Entity1Id] [varchar](50) NULL,
@@ -23,7 +23,7 @@ CREATE TYPE [dbo].[UDT_Relations] AS TABLE(
 	[Score] [real] NULL
 )
 GO
-/****** Object:  Table [dbo].[Documents]    Script Date: 2/22/2016 12:06:28 PM ******/
+/****** Object:  Table [dbo].[Documents]    Script Date: 2/24/2016 10:11:27 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -45,7 +45,7 @@ CREATE TABLE [dbo].[Documents](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[DocumentStatus]    Script Date: 2/22/2016 12:06:28 PM ******/
+/****** Object:  Table [dbo].[DocumentStatus]    Script Date: 2/24/2016 10:11:27 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -64,7 +64,7 @@ CREATE TABLE [dbo].[DocumentStatus](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Entities]    Script Date: 2/22/2016 12:06:28 PM ******/
+/****** Object:  Table [dbo].[Entities]    Script Date: 2/24/2016 10:11:27 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -85,7 +85,7 @@ CREATE TABLE [dbo].[Entities](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[EntityTypes]    Script Date: 2/22/2016 12:06:28 PM ******/
+/****** Object:  Table [dbo].[EntityTypes]    Script Date: 2/24/2016 10:11:27 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -104,7 +104,7 @@ CREATE TABLE [dbo].[EntityTypes](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Relations]    Script Date: 2/22/2016 12:06:28 PM ******/
+/****** Object:  Table [dbo].[Relations]    Script Date: 2/24/2016 10:11:27 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -115,6 +115,7 @@ CREATE TABLE [dbo].[Relations](
 	[SourceId] [int] NOT NULL,
 	[DocId] [int] NOT NULL,
 	[SentenceIndex] [int] NOT NULL,
+	[ScoringServiceId] [nvarchar](50) NOT NULL,
 	[ModelVersion] [varchar](50) NOT NULL,
 	[Entity1TypeId] [int] NOT NULL,
 	[Entity1Id] [varchar](50) NOT NULL,
@@ -122,11 +123,12 @@ CREATE TABLE [dbo].[Relations](
 	[Entity2Id] [varchar](50) NOT NULL,
 	[Relation] [varchar](50) NULL,
 	[Score] [real] NOT NULL,
- CONSTRAINT [PK_Graph] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_Relations] PRIMARY KEY CLUSTERED 
 (
 	[SourceId] ASC,
 	[DocId] ASC,
 	[SentenceIndex] ASC,
+	[ScoringServiceId] ASC,
 	[ModelVersion] ASC,
 	[Entity1TypeId] ASC,
 	[Entity1Id] ASC,
@@ -138,7 +140,7 @@ CREATE TABLE [dbo].[Relations](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Sentences]    Script Date: 2/22/2016 12:06:28 PM ******/
+/****** Object:  Table [dbo].[Sentences]    Script Date: 2/24/2016 10:11:27 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -157,7 +159,7 @@ CREATE TABLE [dbo].[Sentences](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Sources]    Script Date: 2/22/2016 12:06:28 PM ******/
+/****** Object:  Table [dbo].[Sources]    Script Date: 2/24/2016 10:11:27 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -214,7 +216,7 @@ REFERENCES [dbo].[Documents] ([SourceId], [Id])
 GO
 ALTER TABLE [dbo].[Sentences] CHECK CONSTRAINT [FK_Sentences_Documents]
 GO
-/****** Object:  StoredProcedure [dbo].[FilterExistingDocuments]    Script Date: 2/22/2016 12:06:28 PM ******/
+/****** Object:  StoredProcedure [dbo].[FilterExistingDocuments]    Script Date: 2/24/2016 10:11:27 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -262,7 +264,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[GetEntitiesGenericNames]    Script Date: 2/22/2016 12:06:28 PM ******/
+/****** Object:  StoredProcedure [dbo].[GetEntitiesGenericNames]    Script Date: 2/24/2016 10:11:27 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -368,7 +370,7 @@ END
 */
 
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateDocumentStatus]    Script Date: 2/22/2016 12:06:28 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpdateDocumentStatus]    Script Date: 2/24/2016 10:11:27 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -393,7 +395,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[UpsertDocument]    Script Date: 2/22/2016 12:06:28 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpsertDocument]    Script Date: 2/24/2016 10:11:27 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -428,7 +430,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[UpsertEntities]    Script Date: 2/22/2016 12:06:28 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpsertEntities]    Script Date: 2/24/2016 10:11:27 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -464,7 +466,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[UpsertRelations]    Script Date: 2/22/2016 12:06:28 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpsertRelations]    Script Date: 2/24/2016 10:11:27 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -520,7 +522,7 @@ BEGIN
 
 	-- insert updated relations
 	INSERT INTO Relations 
-	SELECT @SourceId, @DocId, @SentenceIndex, r.ModelVersion, r.Entity1TypeId, r.Entity1Id, r.Entity2TypeId, r.Entity2Id, r.Relation, r.Score
+	SELECT @SourceId, @DocId, @SentenceIndex, r.ScoringServiceId, r.ModelVersion, r.Entity1TypeId, r.Entity1Id, r.Entity2TypeId, r.Entity2Id, r.Relation, r.Score
 	FROM @relations r
 	
 
@@ -552,6 +554,7 @@ END
 
 
 GO
+
 
 INSERT INTO DocumentStatus (Id,Name) VALUES (1, 'Processing')
 INSERT INTO DocumentStatus (Id,Name) VALUES (2, 'Scoring')
