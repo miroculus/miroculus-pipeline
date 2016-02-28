@@ -23,5 +23,5 @@
     "type": "git",
     "url": "git://github.com/CatalystCode/miroculus-pipeline"
   },
-  "license": "Apache-2.0"
+  "license": "MIT"
 }
