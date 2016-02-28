@@ -1,0 +1,345 @@
+﻿{
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "DB_SERVER": {
+      "type": "string",
+      "minLength": 1
+    },
+    "DB_NAME": {
+      "type": "string",
+      "minLength": 1
+    },
+    "DB_PASSWORD": {
+      "type": "securestring",
+      "minLength": 1
+    },
+    "DB_USER": {
+      "type": "string",
+      "minLength": 1
+    },
+    "STORAGE_ACCOUNT": {
+      "type": "string",
+      "minLength": 1
+    },
+    "STORAGE_KEY": {
+      "type": "securestring",
+      "minLength": 1
+    },
+    "QUEUE_SCORING": {
+      "type": "string",
+      "minLength": 1
+    },
+    "QUEUE_NEW_IDS": {
+      "type": "string",
+      "minLength": 1
+    },
+    "QUEUE_TRIGGER_QUERY": {
+      "type": "string",
+      "minLength": 1
+    },
+    "LOG_LEVEL": {
+      "type": "string",
+      "minLength": 1
+    },
+    "LOG_STORAGE_ACCOUNT": {
+      "type": "string",
+      "minLength": 1
+    },
+    "LOG_STORAGE_KEY": {
+      "type": "securestring",
+      "minLength": 1
+    },
+    "SERVICE_DOC_URL": {
+      "type": "string",
+      "minLength": 1
+    },
+    "SK_SCORING_URL": {
+      "type": "string",
+      "minLength": 1
+    },
+    "TLC_SCORING_URL": {
+      "type": "string",
+      "minLength": 1
+    },
+
+    "queryIDSiteName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the web app that you wish to create."
+      }
+    },
+    "docParserSiteName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the web app that you wish to create."
+      }
+    },
+    "scoringSiteName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the web app that you wish to create."
+      }
+    },
+    "hostingPlanName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the App Service plan to use for hosting the web app."
+      }
+    },
+    "siteLocation": {
+      "type": "string",
+      "metadata": {
+        "description": "The location to use for creating the web app and hosting plan. It must be one of the Azure locations that support web apps."
+      }
+    },
+    "sku": {
+      "type": "string",
+      "allowedValues": [
+        "Free",
+        "Shared",
+        "Basic",
+        "Standard"
+      ],
+      "defaultValue": "Free",
+      "metadata": {
+        "description": "The pricing tier for the hosting plan."
+      }
+    },
+    "workerSize": {
+      "type": "string",
+      "allowedValues": [
+        "0",
+        "1",
+        "2"
+      ],
+      "defaultValue": "0",
+      "metadata": {
+        "description": "The instance size of the hosting plan (small, medium, or large)."
+      }
+    },
+    "repoURL": {
+      "type": "string",
+      "defaultValue": "https://github.com/morsh/azure-web-job-sample.git",
+      "metadata": {
+        "description": "The URL for the GitHub repository that contains the project to deploy."
+      }
+    },
+    "branch": {
+      "type": "string",
+      "defaultValue": "master",
+      "metadata": {
+        "description": "The branch of the GitHub repository to use."
+      }
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2015-04-01",
+      "name": "[parameters('hostingPlanName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "location": "[parameters('siteLocation')]",
+      "properties": {
+        "name": "[parameters('hostingPlanName')]",
+        "sku": "[parameters('sku')]",
+        "workerSize": "[parameters('workerSize')]",
+        "numberOfWorkers": 1
+      }
+    },
+    {
+      "apiVersion": "2015-04-01",
+      "name": "[parameters('queryIDSiteName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[parameters('siteLocation')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]"
+      ],
+      "properties": {
+        "serverFarmId": "[parameters('hostingPlanName')]"
+      },
+      "resources": [
+        {
+          "apiVersion": "2015-04-01",
+          "name": "web",
+          "type": "sourcecontrols",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/Sites', parameters('queryIDSiteName'))]"
+          ],
+          "properties": {
+            "RepoUrl": "[parameters('repoURL')]",
+            "branch": "[parameters('branch')]",
+            "IsManualIntegration": true
+          }
+        },
+        {
+          "apiVersion": "2015-04-01",
+          "name": "appsettings",
+          "type": "config",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', parameters('queryIDSiteName'))]"
+          ],
+          "properties": {
+            "WEBSITE_NODE_DEFAULT_VERSION": "4.2.4",
+            "PIPELINE_ROLE": "query-id",
+            "DB_SERVER": "[parameters('DB_SERVER')]",
+            "DB_NAME": "[parameters('DB_NAME')]",
+            "DB_PASSWORD": "[parameters('DB_PASSWORD')]",
+            "DB_USER": "[parameters('DB_USER')]",
+            "STORAGE_ACCOUNT": "[parameters('STORAGE_ACCOUNT')]",
+            "STORAGE_KEY": "[parameters('STORAGE_KEY')]",
+            "QUEUE_SCORING": "[parameters('QUEUE_SCORING')]",
+            "QUEUE_NEW_IDS": "[parameters('QUEUE_NEW_IDS')]",
+            "QUEUE_TRIGGER_QUERY": "[parameters('QUEUE_TRIGGER_QUERY')]",
+            "LOG_LEVEL": "[parameters('LOG_LEVEL')]",
+            "LOG_STORAGE_ACCOUNT": "[parameters('LOG_STORAGE_ACCOUNT')]",
+            "LOG_STORAGE_KEY": "[parameters('LOG_STORAGE_KEY')]",
+            "SERVICE_DOC_URL": "[parameters('SERVICE_DOC_URL')]",
+            "SK_SCORING_URL": "[parameters('SK_SCORING_URL')]",
+            "TLC_SCORING_URL": "[parameters('TLC_SCORING_URL')]"
+          }
+        },
+        {
+          "apiVersion": "2015-04-01",
+          "name": "web",
+          "type": "config",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', parameters('queryIDSiteName'))]",
+          ],
+          "properties": {
+            "alwaysOn": "true"
+          }
+        }
+      ]
+    },
+    {
+      "apiVersion": "2015-04-01",
+      "name": "[parameters('docParserSiteName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[parameters('siteLocation')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]"
+      ],
+      "properties": {
+        "serverFarmId": "[parameters('hostingPlanName')]"
+      },
+      "resources": [
+        {
+          "apiVersion": "2015-04-01",
+          "name": "web",
+          "type": "sourcecontrols",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/Sites', parameters('docParserSiteName'))]"
+          ],
+          "properties": {
+            "RepoUrl": "[parameters('repoURL')]",
+            "branch": "[parameters('branch')]",
+            "IsManualIntegration": true
+          }
+        },
+        {
+          "apiVersion": "2015-04-01",
+          "name": "appsettings",
+          "type": "config",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', parameters('docParserSiteName'))]"
+          ],
+          "properties": {
+            "WEBSITE_NODE_DEFAULT_VERSION": "4.2.4",
+            "PIPELINE_ROLE": "paper-parser",
+            "DB_SERVER": "[parameters('DB_SERVER')]",
+            "DB_NAME": "[parameters('DB_NAME')]",
+            "DB_PASSWORD": "[parameters('DB_PASSWORD')]",
+            "DB_USER": "[parameters('DB_USER')]",
+            "STORAGE_ACCOUNT": "[parameters('STORAGE_ACCOUNT')]",
+            "STORAGE_KEY": "[parameters('STORAGE_KEY')]",
+            "QUEUE_SCORING": "[parameters('QUEUE_SCORING')]",
+            "QUEUE_NEW_IDS": "[parameters('QUEUE_NEW_IDS')]",
+            "QUEUE_TRIGGER_QUERY": "[parameters('QUEUE_TRIGGER_QUERY')]",
+            "LOG_LEVEL": "[parameters('LOG_LEVEL')]",
+            "LOG_STORAGE_ACCOUNT": "[parameters('LOG_STORAGE_ACCOUNT')]",
+            "LOG_STORAGE_KEY": "[parameters('LOG_STORAGE_KEY')]",
+            "SERVICE_DOC_URL": "[parameters('SERVICE_DOC_URL')]",
+            "SK_SCORING_URL": "[parameters('SK_SCORING_URL')]",
+            "TLC_SCORING_URL": "[parameters('TLC_SCORING_URL')]"
+          }
+        },
+        {
+          "apiVersion": "2015-04-01",
+          "name": "web",
+          "type": "config",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', parameters('docParserSiteName'))]"
+          ],
+          "properties": {
+            "alwaysOn": "true"
+          }
+        }
+      ]
+    },
+    {
+      "apiVersion": "2015-04-01",
+      "name": "[parameters('scoringSiteName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[parameters('siteLocation')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]"
+      ],
+      "properties": {
+        "serverFarmId": "[parameters('hostingPlanName')]"
+      },
+      "resources": [
+        {
+          "apiVersion": "2015-04-01",
+          "name": "web",
+          "type": "sourcecontrols",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/Sites', parameters('scoringSiteName'))]"
+          ],
+          "properties": {
+            "RepoUrl": "[parameters('repoURL')]",
+            "branch": "[parameters('branch')]",
+            "IsManualIntegration": true
+          }
+        },
+        {
+          "apiVersion": "2015-04-01",
+          "name": "appsettings",
+          "type": "config",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', parameters('scoringSiteName'))]"
+          ],
+          "properties": {
+            "WEBSITE_NODE_DEFAULT_VERSION": "4.2.4",
+            "PIPELINE_ROLE": "scoring",
+            "DB_SERVER": "[parameters('DB_SERVER')]",
+            "DB_NAME": "[parameters('DB_NAME')]",
+            "DB_PASSWORD": "[parameters('DB_PASSWORD')]",
+            "DB_USER": "[parameters('DB_USER')]",
+            "STORAGE_ACCOUNT": "[parameters('STORAGE_ACCOUNT')]",
+            "STORAGE_KEY": "[parameters('STORAGE_KEY')]",
+            "QUEUE_SCORING": "[parameters('QUEUE_SCORING')]",
+            "QUEUE_NEW_IDS": "[parameters('QUEUE_NEW_IDS')]",
+            "QUEUE_TRIGGER_QUERY": "[parameters('QUEUE_TRIGGER_QUERY')]",
+            "LOG_LEVEL": "[parameters('LOG_LEVEL')]",
+            "LOG_STORAGE_ACCOUNT": "[parameters('LOG_STORAGE_ACCOUNT')]",
+            "LOG_STORAGE_KEY": "[parameters('LOG_STORAGE_KEY')]",
+            "SERVICE_DOC_URL": "[parameters('SERVICE_DOC_URL')]",
+            "SK_SCORING_URL": "[parameters('SK_SCORING_URL')]",
+            "TLC_SCORING_URL": "[parameters('TLC_SCORING_URL')]"
+          }
+        },
+        {
+          "apiVersion": "2015-04-01",
+          "name": "web",
+          "type": "config",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', parameters('scoringSiteName'))]"
+          ],
+          "properties": {
+            "alwaysOn": "true"
+          }
+        }
+      ]
+    }
+  ]
+}
