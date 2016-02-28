@@ -278,10 +278,9 @@ ClientBin/
 *.dbproj.schemaview
 *.pfx
 *.publishsettings
-node_modules/
-!NodeWorkersEditor/node_modules/
-NodeWorkersEditor/node_modules/*
-!NodeWorkersEditor/node_modules/x-*
+node_modules/*
+!node_modules/x-*
+!node_modules/azure-logging
 orleans.codegen.cs
 
 # RIA/Silverlight projects
