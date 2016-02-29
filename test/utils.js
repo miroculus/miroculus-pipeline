@@ -64,7 +64,7 @@ function setEnvironmentVariables(setenvPath, cb) {
   });
   
   reader.on('close', function (line) {
-    cb();
+    return cb();
   });
 }
 
@@ -112,7 +112,7 @@ function getTableRowCount(tableName, where, cb) {
     
     request.on('row', function (columns) {
       var result = 0;
-      if (columns && columns.length > 0 && columns[0].value) {
+      if (columns && columns.length && columns[0].value) {
         result = parseInt(columns[0].value);
         if (isNaN(result)) result = 0;
       }
