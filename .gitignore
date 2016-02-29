@@ -35,6 +35,8 @@ public/bower_components
 # secrets
 *.private.json
 
+# Deployment Parameters
+deployment/Templates/parameters.*
 
 ## Webstorm
 

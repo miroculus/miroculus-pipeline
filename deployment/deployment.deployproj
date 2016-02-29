@@ -33,8 +33,9 @@
       <Visible>False</Visible>
     </None>
     <Content Include="Scripts\Deploy-AzureResourceGroup.ps1" />
-    <Content Include="Templates\WebSite.json" />
-    <Content Include="Templates\WebSite.parameters.json" />
+    <Content Include="Templates\template.json" />
+    <Content Include="Templates\parameters.prod.json" />
+    <Content Include="Templates\parameters.test.json" />
     <None Include="Templates\metadata.json" />
   </ItemGroup>
   <ItemGroup>
