@@ -34,6 +34,23 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="app.js" />
+    <Compile Include="node_modules\azure-logging\lib\format.js" />
+    <Compile Include="node_modules\azure-logging\lib\formatters\html.js" />
+    <Compile Include="node_modules\azure-logging\lib\formatters\text.js" />
+    <Compile Include="node_modules\azure-logging\lib\interceptor.js" />
+    <Compile Include="node_modules\azure-logging\lib\levels.js" />
+    <Compile Include="node_modules\azure-logging\lib\params.js" />
+    <Compile Include="node_modules\azure-logging\lib\reader.js" />
+    <Compile Include="node_modules\azure-logging\lib\transporter.js" />
+    <Compile Include="node_modules\azure-logging\lib\transports\azuretable.js" />
+    <Compile Include="node_modules\azure-logging\lib\transports\console.js" />
+    <Compile Include="node_modules\azure-logging\lib\transports\mongo.js" />
+    <Compile Include="node_modules\azure-logging\lib\writer.js" />
+    <Compile Include="node_modules\azure-logging\main.js" />
+    <Compile Include="node_modules\azure-logging\test\interceptor.test.js" />
+    <Compile Include="node_modules\azure-logging\test\query.test.js" />
+    <Compile Include="node_modules\azure-logging\test\reader.test.js" />
+    <Compile Include="node_modules\azure-logging\test\writer.test.js" />
     <Compile Include="node_modules\x-blob\lib\index.js" />
     <Compile Include="node_modules\x-cmd-insertSentences\lib\index.js" />
     <Compile Include="node_modules\x-cmd-insertSentences\test.js" />
@@ -234,6 +251,9 @@
     <Compile Include="test\worker-runners\query-worker.js" />
     <Compile Include="test\worker-runners\scorer-worker.js" />
     <Compile Include="test\worker-runners\parser-worker.js" />
+    <Content Include="node_modules\azure-logging\mongologssetup.txt" />
+    <Content Include="node_modules\azure-logging\package.json" />
+    <Content Include="node_modules\azure-logging\README.md" />
     <Content Include="node_modules\x-blob\package.json" />
     <Content Include="node_modules\x-cmd-insertSentences\package.json" />
     <Content Include="node_modules\x-config\package.json" />
@@ -341,6 +361,11 @@
     <Content Include="test\node_modules\azure-logging\README.md" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="node_modules\azure-logging\" />
+    <Folder Include="node_modules\azure-logging\lib\" />
+    <Folder Include="node_modules\azure-logging\lib\formatters\" />
+    <Folder Include="node_modules\azure-logging\lib\transports\" />
+    <Folder Include="node_modules\azure-logging\test\" />
     <Folder Include="test\" />
     <Folder Include="node_modules\" />
     <Folder Include="node_modules\x-blob\" />

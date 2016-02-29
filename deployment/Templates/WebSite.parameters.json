@@ -20,7 +20,16 @@
     "hostingPlanName": { "value": "BasicHostingPlan" },
     "sku": { "value": "Basic" },
     "siteLocation": { "value": "West US" },
-    "repoURL": { "value": "https://github.com/morsh/azure-web-job-sample.git" },
-    "branch": { "value": "master" }
+    "repoURL": { "value": "https://github.com/CatalystCode/miroculus-pipeline.git" },
+    "branch": { "value": "moving-workers-to-webjobs" },
+      "DB_PASSWORD": {
+          "value": "Pa$$word1"
+      },
+      "STORAGE_KEY": {
+          "value": "PTaww2dICJXw4aCu1SX+0YMdpDL1cFVHHt6o37I9vEFdgQivu5eVxWEg2k48DWom9u8Pd+xKf4aj8d4eE4knGw=="
+      },
+      "LOG_STORAGE_KEY": {
+          "value": "3nbbTJIhSvEHGFKkMs8hLEiTv3TrGTRsN7HVj0YT6xWebh6SncluiO4RzQFCBd6NXWpVbLJvnMU57Ap8Vo7BNA=="
+      }
   }
 }
