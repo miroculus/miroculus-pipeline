@@ -179,7 +179,7 @@
             "[resourceId('Microsoft.Web/sites', parameters('queryIDSiteName'))]"
           ],
           "properties": {
-            "WEBSITE_NODE_DEFAULT_VERSION": "4.2.3",
+            "WEBSITE_NODE_DEFAULT_VERSION": "4.2.4",
             "PIPELINE_ROLE": "query-id",
             "DB_SERVER": "[parameters('DB_SERVER')]",
             "DB_NAME": "[parameters('DB_NAME')]",
@@ -233,7 +233,7 @@
             "[resourceId('Microsoft.Web/sites', parameters('docParserSiteName'))]"
           ],
           "properties": {
-            "WEBSITE_NODE_DEFAULT_VERSION": "4.2.3",
+            "WEBSITE_NODE_DEFAULT_VERSION": "4.2.4",
             "PIPELINE_ROLE": "paper-parser",
             "DB_SERVER": "[parameters('DB_SERVER')]",
             "DB_NAME": "[parameters('DB_NAME')]",
@@ -287,7 +287,7 @@
             "[resourceId('Microsoft.Web/sites', parameters('scoringSiteName'))]"
           ],
           "properties": {
-            "WEBSITE_NODE_DEFAULT_VERSION": "4.2.3",
+            "WEBSITE_NODE_DEFAULT_VERSION": "4.2.4",
             "PIPELINE_ROLE": "scoring",
             "DB_SERVER": "[parameters('DB_SERVER')]",
             "DB_NAME": "[parameters('DB_NAME')]",
