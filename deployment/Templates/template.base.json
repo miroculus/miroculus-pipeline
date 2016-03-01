@@ -160,19 +160,6 @@
       "resources": [
         {
           "apiVersion": "2015-04-01",
-          "name": "web",
-          "type": "sourcecontrols",
-          "dependsOn": [
-            "[resourceId('Microsoft.Web/Sites', parameters('queryIDSiteName'))]"
-          ],
-          "properties": {
-            "RepoUrl": "[parameters('repoURL')]",
-            "branch": "[parameters('branch')]",
-            "IsManualIntegration": true
-          }
-        },
-        {
-          "apiVersion": "2015-04-01",
           "name": "appsettings",
           "type": "config",
           "dependsOn": [
@@ -214,19 +201,6 @@
       "resources": [
         {
           "apiVersion": "2015-04-01",
-          "name": "web",
-          "type": "sourcecontrols",
-          "dependsOn": [
-            "[resourceId('Microsoft.Web/Sites', parameters('docParserSiteName'))]"
-          ],
-          "properties": {
-            "RepoUrl": "[parameters('repoURL')]",
-            "branch": "[parameters('branch')]",
-            "IsManualIntegration": true
-          }
-        },
-        {
-          "apiVersion": "2015-04-01",
           "name": "appsettings",
           "type": "config",
           "dependsOn": [
@@ -266,19 +240,6 @@
         "serverFarmId": "[parameters('hostingPlanName')]"
       },
       "resources": [
-        {
-          "apiVersion": "2015-04-01",
-          "name": "web",
-          "type": "sourcecontrols",
-          "dependsOn": [
-            "[resourceId('Microsoft.Web/Sites', parameters('scoringSiteName'))]"
-          ],
-          "properties": {
-            "RepoUrl": "[parameters('repoURL')]",
-            "branch": "[parameters('branch')]",
-            "IsManualIntegration": true
-          }
-        },
         {
           "apiVersion": "2015-04-01",
           "name": "appsettings",
