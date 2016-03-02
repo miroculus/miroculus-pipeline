@@ -199,6 +199,7 @@ describe('Whole Pipeline', function () {
             return utils.countLogMessages({
               message: 'Queued document ' + DOCUMENT_ID_TO_MONITOR,
               app: 'doc-query',
+              level: 'log',
               since: startTime
             }, function (error, count) {
               if (error) return cb(error);
