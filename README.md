@@ -1,6 +1,11 @@
 # miroculus-pipeline
 Miroculus pipeline components
 
+## Deployment
+Move to ARM mode by running:
+```
+azure config mode arm
+```
 # Trigger New Document ID Check
 * Push the following message to the trigger queue to initiate a new check
 ```
