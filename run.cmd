@@ -1,15 +1,9 @@
+SET setenvpath=%1
 
-cd ScoringWorker
-start run.cmd
-cd ..
+IF [%setenvpath%]==[] SET setenvpath=setenv.cmd
+echo set env path: %setenvpath%
+call npm install
 
-cd QueryIDs
-start run.cmd
-cd ..
-
-cd DocParser
-start run.cmd
-cd ..
-
-
-
+start "" run.query.cmd %setenvpath% "false"
+start "" run.parser.cmd %setenvpath% "false"
+start "" run.scoring.cmd %setenvpath% "false"
