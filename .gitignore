@@ -2,6 +2,7 @@
 ##setenv private files
 setenv.cmd
 
+.vscode
 
 ## Node.js
 # Logs
