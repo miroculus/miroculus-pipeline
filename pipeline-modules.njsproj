@@ -44,6 +44,7 @@
     <Compile Include="node_modules\azure-logging\lib\transporter.js" />
     <Compile Include="node_modules\azure-logging\lib\transports\azuretable.js" />
     <Compile Include="node_modules\azure-logging\lib\transports\console.js" />
+    <Compile Include="node_modules\azure-logging\lib\transports\constants.js" />
     <Compile Include="node_modules\azure-logging\lib\transports\mongo.js" />
     <Compile Include="node_modules\azure-logging\lib\writer.js" />
     <Compile Include="node_modules\azure-logging\main.js" />

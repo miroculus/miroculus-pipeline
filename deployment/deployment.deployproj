@@ -33,10 +33,12 @@
       <Visible>False</Visible>
     </None>
     <Content Include="Scripts\Deploy-AzureResourceGroup.ps1" />
-    <Content Include="Templates\template.json" />
     <Content Include="Templates\parameters.prod.json" />
     <Content Include="Templates\parameters.test.json" />
+    <None Include="Templates\deploy.cmd" />
     <None Include="Templates\metadata.json" />
+    <None Include="Templates\template.base.json" />
+    <None Include="Templates\template.sourcecontrol.json" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Tools\AzCopy.exe" />
