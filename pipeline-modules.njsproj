@@ -33,6 +33,7 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ensure-sql.js" />
     <Compile Include="app.js" />
     <Compile Include="node_modules\azure-logging\lib\format.js" />
     <Compile Include="node_modules\azure-logging\lib\formatters\html.js" />
@@ -160,11 +161,13 @@
       <SubType>Code</SubType>
       <TestFramework>Mocha</TestFramework>
     </Compile>
+    <Compile Include="Sql\sql.sql" />
     <Compile Include="test\utils.js" />
     <Compile Include="test\worker-runners\query-worker.js" />
     <Compile Include="test\worker-runners\scorer-worker.js" />
     <Compile Include="test\worker-runners\parser-worker.js" />
     <Content Include=".gitignore" />
+    <Content Include="deploy.cmd" />
     <Content Include="node_modules\azure-logging\bin\reader" />
     <Content Include="node_modules\azure-logging\mongologssetup.txt" />
     <Content Include="node_modules\azure-logging\package.json" />
@@ -245,6 +248,7 @@
     <Folder Include="node_modules\x-docServiceProxy\" />
     <Folder Include="node_modules\x-docServiceProxy\lib\" />
     <Folder Include="node_modules\x-paper-parser\sample\" />
+    <Folder Include="Sql\" />
     <Folder Include="test\" />
     <Folder Include="node_modules\" />
     <Folder Include="node_modules\x-blob\" />
