@@ -78,9 +78,9 @@ describe('Whole Pipeline', function () {
 
       // Empty database schema from data
       function (cb) {
-        var emptyScript = path.join(__dirname, '..', 'Sql', 'emptytables.sql');
+        var emptyScript = path.join(__dirname, '..', 'Sql', 'testsetup.sql');
         if (!fs.existsSync(emptyScript)) {
-          return cb(new Error('Empty DB script not found in', emptyScript));
+          return cb(new Error('Test setup DB script not found in', emptyScript));
         }
         
         return utils.runDBScript(emptyScript, cb);
@@ -151,8 +151,8 @@ describe('Whole Pipeline', function () {
         var message = {
           "requestType": "trigger",
           "data": {
-            "fromDate": DATE_TO_CHECK,
-            "toDate": DATE_TO_CHECK
+            "from": DATE_TO_CHECK,
+            "to": DATE_TO_CHECK
           }
         };
         return queueService.createMessage(config.queues.trigger_query, JSON.stringify(message), function (error) {
@@ -216,7 +216,7 @@ describe('Whole Pipeline', function () {
           });
         },
 
-                // Periodic check that document was parsed for sentences
+        // Periodic check that document was parsed for sentences
         function (cb) {
           
           return utils.waitForLogMessage({
@@ -246,11 +246,11 @@ describe('Whole Pipeline', function () {
         function (cb) {
           
           // TODO:
-          // Update 40 sentences to X sentences from the following document were scored
+          // Update 37 sentences to X sentences from the following document were scored
           return utils.waitForTableRowCount({
             tableName: 'Sentences', 
             where: 'DocId=' + DOCUMENT_ID_TO_MONITOR,
-            expectedCount: 40
+            expectedCount: 3
           }, function (error) {
             if (error) return cb(error);
             
