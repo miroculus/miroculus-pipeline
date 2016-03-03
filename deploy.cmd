@@ -1,4 +1,4 @@
-﻿@if "%SCM_TRACE_LEVEL%" NEQ "4" @echo off
+@if "%SCM_TRACE_LEVEL%" NEQ "4" @echo off
 
 :: ----------------------
 :: KUDU Deployment Script
@@ -105,7 +105,28 @@ IF EXIST "%DEPLOYMENT_TARGET%\package.json" (
   popd
 )
 
-:: 4. Ensure sql server creation
+:: 4. Install bower packages
+IF EXIST "%DEPLOYMENT_TARGET%\public\bower.json" (
+ pushd "%DEPLOYMENT_TARGET%\public"
+ call ..\node_modules\.bin\bower install --force-latest
+ IF !ERRORLEVEL! NEQ 0 goto error
+ popd
+ )
+
+:: 5. Remove irrelevant folders
+:: Remove webjobs folder if this is a website
+:: Remove website folder if this is a webjob
+IF "%DEPLOYMENT_ROLE%" NEQ "website" (
+  echo deleting server.js
+  call del /q "%DEPLOYMENT_TARGET%\server.js"
+) ELSE (
+  echo deleting web jobs folder
+  call rmdir /s /q "%DEPLOYMENT_TARGET%\app_data"
+)
+
+IF !ERRORLEVEL! NEQ 0 goto error
+
+:: 6. Ensure sql server creation
 echo calling command: node ensure-sql.js
 call node ensure-sql.js
 
