@@ -15,7 +15,8 @@
     <ProjectGuid>e5424372-3317-4e69-8afb-128422cc1871</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>app.js</StartupFile>
+    <StartupFile>
+    </StartupFile>
     <StartWebBrowser>False</StartWebBrowser>
     <SearchPath>
     </SearchPath>
@@ -34,7 +35,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ensure-sql.js" />
-    <Compile Include="app.js" />
     <Compile Include="node_modules\azure-logging\lib\format.js" />
     <Compile Include="node_modules\azure-logging\lib\formatters\html.js" />
     <Compile Include="node_modules\azure-logging\lib\formatters\text.js" />
@@ -161,7 +161,6 @@
       <SubType>Code</SubType>
       <TestFramework>Mocha</TestFramework>
     </Compile>
-    <Compile Include="Sql\sql.sql" />
     <Compile Include="test\utils.js" />
     <Compile Include="test\worker-runners\query-worker.js" />
     <Compile Include="test\worker-runners\scorer-worker.js" />
@@ -188,6 +187,10 @@
     <Content Include="run.parser.cmd" />
     <Content Include="run.query.cmd" />
     <Content Include="run.scoring.cmd" />
+    <Content Include="Sql\dropschema.sql" />
+    <Content Include="Sql\emptytables.sql" />
+    <Content Include="Sql\README.md" />
+    <Content Include="Sql\schema.sql" />
     <Content Include="test\mocha.json" />
     <Content Include="package.json" />
     <Content Include="README.md" />

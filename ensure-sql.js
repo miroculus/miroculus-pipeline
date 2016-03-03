@@ -10,16 +10,16 @@ child_process.exec(cmd, null, function (error, stdout, stderr) {
   
   stdout = stdout || '';
   if (stdout.indexOf('rows affected)') < 0) return console.error('there was a problem running the query');
-  if (stdout.indexOf('(0 rows affected)') < 0) return console.info('db already exists');
+  if (stdout.indexOf('(0 rows affected)') < 0) return console.info('db already deployed');
   
-  console.info('db not found, creating a new DB...');
+  console.info('schema not found, creating a new schema...');
   
   var createdb_command = '';
-  createdb_command += 'sqlcmd -U %DB_USER% -S %DB_SERVER% -P %DB_PASSWORD% -d %DB_NAME% -i ' + path.join('Sql', 'sql.sql') + ' > createdb.log';
+  createdb_command += 'sqlcmd -U %DB_USER% -S %DB_SERVER% -P %DB_PASSWORD% -d %DB_NAME% -i ' + path.join('Sql', 'schema.sql') + ' > createdb.log';
   child_process.exec(createdb_command, null, function (error, stdout, stderr) {
     
-    if (error) return console.error('Error creating new DB', error);
+    if (error) return console.error('Error creating new DB schema', error);
 
-    return console.info('DB created successfully');
+    return console.info('DB schema deployed successfully');
   });
 });

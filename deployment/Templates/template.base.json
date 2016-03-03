@@ -153,12 +153,12 @@
         "description": "The branch of the GitHub repository to use."
       }
     },
-    "miroculus-databaseCollation": {
+    "databaseCollation": {
       "type": "string",
       "minLength": 1,
       "defaultValue": "SQL_Latin1_General_CP1_CI_AS"
     },
-    "miroculus-databaseEdition": {
+    "databaseEdition": {
       "type": "string",
       "defaultValue": "Basic",
       "allowedValues": [
@@ -167,7 +167,7 @@
         "Premium"
       ]
     },
-    "miroculus-databaseRequestedServiceObjectiveName": {
+    "databaseRequestedServiceObjectiveName": {
       "type": "string",
       "defaultValue": "Basic",
       "allowedValues": [
@@ -236,10 +236,10 @@
             "displayName": "[parameters('DB_NAME')]"
           },
           "properties": {
-            "collation": "[parameters('miroculus-databaseCollation')]",
-            "edition": "[parameters('miroculus-databaseEdition')]",
+            "collation": "[parameters('databaseCollation')]",
+            "edition": "[parameters('databaseEdition')]",
             "maxSizeBytes": "1073741824",
-            "requestedServiceObjectiveName": "[parameters('miroculus-databaseRequestedServiceObjectiveName')]"
+            "requestedServiceObjectiveName": "[parameters('databaseRequestedServiceObjectiveName')]"
           }
         }
       ]
@@ -387,7 +387,18 @@
             "LOG_STORAGE_KEY": "[parameters('LOG_STORAGE_KEY')]",
             "SERVICE_DOC_URL": "[parameters('SERVICE_DOC_URL')]",
             "SK_SCORING_URL": "[parameters('SK_SCORING_URL')]",
-            "TLC_SCORING_URL": "[parameters('TLC_SCORING_URL')]"            
+            "TLC_SCORING_URL": "[parameters('TLC_SCORING_URL')]"
+          }
+        },
+        {
+          "apiVersion": "2015-04-01",
+          "name": "web",
+          "type": "config",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', parameters('scoringSiteName'))]"
+          ],
+          "properties": {
+            "alwaysOn": "true"
           }
         }
       ]
@@ -398,7 +409,8 @@
       "location": "[parameters('siteLocation')]",
       "apiVersion": "2015-08-01",
       "dependsOn": [
-        "[concat('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]"
+        "[concat('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
+        "[resourceId('Microsoft.Sql/servers/', parameters('DB_SERVER'))]"
       ],
       "tags": {
         "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]": "Resource",
@@ -419,7 +431,7 @@
           "properties": {
             "WEBSITE_NODE_DEFAULT_VERSION": "4.2.3",
             "PIPELINE_ROLE": "graph",
-            "DB_SERVER": "[parameters('DB_SERVER')]",
+            "DB_SERVER": "[concat(parameters('DB_SERVER'), '.database.windows.net')]",
             "DB_NAME": "[parameters('DB_NAME')]",
             "DB_PASSWORD": "[parameters('DB_PASSWORD')]",
             "DB_USER": "[parameters('DB_USER')]",
@@ -445,7 +457,8 @@
       "location": "[parameters('siteLocation')]",
       "apiVersion": "2015-08-01",
       "dependsOn": [
-        "[concat('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]"
+        "[concat('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
+        "[resourceId('Microsoft.Sql/servers/', parameters('DB_SERVER'))]"
       ],
       "tags": {
         "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]": "Resource",
@@ -466,7 +479,7 @@
           "properties": {
             "WEBSITE_NODE_DEFAULT_VERSION": "4.2.3",
             "PIPELINE_ROLE": "console",
-            "DB_SERVER": "[parameters('DB_SERVER')]",
+            "DB_SERVER": "[concat(parameters('DB_SERVER'), '.database.windows.net')]",
             "DB_NAME": "[parameters('DB_NAME')]",
             "DB_PASSWORD": "[parameters('DB_PASSWORD')]",
             "DB_USER": "[parameters('DB_USER')]",
@@ -485,17 +498,6 @@
             "GOOGLE_CLIENT_SECRET": "[parameters('GOOGLE_CLIENT_SECRET')]",
             "GOOGLE_CALLBACK_URL": "[concat('https://', parameters('consoleWebsiteName'), '.azurewebsites.net/.auth/login/google/callback')]",
             "DEPLOYMENT_ROLE": "website"
-          }
-        },
-        {
-          "apiVersion": "2015-04-01",
-          "name": "web",
-          "type": "config",
-          "dependsOn": [
-            "[resourceId('Microsoft.Web/sites', parameters('scoringSiteName'))]"
-          ],
-          "properties": {
-            "alwaysOn": "true"
           }
         }
       ]
