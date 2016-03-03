@@ -285,8 +285,7 @@
             "LOG_STORAGE_KEY": "[parameters('LOG_STORAGE_KEY')]",
             "SERVICE_DOC_URL": "[parameters('SERVICE_DOC_URL')]",
             "SK_SCORING_URL": "[parameters('SK_SCORING_URL')]",
-            "TLC_SCORING_URL": "[parameters('TLC_SCORING_URL')]",
-            "DEPLOYMENT_ROLE": "website"
+            "TLC_SCORING_URL": "[parameters('TLC_SCORING_URL')]"            
           }
         }
       ]
@@ -382,7 +381,8 @@
             "TLC_SCORING_URL": "[parameters('TLC_SCORING_URL')]",
             "GOOGLE_CLIENT_ID": "[parameters('GOOGLE_CLIENT_ID')]",
             "GOOGLE_CLIENT_SECRET": "[parameters('GOOGLE_CLIENT_SECRET')]",
-            "GOOGLE_CALLBACK_URL": "[concat('https://', parameters('consoleWebsiteName'), '.azurewebsites.net/.auth/login/google/callback')]"
+            "GOOGLE_CALLBACK_URL": "[concat('https://', parameters('consoleWebsiteName'), '.azurewebsites.net/.auth/login/google/callback')]",
+            "DEPLOYMENT_ROLE": "website"
           }
         }
       ]
