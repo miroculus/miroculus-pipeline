@@ -242,6 +242,7 @@
     <Folder Include="node_modules\azure-logging\lib\transports\" />
     <Folder Include="node_modules\azure-logging\bin\" />
     <Folder Include="node_modules\azure-logging\test\" />
+    <Folder Include="node_modules\x-graph\" />
     <Folder Include="node_modules\x-docServiceProxy\" />
     <Folder Include="node_modules\x-docServiceProxy\lib\" />
     <Folder Include="node_modules\x-paper-parser\sample\" />
