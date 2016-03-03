@@ -183,10 +183,10 @@
       "apiVersion": "2014-04-01-preview",
       "dependsOn": [ ],
       "tags": {
-        "displayName": "sql-database-server"
+        "displayName": "[parameters('DB_SERVER')]"
       },
       "properties": {
-        "administratorLogin": "[parameters('DB_NAME')]",
+        "administratorLogin": "[parameters('DB_USER')]",
         "administratorLoginPassword": "[parameters('DB_PASSWORD')]"
       },
       "resources": [
@@ -200,7 +200,7 @@
           ],
           "properties": {
             "startIpAddress": "0.0.0.0",
-            "endIpAddress": "0.0.0.0"
+            "endIpAddress": "255.255.255.255"
           }
         },
         {
@@ -246,7 +246,7 @@
           "properties": {
             "WEBSITE_NODE_DEFAULT_VERSION": "4.2.3",
             "PIPELINE_ROLE": "query-id",
-            "DB_SERVER": "[concat(parameters('DB_SERVER'), 'database.windows.net')]",
+            "DB_SERVER": "[concat(parameters('DB_SERVER'), '.database.windows.net')]",
             "DB_NAME": "[parameters('DB_NAME')]",
             "DB_PASSWORD": "[parameters('DB_PASSWORD')]",
             "DB_USER": "[parameters('DB_USER')]",
@@ -299,7 +299,7 @@
           "properties": {
             "WEBSITE_NODE_DEFAULT_VERSION": "4.2.3",
             "PIPELINE_ROLE": "paper-parser",
-            "DB_SERVER": "[concat(parameters('DB_SERVER'), 'database.windows.net')]",
+            "DB_SERVER": "[concat(parameters('DB_SERVER'), '.database.windows.net')]",
             "DB_NAME": "[parameters('DB_NAME')]",
             "DB_PASSWORD": "[parameters('DB_PASSWORD')]",
             "DB_USER": "[parameters('DB_USER')]",
@@ -352,7 +352,7 @@
           "properties": {
             "WEBSITE_NODE_DEFAULT_VERSION": "4.2.3",
             "PIPELINE_ROLE": "scoring",
-            "DB_SERVER": "[concat(parameters('DB_SERVER'), 'database.windows.net')]",
+            "DB_SERVER": "[concat(parameters('DB_SERVER'), '.database.windows.net')]",
             "DB_NAME": "[parameters('DB_NAME')]",
             "DB_PASSWORD": "[parameters('DB_PASSWORD')]",
             "DB_USER": "[parameters('DB_USER')]",
