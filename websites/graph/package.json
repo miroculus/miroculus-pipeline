@@ -1,5 +1,5 @@
 {
-  "name": "x-graph",
+  "name": "graph",
   "version": "1.0.0",
   "description": "graph api",
   "main": "index.js",
