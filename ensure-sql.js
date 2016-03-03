@@ -2,6 +2,7 @@
 var path = require('path');
 
 var cmd = 'sqlcmd -U %DB_USER% -S %DB_SERVER%.database.windows.net -P %DB_PASSWORD% -d master -Q "SELECT name FROM sys.databases WHERE name=\'%DB_NAME%1\'" -h -1';
+console.info(cmd);
 child_process.exec(cmd, null, function (error, stdout, stderr) {
   if (error) return console.error('Error querying for DBs', error);
   
