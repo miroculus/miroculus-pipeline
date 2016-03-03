@@ -26,6 +26,7 @@
     "wordwrap": "^1.0.0"
   },
   "scripts": {
+    "postinstall": "node ensure-sql",
     "test": "./node_modules/.bin/mocha -R xunit test/ > test-reports.xml"
   },
   "repository": {
