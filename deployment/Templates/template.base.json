@@ -103,15 +103,13 @@
     "graphWebsiteName": {
       "type": "string",
       "metadata": {
-        "description": "The name for the Graph API website.",
-        "defaultValue": "graph"
+        "description": "The name for the Graph API website."
       }
     },
     "consoleWebsiteName": {
       "type": "string",
       "metadata": {
-        "description": "The name for the console website.",
-        "defaultValue": "console"
+        "description": "The name for the console website."
       }
     },
     "sku": {
