@@ -116,10 +116,10 @@ IF EXIST "%DEPLOYMENT_TARGET%\public\bower.json" (
 :: 5. Remove irrelevant folders
 :: Remove webjobs folder if this is a website
 :: Remove website folder if this is a webjob
-IF "%DEPLOYMENT_ROLE%" EQ "website" (
-  call rmdir /s /q "%DEPLOYMENT_TARGET%\app_data"
-) ELSE (
+IF "%DEPLOYMENT_ROLE%" NEQ "website" (
   call del /q "%DEPLOYMENT_TARGET%\server.js"
+) ELSE (
+  call rmdir /s /q "%DEPLOYMENT_TARGET%\app_data"
 )
 
 IF !ERRORLEVEL! NEQ 0 goto error
