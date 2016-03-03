@@ -298,7 +298,7 @@
           "name": "appsettings",
           "type": "config",
           "dependsOn": [
-            "[resourceId('Microsoft.Web/sites', parameters('scoringSiteName'))]"
+            "[resourceId('Microsoft.Web/sites', parameters('graphWebsiteName'))]"
           ],
           "properties": {
             "WEBSITE_NODE_DEFAULT_VERSION": "4.2.3",
