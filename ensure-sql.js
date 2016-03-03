@@ -2,7 +2,7 @@
 var path = require('path');
 
 var cmd = 'sqlcmd -U %DB_USER% -S %DB_SERVER% -P %DB_PASSWORD% -d %DB_NAME% -Q ' +
-          '"SELECT * from INFORMATION_SCHEMA.TABLES WHERE table_name in(\'Documents\', \'Sentences\', \'Relations\', \'Entities\')" - h - 1 ';
+          '"SELECT * from INFORMATION_SCHEMA.TABLES WHERE table_name in(\'Documents\', \'Sentences\', \'Relations\', \'Entities\')" -h -1 ';
 console.info('Searching for content in DB %s with user %s in server %s', process.env.DB_NAME, process.env.DB_USER, process.env.DB_SERVER);
 
 child_process.exec(cmd, null, function (error, stdout, stderr) {
