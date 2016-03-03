@@ -93,6 +93,13 @@
         "description": "The location to use for creating the web app and hosting plan. It must be one of the Azure locations that support web apps."
       }
     },
+    "graphWebsiteName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name for the Graph API website.",
+        "defaultValue": "graph"
+      }
+    },
     "sku": {
       "type": "string",
       "allowedValues": [
@@ -250,6 +257,52 @@
           "properties": {
             "WEBSITE_NODE_DEFAULT_VERSION": "4.2.3",
             "PIPELINE_ROLE": "scoring",
+            "DB_SERVER": "[parameters('DB_SERVER')]",
+            "DB_NAME": "[parameters('DB_NAME')]",
+            "DB_PASSWORD": "[parameters('DB_PASSWORD')]",
+            "DB_USER": "[parameters('DB_USER')]",
+            "STORAGE_ACCOUNT": "[parameters('STORAGE_ACCOUNT')]",
+            "STORAGE_KEY": "[parameters('STORAGE_KEY')]",
+            "QUEUE_SCORING": "[parameters('QUEUE_SCORING')]",
+            "QUEUE_NEW_IDS": "[parameters('QUEUE_NEW_IDS')]",
+            "QUEUE_TRIGGER_QUERY": "[parameters('QUEUE_TRIGGER_QUERY')]",
+            "LOG_LEVEL": "[parameters('LOG_LEVEL')]",
+            "LOG_STORAGE_ACCOUNT": "[parameters('LOG_STORAGE_ACCOUNT')]",
+            "LOG_STORAGE_KEY": "[parameters('LOG_STORAGE_KEY')]",
+            "SERVICE_DOC_URL": "[parameters('SERVICE_DOC_URL')]",
+            "SK_SCORING_URL": "[parameters('SK_SCORING_URL')]",
+            "TLC_SCORING_URL": "[parameters('TLC_SCORING_URL')]"
+          }
+        }
+      ]
+    },
+    {
+      "name": "[parameters('graphWebsiteName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[parameters('siteLocation')]",
+      "apiVersion": "2015-08-01",
+      "dependsOn": [
+        "[concat('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]": "Resource",
+        "displayName": "graph"
+      },
+      "properties": {
+        "name": "[parameters('graphWebsiteName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]"
+      },
+      "resources": [
+        {
+          "apiVersion": "2015-04-01",
+          "name": "appsettings",
+          "type": "config",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', parameters('scoringSiteName'))]"
+          ],
+          "properties": {
+            "WEBSITE_NODE_DEFAULT_VERSION": "4.2.3",
+            "PIPELINE_ROLE": "graph",
             "DB_SERVER": "[parameters('DB_SERVER')]",
             "DB_NAME": "[parameters('DB_NAME')]",
             "DB_PASSWORD": "[parameters('DB_PASSWORD')]",

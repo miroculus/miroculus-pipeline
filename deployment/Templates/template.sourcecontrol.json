@@ -93,6 +93,13 @@
         "description": "The location to use for creating the web app and hosting plan. It must be one of the Azure locations that support web apps."
       }
     },
+    "graphWebsiteName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name for the Graph API website.",
+        "defaultValue": "graph"
+      }
+    },
     "sku": {
       "type": "string",
       "allowedValues": [
@@ -218,6 +225,38 @@
           "type": "sourcecontrols",
           "dependsOn": [
             "[resourceId('Microsoft.Web/Sites', parameters('scoringSiteName'))]"
+          ],
+          "properties": {
+            "RepoUrl": "[parameters('repoURL')]",
+            "branch": "[parameters('branch')]",
+            "IsManualIntegration": false
+          }
+        }
+      ]
+    },
+    {
+      "name": "[parameters('graphWebsiteName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[parameters('siteLocation')]",
+      "apiVersion": "2015-08-01",
+      "dependsOn": [
+        "[concat('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]": "Resource",
+        "displayName": "graph"
+      },
+      "properties": {
+        "name": "[parameters('graphWebsiteName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]"
+      },
+      "resources": [
+        {
+          "apiVersion": "2015-04-01",
+          "name": "web",
+          "type": "sourcecontrols",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/Sites', parameters('graphWebsiteName'))]"
           ],
           "properties": {
             "RepoUrl": "[parameters('repoURL')]",
