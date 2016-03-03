@@ -117,8 +117,10 @@ IF EXIST "%DEPLOYMENT_TARGET%\public\bower.json" (
 :: Remove webjobs folder if this is a website
 :: Remove website folder if this is a webjob
 IF "%DEPLOYMENT_ROLE%" NEQ "website" (
+  echo deleting server.js
   call del /q "%DEPLOYMENT_TARGET%\server.js"
 ) ELSE (
+  echo deleting web jobs folder
   call rmdir /s /q "%DEPLOYMENT_TARGET%\app_data"
 )
 
