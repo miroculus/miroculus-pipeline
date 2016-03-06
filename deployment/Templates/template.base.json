@@ -22,10 +22,6 @@
       "type": "string",
       "minLength": 1
     },
-    "STORAGE_KEY": {
-      "type": "securestring",
-      "minLength": 1
-    },
     "QUEUE_SCORING": {
       "type": "string",
       "minLength": 1
@@ -44,10 +40,6 @@
     },
     "LOG_STORAGE_ACCOUNT": {
       "type": "string",
-      "minLength": 1
-    },
-    "LOG_STORAGE_KEY": {
-      "type": "securestring",
       "minLength": 1
     },
     "SERVICE_DOC_URL": {
@@ -180,6 +172,17 @@
       "metadata": {
         "description": "Describes the performance level for Edition"
       }
+    },
+    "pipelineStorageType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Premium_LRS"
+      ]
     }
   },
   "resources": [
@@ -243,13 +246,41 @@
       ]
     },
     {
+      "name": "[parameters('STORAGE_ACCOUNT')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [ ],
+      "tags": {
+        "displayName": "[parameters('STORAGE_ACCOUNT')]"
+      },
+      "properties": {
+        "accountType": "[parameters('pipelineStorageType')]"
+      }
+    },
+    {
+      "name": "[parameters('LOG_STORAGE_ACCOUNT')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [ ],
+      "tags": {
+        "displayName": "[parameters('LOG_STORAGE_ACCOUNT')]"
+      },
+      "properties": {
+        "accountType": "[parameters('pipelineStorageType')]"
+      }
+    },
+    {
       "apiVersion": "2015-04-01",
       "name": "[parameters('queryIdSiteName')]",
       "type": "Microsoft.Web/sites",
       "location": "[parameters('siteLocation')]",
       "dependsOn": [
         "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]",
-        "[resourceId('Microsoft.Sql/servers/', parameters('DB_SERVER'))]"
+        "[resourceId('Microsoft.Sql/servers/', parameters('DB_SERVER'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts/', parameters('STORAGE_ACCOUNT'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts/', parameters('LOG_STORAGE_ACCOUNT'))]"
       ],
       "properties": {
         "serverFarmId": "[parameters('hostingPlanName')]"
@@ -270,13 +301,13 @@
             "DB_PASSWORD": "[parameters('DB_PASSWORD')]",
             "DB_USER": "[parameters('DB_USER')]",
             "STORAGE_ACCOUNT": "[parameters('STORAGE_ACCOUNT')]",
-            "STORAGE_KEY": "[parameters('STORAGE_KEY')]",
+            "STORAGE_KEY": "[listKeys(concat('Microsoft.Storage/storageAccounts/', parameters('STORAGE_ACCOUNT')),'2015-06-15').key1]",
             "QUEUE_SCORING": "[parameters('QUEUE_SCORING')]",
             "QUEUE_NEW_IDS": "[parameters('QUEUE_NEW_IDS')]",
             "QUEUE_TRIGGER_QUERY": "[parameters('QUEUE_TRIGGER_QUERY')]",
             "LOG_LEVEL": "[parameters('LOG_LEVEL')]",
             "LOG_STORAGE_ACCOUNT": "[parameters('LOG_STORAGE_ACCOUNT')]",
-            "LOG_STORAGE_KEY": "[parameters('LOG_STORAGE_KEY')]",
+            "LOG_STORAGE_KEY": "[listKeys(concat('Microsoft.Storage/storageAccounts/', parameters('LOG_STORAGE_ACCOUNT')),'2015-06-15').key1]",
             "SERVICE_DOC_URL": "[parameters('SERVICE_DOC_URL')]",
             "SK_SCORING_URL": "[parameters('SK_SCORING_URL')]",
             "TLC_SCORING_URL": "[parameters('TLC_SCORING_URL')]"
@@ -302,7 +333,9 @@
       "location": "[parameters('siteLocation')]",
       "dependsOn": [
         "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]",
-        "[resourceId('Microsoft.Sql/servers/', parameters('DB_SERVER'))]"
+        "[resourceId('Microsoft.Sql/servers/', parameters('DB_SERVER'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts/', parameters('STORAGE_ACCOUNT'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts/', parameters('LOG_STORAGE_ACCOUNT'))]"
       ],
       "properties": {
         "serverFarmId": "[parameters('hostingPlanName')]"
@@ -323,13 +356,13 @@
             "DB_PASSWORD": "[parameters('DB_PASSWORD')]",
             "DB_USER": "[parameters('DB_USER')]",
             "STORAGE_ACCOUNT": "[parameters('STORAGE_ACCOUNT')]",
-            "STORAGE_KEY": "[parameters('STORAGE_KEY')]",
+            "STORAGE_KEY": "[listKeys(concat('Microsoft.Storage/storageAccounts/', parameters('STORAGE_ACCOUNT')),'2015-06-15').key1]",
             "QUEUE_SCORING": "[parameters('QUEUE_SCORING')]",
             "QUEUE_NEW_IDS": "[parameters('QUEUE_NEW_IDS')]",
             "QUEUE_TRIGGER_QUERY": "[parameters('QUEUE_TRIGGER_QUERY')]",
             "LOG_LEVEL": "[parameters('LOG_LEVEL')]",
             "LOG_STORAGE_ACCOUNT": "[parameters('LOG_STORAGE_ACCOUNT')]",
-            "LOG_STORAGE_KEY": "[parameters('LOG_STORAGE_KEY')]",
+            "LOG_STORAGE_KEY": "[listKeys(concat('Microsoft.Storage/storageAccounts/', parameters('LOG_STORAGE_ACCOUNT')),'2015-06-15').key1]",
             "SERVICE_DOC_URL": "[parameters('SERVICE_DOC_URL')]",
             "SK_SCORING_URL": "[parameters('SK_SCORING_URL')]",
             "TLC_SCORING_URL": "[parameters('TLC_SCORING_URL')]"
@@ -355,7 +388,9 @@
       "location": "[parameters('siteLocation')]",
       "dependsOn": [
         "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]",
-        "[resourceId('Microsoft.Sql/servers/', parameters('DB_SERVER'))]"
+        "[resourceId('Microsoft.Sql/servers/', parameters('DB_SERVER'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts/', parameters('STORAGE_ACCOUNT'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts/', parameters('LOG_STORAGE_ACCOUNT'))]"
       ],
       "properties": {
         "serverFarmId": "[parameters('hostingPlanName')]"
@@ -376,13 +411,13 @@
             "DB_PASSWORD": "[parameters('DB_PASSWORD')]",
             "DB_USER": "[parameters('DB_USER')]",
             "STORAGE_ACCOUNT": "[parameters('STORAGE_ACCOUNT')]",
-            "STORAGE_KEY": "[parameters('STORAGE_KEY')]",
+            "STORAGE_KEY": "[listKeys(concat('Microsoft.Storage/storageAccounts/', parameters('STORAGE_ACCOUNT')),'2015-06-15').key1]",
             "QUEUE_SCORING": "[parameters('QUEUE_SCORING')]",
             "QUEUE_NEW_IDS": "[parameters('QUEUE_NEW_IDS')]",
             "QUEUE_TRIGGER_QUERY": "[parameters('QUEUE_TRIGGER_QUERY')]",
             "LOG_LEVEL": "[parameters('LOG_LEVEL')]",
             "LOG_STORAGE_ACCOUNT": "[parameters('LOG_STORAGE_ACCOUNT')]",
-            "LOG_STORAGE_KEY": "[parameters('LOG_STORAGE_KEY')]",
+            "LOG_STORAGE_KEY": "[listKeys(concat('Microsoft.Storage/storageAccounts/', parameters('LOG_STORAGE_ACCOUNT')),'2015-06-15').key1]",
             "SERVICE_DOC_URL": "[parameters('SERVICE_DOC_URL')]",
             "SK_SCORING_URL": "[parameters('SK_SCORING_URL')]",
             "TLC_SCORING_URL": "[parameters('TLC_SCORING_URL')]"
@@ -408,7 +443,9 @@
       "apiVersion": "2015-08-01",
       "dependsOn": [
         "[concat('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
-        "[resourceId('Microsoft.Sql/servers/', parameters('DB_SERVER'))]"
+        "[resourceId('Microsoft.Sql/servers/', parameters('DB_SERVER'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts/', parameters('STORAGE_ACCOUNT'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts/', parameters('LOG_STORAGE_ACCOUNT'))]"
       ],
       "tags": {
         "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]": "Resource",
@@ -434,13 +471,13 @@
             "DB_PASSWORD": "[parameters('DB_PASSWORD')]",
             "DB_USER": "[parameters('DB_USER')]",
             "STORAGE_ACCOUNT": "[parameters('STORAGE_ACCOUNT')]",
-            "STORAGE_KEY": "[parameters('STORAGE_KEY')]",
+            "STORAGE_KEY": "[listKeys(concat('Microsoft.Storage/storageAccounts/', parameters('STORAGE_ACCOUNT')),'2015-06-15').key1]",
             "QUEUE_SCORING": "[parameters('QUEUE_SCORING')]",
             "QUEUE_NEW_IDS": "[parameters('QUEUE_NEW_IDS')]",
             "QUEUE_TRIGGER_QUERY": "[parameters('QUEUE_TRIGGER_QUERY')]",
             "LOG_LEVEL": "[parameters('LOG_LEVEL')]",
             "LOG_STORAGE_ACCOUNT": "[parameters('LOG_STORAGE_ACCOUNT')]",
-            "LOG_STORAGE_KEY": "[parameters('LOG_STORAGE_KEY')]",
+            "LOG_STORAGE_KEY": "[listKeys(concat('Microsoft.Storage/storageAccounts/', parameters('LOG_STORAGE_ACCOUNT')),'2015-06-15').key1]",
             "SERVICE_DOC_URL": "[parameters('SERVICE_DOC_URL')]",
             "SK_SCORING_URL": "[parameters('SK_SCORING_URL')]",
             "TLC_SCORING_URL": "[parameters('TLC_SCORING_URL')]",
@@ -456,7 +493,9 @@
       "apiVersion": "2015-08-01",
       "dependsOn": [
         "[concat('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
-        "[resourceId('Microsoft.Sql/servers/', parameters('DB_SERVER'))]"
+        "[resourceId('Microsoft.Sql/servers/', parameters('DB_SERVER'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts/', parameters('STORAGE_ACCOUNT'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts/', parameters('LOG_STORAGE_ACCOUNT'))]"
       ],
       "tags": {
         "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]": "Resource",
@@ -482,13 +521,13 @@
             "DB_PASSWORD": "[parameters('DB_PASSWORD')]",
             "DB_USER": "[parameters('DB_USER')]",
             "STORAGE_ACCOUNT": "[parameters('STORAGE_ACCOUNT')]",
-            "STORAGE_KEY": "[parameters('STORAGE_KEY')]",
+            "STORAGE_KEY": "[listKeys(concat('Microsoft.Storage/storageAccounts/', parameters('STORAGE_ACCOUNT')),'2015-06-15').key1]",
             "QUEUE_SCORING": "[parameters('QUEUE_SCORING')]",
             "QUEUE_NEW_IDS": "[parameters('QUEUE_NEW_IDS')]",
             "QUEUE_TRIGGER_QUERY": "[parameters('QUEUE_TRIGGER_QUERY')]",
             "LOG_LEVEL": "[parameters('LOG_LEVEL')]",
             "LOG_STORAGE_ACCOUNT": "[parameters('LOG_STORAGE_ACCOUNT')]",
-            "LOG_STORAGE_KEY": "[parameters('LOG_STORAGE_KEY')]",
+            "LOG_STORAGE_KEY": "[listKeys(concat('Microsoft.Storage/storageAccounts/', parameters('LOG_STORAGE_ACCOUNT')),'2015-06-15').key1]",
             "SERVICE_DOC_URL": "[parameters('SERVICE_DOC_URL')]",
             "SK_SCORING_URL": "[parameters('SK_SCORING_URL')]",
             "TLC_SCORING_URL": "[parameters('TLC_SCORING_URL')]",

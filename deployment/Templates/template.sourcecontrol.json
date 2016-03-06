@@ -22,10 +22,6 @@
       "type": "string",
       "minLength": 1
     },
-    "STORAGE_KEY": {
-      "type": "securestring",
-      "minLength": 1
-    },
     "QUEUE_SCORING": {
       "type": "string",
       "minLength": 1
@@ -44,10 +40,6 @@
     },
     "LOG_STORAGE_ACCOUNT": {
       "type": "string",
-      "minLength": 1
-    },
-    "LOG_STORAGE_KEY": {
-      "type": "securestring",
       "minLength": 1
     },
     "SERVICE_DOC_URL": {
@@ -103,15 +95,13 @@
     "graphWebsiteName": {
       "type": "string",
       "metadata": {
-        "description": "The name for the Graph API website.",
-        "defaultValue": "graph"
+        "description": "The name for the Graph API website."
       }
     },
     "consoleWebsiteName": {
       "type": "string",
       "metadata": {
-        "description": "The name for the console website.",
-        "defaultValue": "console"
+        "description": "The name for the console website."
       }
     },
     "sku": {
@@ -152,6 +142,47 @@
       "metadata": {
         "description": "The branch of the GitHub repository to use."
       }
+    },
+    "databaseCollation": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "SQL_Latin1_General_CP1_CI_AS"
+    },
+    "databaseEdition": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "Standard",
+        "Premium"
+      ]
+    },
+    "databaseRequestedServiceObjectiveName": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "S0",
+        "S1",
+        "S2",
+        "P1",
+        "P2",
+        "P3"
+      ],
+      "metadata": {
+        "description": "Describes the performance level for Edition"
+      }
+    },
+    "pipelineStorageType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Premium_LRS"
+      ]
     }
   },
   "resources": [
@@ -298,18 +329,18 @@
       },
       "resources": [
         {
-            "apiVersion": "2015-04-01",
-            "name": "web",
-            "type": "sourcecontrols",
-            "dependsOn": [
-              "[resourceId('Microsoft.Web/Sites', parameters('consoleWebsiteName'))]"
-            ],
-            "properties": {
-              "RepoUrl": "[parameters('repoURL')]",
-              "branch": "[parameters('branch')]",
-              "IsManualIntegration": false
-            }
+          "apiVersion": "2015-04-01",
+          "name": "web",
+          "type": "sourcecontrols",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/Sites', parameters('consoleWebsiteName'))]"
+          ],
+          "properties": {
+            "RepoUrl": "[parameters('repoURL')]",
+            "branch": "[parameters('branch')]",
+            "IsManualIntegration": false
           }
+        }
       ]
     }
   ]
