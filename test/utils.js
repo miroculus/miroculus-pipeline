@@ -1,5 +1,6 @@
 ﻿var fs = require('fs');
 var lr = require('readline');
+var child_process = require('child_process');
 
 var azure = require('azure-storage');
 var tedious = require('tedious');
@@ -25,7 +26,7 @@ function initDB() {
     idleTimeout: 10000,
     log: false
   };
-  console.info("sql config", configSql);
+  
   pool = new ConnectionPool(poolConfig, configSql);
   pool.on('error', function (err) {
     console.warn('error connecting to sql', err);
@@ -141,7 +142,7 @@ function waitForTableRowCount(options, cb) {
   }, 5000);
 }
 
-function runDBScript(dbScript, cb) {
+function runDBScript2(dbScript, cb) {
   
   initDB();
   
@@ -161,6 +162,21 @@ function runDBScript(dbScript, cb) {
   });
 }
 
+function runDBScript(dbScript, db) {
+  var configSql = require('x-config').sql;
+  var cmd = 'sqlcmd -U ' + configSql.userName + 
+              ' -S ' + configSql.server + 
+              ' -P ' + configSql.password + 
+              ' -d ' + configSql.options.database + 
+              ' -i "' + dbScript + '"';
+
+  child_process.exec(cmd, null, function (err, stdout, stderr) {
+    if (err) console.error('Error running DB scripts', err);
+
+    return db(stderr, stdout);
+  });
+}
+
 function countLogMessages(options, cb) {
   
   // output format (text | html | json)
@@ -174,8 +190,8 @@ function countLogMessages(options, cb) {
   options.top = options.top || '100';
   options.transporters = require('x-config').log.transporters;
   
-  return logger.reader(options, function (error, r) {
-    if (error) return cb(error);
+  return logger.reader(options, function (err, r) {
+    if (err) return cb(err);
     
     var results = [];
     r.on('line', function (data) { results.push(data); });

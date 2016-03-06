@@ -25,6 +25,7 @@ describe('Whole Pipeline', function () {
   
   before(function (done) {
     
+    console.info('Setting up environment...');
     async.series([
 
       // Setting environment variables
@@ -65,8 +66,6 @@ describe('Whole Pipeline', function () {
           level: config.log.level,
           transporters: config.log.transporters
         }, cb);
-        
-        console.info('log initialized');
       },
 
       // Initializing queue service
@@ -76,14 +75,41 @@ describe('Whole Pipeline', function () {
         return cb();
       },
 
-      // Empty database schema from data
+      // Recreate database schema
       function (cb) {
-        var emptyScript = path.join(__dirname, '..', 'Sql', 'emptytables.sql');
-        if (!fs.existsSync(emptyScript)) {
-          return cb(new Error('Empty DB script not found in', emptyScript));
-        }
+        var dropScript = path.join(__dirname, '..', 'Sql', 'dropschema.sql');
+        var schemaScript = path.join(__dirname, '..', 'Sql', 'schema.sql');
+        var setupScript = path.join(__dirname, '..', 'Sql', 'testsetup.sql');
         
-        return utils.runDBScript(emptyScript, cb);
+        if (!fs.existsSync(dropScript)) return cb(new Error('Drop DB schema script not found in', dropScript));
+        if (!fs.existsSync(schemaScript)) return cb(new Error('Create DB schema script not found in', schemaScript));
+        if (!fs.existsSync(setupScript)) return cb(new Error('Setup DB script not found in', setupScript));
+        
+        console.info('Setting up DB schema');
+        return utils.runDBScript(dropScript, function (err) {
+          if (err) {
+            console.error('Error running empty db schema:', err);
+            return cb(err);
+          }
+
+          return utils.runDBScript(schemaScript, function (err) {
+            if (err) {
+              console.error('Error running create db schema:', err);
+              return cb(err);
+            }
+            
+            return utils.runDBScript(setupScript, function (err) {
+              if (err) {
+                console.error('Error running setup db:', err);
+                return cb(err);
+              }
+              
+              console.info('DB schema was recreated successfully');
+              return cb();
+            });
+          });
+
+        });
       },
 
       // Recreate queues in pipeline
@@ -105,14 +131,14 @@ describe('Whole Pipeline', function () {
       function (cb) {
         
         // If one of the workers throws an error, log the error message
-        var runnersPath = path.join(__dirname, 'worker-runners');
-        var queryWorker = exec('node ' + path.join(runnersPath, 'query-worker.js'), function (err, stdout, stderr) {
+        var runAppJSPath = path.join(__dirname, '..', 'app_data', 'jobs', 'continuous', 'worker', 'app.js');
+        var queryWorker = exec('set PIPELINE_ROLE=query-id&& set WORKERS=1&& node ' + runAppJSPath, function (err, stdout, stderr) {
           if (err) return console.error('Error in Query worker', err);
         });
-        var parserWorker = exec('node ' + path.join(runnersPath, 'parser-worker.js'), function (err, stdout, stderr) {
+        var parserWorker = exec('set PIPELINE_ROLE=paper-parser&& set WORKERS=1&& node ' + runAppJSPath, function (err, stdout, stderr) {
           if (err) return console.error('Error in Parser worker', err);
         });
-        var scorerWorker = exec('node ' + path.join(runnersPath, 'scorer-worker.js'), function (err, stdout, stderr) {
+        var scorerWorker = exec('set PIPELINE_ROLE=scoring&& set WORKERS=1&& node ' + runAppJSPath, function (err, stdout, stderr) {
           if (err) return console.error('Error in Scorer worker', err);
         });
         
@@ -134,7 +160,16 @@ describe('Whole Pipeline', function () {
         
         return cb();
       }
-    ], done);
+    ], function (err) {
+
+      if (err) {
+        console.error('There was an error during the test setup:', err);
+        return done(err);
+      }
+      
+      console.info('Setup was completed successfully');
+      return done();
+    });
 
   });
   
@@ -151,8 +186,8 @@ describe('Whole Pipeline', function () {
         var message = {
           "requestType": "trigger",
           "data": {
-            "fromDate": DATE_TO_CHECK,
-            "toDate": DATE_TO_CHECK
+            "from": DATE_TO_CHECK,
+            "to": DATE_TO_CHECK
           }
         };
         return queueService.createMessage(config.queues.trigger_query, JSON.stringify(message), function (error) {
@@ -190,7 +225,7 @@ describe('Whole Pipeline', function () {
         function (cb) {
           return utils.waitForLogMessage({
             message: 'done queuing messages for all documents', 
-            app: 'doc-query',
+            app: 'query-id',
             since: startTime
           }, function (error) {
             if (error) return cb(error);
@@ -198,7 +233,7 @@ describe('Whole Pipeline', function () {
             // Check the specific document we expect in the pipeline was processed
             return utils.countLogMessages({
               message: 'Queued document ' + DOCUMENT_ID_TO_MONITOR,
-              app: 'doc-query',
+              app: 'query-id',
               level: 'log',
               since: startTime
             }, function (error, count) {

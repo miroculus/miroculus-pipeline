@@ -1,6 +1,0 @@
-﻿{
-  "ui": "tdd",
-  "timeout": 300000,
-  "reporter": "xunit",
-  "bail":  true
-}
