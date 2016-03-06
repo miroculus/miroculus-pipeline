@@ -125,6 +125,13 @@ IF "%DEPLOYMENT_ROLE%" NEQ "website" (
 )
 
 IF !ERRORLEVEL! NEQ 0 goto error
+
+:: 6. Ensure sql server creation
+IF "%PIPELINE_ROLE%" EQU "query-id" (
+	echo calling command: node ensure-sql.js
+	call node ensure-sql.js
+)
+
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 :: Post deployment stub

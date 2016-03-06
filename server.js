@@ -7,27 +7,36 @@ function handleError(err) {
 }
 
 var path = require('path');
+var fs = require('fs');
 var log = require('x-log');
 var config = require('x-config');
 var websiteName = process.env.PIPELINE_ROLE;
 
 var websitePath = path.join(__dirname, 'websites', websiteName);
 console.log('staring website:', websitePath);
-var app = require(websitePath);
+if (!fs.existsSync(websitePath)) {
+  console.warn('this is a worker role');
+  require('http').createServer(function (req, res) {
+    return res.end('hello from ' + process.env.PIPELINE_ROLE + ' worker');
+  }).listen(process.env.PORT);
+}
+else {
+  var app = require(websitePath);
 
-log.init({
+  log.init({
     domain: process.env.COMPUTERNAME || '',
     instanceId: log.getInstanceId(),
     app: websiteName,
     level: config.log.level,
     transporters: config.log.transporters
   },
-  function (err) {
-    if (err) return handleError(err);
-    console.log('starting %s server...', websiteName);
-
-    var server = app.listen(app.get('port'), function (err) {
+    function (err) {
       if (err) return handleError(err);
-      console.log('%s server listening on port %s', websiteName, server.address().port);
+      console.log('starting %s server...', websiteName);
+
+      var server = app.listen(app.get('port'), function (err) {
+        if (err) return handleError(err);
+        console.log('%s server listening on port %s', websiteName, server.address().port);
+      });
     });
-  });
+}

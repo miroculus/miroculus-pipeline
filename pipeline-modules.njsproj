@@ -15,7 +15,8 @@
     <ProjectGuid>e5424372-3317-4e69-8afb-128422cc1871</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>app.js</StartupFile>
+    <StartupFile>
+    </StartupFile>
     <StartWebBrowser>False</StartWebBrowser>
     <SearchPath>
     </SearchPath>
@@ -33,7 +34,7 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="app.js" />
+    <Compile Include="ensure-sql.js" />
     <Compile Include="node_modules\azure-logging\lib\format.js" />
     <Compile Include="node_modules\azure-logging\lib\formatters\html.js" />
     <Compile Include="node_modules\azure-logging\lib\formatters\text.js" />
@@ -165,6 +166,7 @@
     <Compile Include="test\worker-runners\scorer-worker.js" />
     <Compile Include="test\worker-runners\parser-worker.js" />
     <Content Include=".gitignore" />
+    <Content Include="deploy.cmd" />
     <Content Include="node_modules\azure-logging\bin\reader" />
     <Content Include="node_modules\azure-logging\mongologssetup.txt" />
     <Content Include="node_modules\azure-logging\package.json" />
@@ -185,6 +187,10 @@
     <Content Include="run.parser.cmd" />
     <Content Include="run.query.cmd" />
     <Content Include="run.scoring.cmd" />
+    <Content Include="Sql\dropschema.sql" />
+    <Content Include="Sql\emptytables.sql" />
+    <Content Include="Sql\README.md" />
+    <Content Include="Sql\schema.sql" />
     <Content Include="test\mocha.json" />
     <Content Include="package.json" />
     <Content Include="README.md" />
@@ -246,6 +252,7 @@
     <Folder Include="node_modules\x-docServiceProxy\" />
     <Folder Include="node_modules\x-docServiceProxy\lib\" />
     <Folder Include="node_modules\x-paper-parser\sample\" />
+    <Folder Include="Sql\" />
     <Folder Include="test\" />
     <Folder Include="node_modules\" />
     <Folder Include="node_modules\x-blob\" />

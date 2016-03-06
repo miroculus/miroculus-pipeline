@@ -19,8 +19,8 @@ azure config mode arm
 {
   "requestType": "trigger",
   "data": {
-        "fromDate": "2014-02-01",
-        "toDate": "2014-02-14"
+        "from": "2014-02-01",
+        "to": "2014-02-14"
     }
 }
 ```
