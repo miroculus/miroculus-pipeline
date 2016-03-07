@@ -24,7 +24,7 @@
     <OutputPath>.</OutputPath>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
-    <ProjectView>ShowAllFiles</ProjectView>
+    <ProjectView>ProjectFiles</ProjectView>
     <StartWebBrowser>False</StartWebBrowser>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -35,7 +35,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="app_data\jobs\continuous\worker\app.js" />
-    <Compile Include="ensure-sql.js" />
+    <Compile Include="deployment_modules\ensure-folder-hierarchy.js" />
+    <Compile Include="deployment_modules\ensure-sql.js" />
     <Compile Include="node_modules\azure-logging\lib\format.js" />
     <Compile Include="node_modules\azure-logging\lib\formatters\html.js" />
     <Compile Include="node_modules\azure-logging\lib\formatters\text.js" />
@@ -68,6 +69,7 @@
     <Compile Include="node_modules\x-query-id\lib\index.js" />
     <Compile Include="node_modules\x-queue\lib\index.js" />
     <Compile Include="node_modules\x-scoring\lib\index.js" />
+    <Compile Include="server.js" />
     <Compile Include="test\trigger-from-to.js">
       <SubType>Code</SubType>
       <TestFramework>Mocha</TestFramework>
@@ -77,7 +79,6 @@
     <Compile Include="test\worker-runners\scorer-worker.js" />
     <Compile Include="test\worker-runners\parser-worker.js" />
     <Content Include=".gitignore" />
-    <Content Include="deploy.cmd" />
     <Content Include="node_modules\azure-logging\bin\reader" />
     <Content Include="node_modules\azure-logging\mongologssetup.txt" />
     <Content Include="node_modules\azure-logging\package.json" />
@@ -95,6 +96,8 @@
     <Content Include="node_modules\x-queue\package.json" />
     <Content Include="node_modules\x-scoring\package.json" />
     <Content Include="run.cmd" />
+    <Content Include="run.console.cmd" />
+    <Content Include="run.graph.cmd" />
     <Content Include="run.parser.cmd" />
     <Content Include="run.query.cmd" />
     <Content Include="run.scoring.cmd" />
@@ -111,6 +114,7 @@
     <Folder Include="app_data\jobs\" />
     <Folder Include="app_data\jobs\continuous\" />
     <Folder Include="app_data\jobs\continuous\worker\" />
+    <Folder Include="deployment_modules\" />
     <Folder Include="node_modules\azure-logging\" />
     <Folder Include="node_modules\azure-logging\lib\" />
     <Folder Include="node_modules\azure-logging\lib\formatters\" />
