@@ -24,7 +24,7 @@
     <OutputPath>.</OutputPath>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
-    <ProjectView>ShowAllFiles</ProjectView>
+    <ProjectView>ProjectFiles</ProjectView>
     <StartWebBrowser>False</StartWebBrowser>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -76,9 +76,6 @@
       <TestFramework>Mocha</TestFramework>
     </Compile>
     <Compile Include="test\utils.js" />
-    <Compile Include="test\worker-runners\query-worker.js" />
-    <Compile Include="test\worker-runners\scorer-worker.js" />
-    <Compile Include="test\worker-runners\parser-worker.js" />
     <Content Include=".gitignore" />
     <Content Include="deployment\sql\dropschema.sql" />
     <Content Include="deployment\sql\emptytables.sql" />
@@ -155,7 +152,6 @@
     <Folder Include="node_modules\x-queue\lib\" />
     <Folder Include="node_modules\x-scoring\" />
     <Folder Include="node_modules\x-scoring\lib\" />
-    <Folder Include="test\worker-runners\" />
   </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
