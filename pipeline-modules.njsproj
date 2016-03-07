@@ -35,8 +35,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="app_data\jobs\continuous\worker\app.js" />
-    <Compile Include="deployment_modules\ensure-folder-hierarchy.js" />
-    <Compile Include="deployment_modules\ensure-sql.js" />
+    <Compile Include="deployment_scripts\ensure-folder-hierarchy.js" />
+    <Compile Include="deployment_scripts\ensure-sql.js" />
     <Compile Include="node_modules\azure-logging\lib\format.js" />
     <Compile Include="node_modules\azure-logging\lib\formatters\html.js" />
     <Compile Include="node_modules\azure-logging\lib\formatters\text.js" />
@@ -114,7 +114,7 @@
     <Folder Include="app_data\jobs\" />
     <Folder Include="app_data\jobs\continuous\" />
     <Folder Include="app_data\jobs\continuous\worker\" />
-    <Folder Include="deployment_modules\" />
+    <Folder Include="deployment_scripts\" />
     <Folder Include="node_modules\azure-logging\" />
     <Folder Include="node_modules\azure-logging\lib\" />
     <Folder Include="node_modules\azure-logging\lib\formatters\" />
