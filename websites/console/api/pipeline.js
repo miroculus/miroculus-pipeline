@@ -41,8 +41,8 @@ docRouter(router, "/api/pipeline", function (router) {
       if (err) return console.error('error initizalizing queue', triggerQueue, err);
 
       var message = { requestType: 'trigger', data: {} };
-      if (from) message.data.from = message.data.fromDate = from;
-      if (to) message.data.to = message.data.toDate = to;
+      if (from) message.data.from = from;
+      if (to) message.data.to = to;
       
       return triggerQueue.sendMessage(message, function (err, result) {
         if (err) return res.json({ err: err.message });
@@ -201,6 +201,27 @@ docRouter(router, "/api/pipeline", function (router) {
     }
   );
   
+  router.post('/loadmodel', function (req, res) { 
+      return res.end('waiting for Nadav to implement');
+    },
+    {
+      id: 'pipeline_loadmodel',
+      name: 'loadmodel',
+      usage: 'pipeline loadmodel',
+      example: 'pipeline loadmodel',
+      doc: 'Updates model in scorer services',
+      params: {
+          "model": {
+          "short": "m",
+          "type": "string",
+          "doc": "model path in blob container",
+          "style": "query"
+        }
+      },
+      response: { representations: ['application/json'] }
+    }
+    );
+  
   router.post('/rescore', function (req, res) { 
       var scoringQueue = queue({
         storageName: config.storage.account,
@@ -228,15 +249,42 @@ docRouter(router, "/api/pipeline", function (router) {
       usage: 'pipeline rescore',
       example: 'pipeline rescore',
       doc: 'Updates model and rescore all sentences',
-      params: {
-          "model": {
-          "short": "m",
-          "type": "string",
-          "doc": "model path in blob container",
-          "style": "query"
-        }
-      },
+      params: {},
+      response: { representations: ['application/json'] }
+    }
+    );
+  
+  
+  router.post('/reprocess', function (req, res) { 
+      var queryQueue = queue({
+        storageName: config.storage.account,
+        storageKey: config.storage.key,
+        queueName: config.queues.trigger_query.name
+      });
+      
+      var msg = {
+        requestType: constants.queues.action.REPROCESS,
+        data: {}
+      };
+      
+      queryQueue.init(function (err) {
+        if (err) return console.error('error initizalizing queue', queryQueue, err);
+        return queryQueue.sendMessage(msg, function (err) {
+          if (err) return res.json({ err: err.message });
+          console.log('reprocessing request added to trigger_query queue');
+          return res.end('rescoring request added to trigger_query queue');
+        });
+      });
+    },
+    {
+      id: 'pipeline_reprocess',
+      name: 'reprocess',
+      usage: 'pipeline reprocess',
+      example: 'pipeline reprocess',
+      doc: 'Reprocess all documents',
+      params: {},
       response: { representations: ['application/json'] }
     }
   );
+  
 });
