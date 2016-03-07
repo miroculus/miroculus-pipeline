@@ -9,7 +9,7 @@ if (process.env.DEPLOYMENT_ROLE === 'website') {
   var appPath = path.join(process.env.DEPLOYMENT_TARGET, 'app_data', 'jobs', 'continuous', 'worker', 'app.js');
   console.info('Deleting web jobs folder', appPath);
   
-  if (fs.appPath(serverPath)) fs.unlinkSync(appPath);
+  if (fs.existsSync(serverPath)) fs.unlinkSync(appPath);
 }
 
 console.info('Remove irrelevant folders completed');
