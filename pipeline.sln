@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "pipeline-modules", "pipeline-modules.njsproj", "{E5424372-3317-4E69-8AFB-128422CC1871}"
 EndProject
-Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "deployment", "deployment\deployment.deployproj", "{4DFAA4E7-0014-47B4-98BB-5ADCE649D689}"
+Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "deployment", "AzureDeployment\deployment.deployproj", "{4DFAA4E7-0014-47B4-98BB-5ADCE649D689}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

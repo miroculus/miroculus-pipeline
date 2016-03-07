@@ -40,8 +40,8 @@
     "wordwrap": "^1.0.0"
   },
   "scripts": {
-    "preinstall": "node deployment_scripts/ensure-folder-hierarchy",
-    "postinstall": "node deployment_scripts/ensure-sql",
+    "preinstall": "node deployment/ensure-folder-hierarchy",
+    "postinstall": "node deployment/ensure-sql",
     "test": "./node_modules/.bin/mocha test/"
   },
   "repository": {

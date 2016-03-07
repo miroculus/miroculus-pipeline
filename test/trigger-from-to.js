@@ -77,9 +77,9 @@ describe('Whole Pipeline', function () {
 
       // Recreate database schema
       function (cb) {
-        var dropScript = path.join(__dirname, '..', 'Sql', 'dropschema.sql');
-        var schemaScript = path.join(__dirname, '..', 'Sql', 'schema.sql');
-        var setupScript = path.join(__dirname, '..', 'Sql', 'testsetup.sql');
+        var dropScript = path.join(__dirname, '..', 'deployment', 'sql', 'dropschema.sql');
+        var schemaScript = path.join(__dirname, '..', 'deployment', 'sql', 'schema.sql');
+        var setupScript = path.join(__dirname, '..', 'deployment', 'sql', 'testsetup.sql');
         
         if (!fs.existsSync(dropScript)) return cb(new Error('Drop DB schema script not found in', dropScript));
         if (!fs.existsSync(schemaScript)) return cb(new Error('Create DB schema script not found in', schemaScript));
