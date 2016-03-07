@@ -13,7 +13,7 @@ azure config mode arm
   "requestType": "trigger"
 }
 ```
-
+ 
 * If you want to specify a date range to check documents, use the following format
 ```
 {
