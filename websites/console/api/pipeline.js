@@ -9,6 +9,7 @@ var express = require('express'),
   async = require('async'),
   queue = require('x-queue'),
   db = require('./db'),
+  constants = require('x-constants'),
   S = require('string');
   
   
@@ -200,4 +201,42 @@ docRouter(router, "/api/pipeline", function (router) {
     }
   );
   
+  router.post('/rescore', function (req, res) { 
+      var scoringQueue = queue({
+        storageName: config.storage.account,
+        storageKey: config.storage.key,
+        queueName: config.queues.scoring.name
+      });
+      
+      var msg = {
+        requestType: constants.queues.action.RESCORE,
+        data: {}
+      };
+      
+      scoringQueue.init(function (err) {
+        if (err) return console.error('error initizalizing queue', scoringQueue, err);
+        return scoringQueue.sendMessage(msg, function (err) {
+          if (err) return res.json({ err: err.message });
+          console.log('rescoring request added to scoring queue');
+          return res.end('rescoring request added to scoring queue');
+        });
+      });
+    },
+    {
+      id: 'pipeline_rescore',
+      name: 'rescore',
+      usage: 'pipeline rescore',
+      example: 'pipeline rescore',
+      doc: 'Updates model and rescore all sentences',
+      params: {
+          "model": {
+          "short": "m",
+          "type": "string",
+          "doc": "model path in blob container",
+          "style": "query"
+        }
+      },
+      response: { representations: ['application/json'] }
+    }
+  );
 });
