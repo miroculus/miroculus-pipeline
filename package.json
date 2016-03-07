@@ -20,6 +20,7 @@
     "docrouter": "^0.7.0",
     "express": "^4.13.4",
     "express-session": "^1.12.1",
+    "fs-extra": "^0.26.5",
     "googleapis": "^2.1.7",
     "memory-streams": "^0.1.0",
     "mocha": "^2.4.5",

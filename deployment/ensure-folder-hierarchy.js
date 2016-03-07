@@ -1,15 +1,17 @@
-﻿var fs = require('fs');
+﻿var fse = require('fs-extra');
 var path = require('path');
 
-console.info('Remove irrelevant folders');
+console.info('Checking if should create web job folders');
+
 // Remove app.js of the web job if this is a website (this will remove the web job completely)
-if (process.env.DEPLOYMENT_ROLE === 'website') {
-
-  // Remove website app.js if this is a webjob
-  var appPath = path.join(process.env.DEPLOYMENT_TARGET, 'app_data', 'jobs', 'continuous', 'worker', 'app.js');
-  console.info('Deleting web jobs folder', appPath);
+if (process.env.DEPLOYMENT_ROLE !== 'website') {
   
-  if (fs.existsSync(appPath)) fs.unlinkSync(appPath);
-}
+  var sourceFile = path.join('webjob', 'app.js');
+  var targetFile = path.join('app_data', 'jobs', 'continuous', 'worker', 'app.js');
+  
+  if (fse.existsSync(targetFile)) fse.removeSync(targetFile);
 
-console.info('Remove irrelevant folders completed');
+  fse.ensureLinkSync(sourceFile, targetFile);
+
+  console.info('Remove irrelevant folders completed');
+}

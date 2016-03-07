@@ -34,7 +34,6 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="app_data\jobs\continuous\worker\app.js" />
     <Compile Include="deployment\ensure-folder-hierarchy.js" />
     <Compile Include="deployment\ensure-sql.js" />
     <Compile Include="deployment_scripts\ensure-sql.js" />
@@ -76,6 +75,7 @@
       <TestFramework>Mocha</TestFramework>
     </Compile>
     <Compile Include="test\utils.js" />
+    <Compile Include="webjob\app.js" />
     <Content Include=".gitignore" />
     <Content Include="deployment\sql\dropschema.sql" />
     <Content Include="deployment\sql\emptytables.sql" />
@@ -112,13 +112,10 @@
     <Content Include="Sql\testsetup.sql" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="app_data\" />
-    <Folder Include="app_data\jobs\" />
-    <Folder Include="app_data\jobs\continuous\" />
-    <Folder Include="app_data\jobs\continuous\worker\" />
     <Folder Include="deployment\" />
     <Folder Include="deployment\sql\" />
     <Folder Include="deployment_scripts\" />
+    <Folder Include="webjob\" />
     <Folder Include="node_modules\azure-logging\" />
     <Folder Include="node_modules\azure-logging\lib\" />
     <Folder Include="node_modules\azure-logging\lib\formatters\" />
