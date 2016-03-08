@@ -119,7 +119,7 @@ function run(cb) {
               // capture sentence index in the array
               .map(function (sentence, index) {
                 return { data: sentence, index: index };
-            });
+              });
             
             console.info('found %s relevant sentences for scoring', sentences.length);
             

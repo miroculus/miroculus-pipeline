@@ -114,6 +114,7 @@ function Worker(opts) {
     };
 
     function deleteMessage(message, cb) {
+      console.log('deleting item', message.messageid);
       var queueIn = queues[constants.queues.types.IN];
       return queueIn.deleteMessage(message, function (err) {
         if (err) return cb(new Error('error deleting item from queue', err));
