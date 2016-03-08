@@ -7,4 +7,4 @@ IF [%setenvpath%]==[] SET setenvpath=setenv.cmd
 echo calling %setenvpath%
 call %setenvpath%
 set PIPELINE_ROLE=query-id
-call node app_data\jobs\continuous\worker\app.js
+call node webjob\app.js

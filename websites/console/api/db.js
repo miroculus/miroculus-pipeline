@@ -115,7 +115,6 @@ function getCounters(cb) {
       if (err) return cb(err); 
       return cb(null, result[0]);
     });
-    
 }
 
 function execQuery(query, cb) {

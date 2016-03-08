@@ -40,7 +40,7 @@
                     historyStorageKey = sessionId + "history",
                     resultsContainer = $("<div>").appendTo(options.resultsContainer),
                     promptControl = options.promptControl,
-                    myBoard = new MyBoard(),
+                    docker = new Docker(),
                     history = new History(),
                     env = new Environment(),
                     commands = new Commands(options.commands),
@@ -492,11 +492,11 @@
 
                   var resultContainer = $("<div class='cli-commandResult'>").appendTo(resultsContainer)
 
-                  // todo: move following code to MyBoard class
+                  // todo: move following code to Docker class
                     .dblclick(function (e) {
                       if (!e.ctrlKey) return;
 
-                      if ($(this).parent().is('.cli-my-board-item')) {
+                      if ($(this).parent().is('.cli-docker-item')) {
                         if (liveInterval) clearInterval(liveInterval);
                         $(this).remove();
                       }
@@ -763,46 +763,46 @@
                         }
                     }
 
-                    var myboardCommand = {
-                        name: 'myboard',
-                        description: 'Manages My Board Panel. Using with no params will toggle the board visibility.',
-                        usage: 'myboard [--off] [--on] [--put]',
-                        example: 'myboard',
+                    var dockerCommand = {
+                        name: 'docker',
+                        description: 'Manages the docker panel. Using with no params will toggle the docker visibility.',
+                        usage: 'docker [--off] [--on] [--put]',
+                        example: 'docker',
                         params: [
                             {
                                 name: 'off',
-                                description: 'turn my board off',
+                                description: 'turn docker visibility off',
                                 type: 'boolean'
                             },
                             {
                                 name: 'on',
-                                description: 'turn my board on',
+                                description: 'turn docker visibility on',
                                 type: 'boolean'
                             }
                             ,
                             {
-                                name: 'put',
-                                description: 'move last result to my board panel',
+                                name: 'dock',
+                                description: 'dock last result',
                                 type: 'boolean'
                             }
                         ],
                         //hidden: true,
                         exec: function(args) {
 
-                            if(!args.on && !args.off && !args.put) {
-                                if ($(".cli-my-board").css("display")=='none')
+                            if(!args.on && !args.off && !args.dock) {
+                                if ($(".cli-docker").css("display")=='none')
                                     args.on = true;
                                 else args.off = true;
                             }
 
                             if(args.off) {
-                                $(".cli-my-board").hide();
+                                $(".cli-docker").hide();
                             }
                             else if (args.on)
-                                $(".cli-my-board").show();
-                            else if(args.put) {
+                                $(".cli-docker").show();
+                            else if(args.dock) {
                                 var item = resultsContainer.find(".cli-commandResult").last().prevAll(".cli-commandResult")[0];
-                                myBoard.addItemToMyBoard(item);
+                                docker.addItemToDocker(item);
                             }
                         }
                     }
@@ -1231,7 +1231,7 @@
                     commands.add(installPluginCommand);
                     commands.add(uninstallPluginCommand);
                     commands.add(resetPluginsCommand);
-                    commands.add(myboardCommand);
+                    commands.add(dockerCommand);
                     //commands.add(sampleCommand);
                     //commands.add(sampleGroupCommand);
                     //commands.add(sampleGroupCommand1);
@@ -1570,12 +1570,12 @@
                     }
                 }
 
-                // my board
-                function MyBoard() {
+                // docker
+                function Docker() {
 
                     var self = this;
-                    var board = options.myBoard;
-                    board.find(".cli-my-board-title").data('on', true)
+                    var docker = options.docker;
+                    docker.find(".cli-docker-title").data('on', true)
                         .click(function(){
                             if($(this).data('on')) {
                                 $(this).parent().css({"height": "28px", "overflow" : "hidden"});
@@ -1587,36 +1587,36 @@
                         });
 
                     $(window).resize(function(){
-                        board.css('height', resultsContainer.parent().height());
+                        docker.css('height', resultsContainer.parent().height());
                     });
 
                     /*
-                    $(".cli-my-board-title").hover(
+                    $(".cli-docker-title").hover(
                         function(){
-                            $(this).parent('.cli-my-board').draggable().draggable( "option", "disabled", false);
+                            $(this).parent('.cli-docker').draggable().draggable( "option", "disabled", false);
                         },
                         function(){
-                            $(this).parent('.cli-my-board').draggable( "option", "disabled", true );
+                            $(this).parent('.cli-docker').draggable( "option", "disabled", true );
                         }
                     );
 
-                    $(".cli-my-board-title").click(
+                    $(".cli-docker-title").click(
                         function(){
-                            $(this).parent(".cli-my-board").find(".cli-my-board-item").toggle();
+                            $(this).parent(".cli-docker").find(".cli-docker-item").toggle();
                         }
                     );
                     */
 
-                    board
+                    docker
                         //.resizable()
                         .droppable({
                         drop: function( event, ui ) {
-                            self.addItemToMyBoard(ui.draggable);
+                            self.addItemToDocker(ui.draggable);
                         }
                     });
 
-                    this.addItemToMyBoard = function(item){
-                        var conatiner = $("<div class='cli-my-board-item'>").appendTo(board);
+                    this.addItemToDocker = function(item){
+                        var conatiner = $("<div class='cli-docker-item'>").appendTo(docker);
 
                         $(item).appendTo(conatiner);
                         setTimeout(function(){
@@ -1624,8 +1624,8 @@
                         }, 500);
                     }
 
-                    board.find(".cli-my-board-close").click(function(){
-                        board.hide();
+                    docker.find(".cli-docker-close").click(function(){
+                        docker.hide();
                     });
 
                 }

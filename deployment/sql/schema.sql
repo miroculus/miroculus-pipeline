@@ -1,18 +1,17 @@
-﻿
-/****** Object:  UserDefinedTableType [dbo].[UDT_DocIdList]    Script Date: 3/3/2016 4:20:34 PM ******/
+﻿/****** Object:  UserDefinedTableType [dbo].[UDT_DocIdList]    Script Date: 3/7/2016 11:40:29 PM ******/
 CREATE TYPE [dbo].[UDT_DocIdList] AS TABLE(
 	[SourceId] [int] NULL,
 	[DocId] [varchar](50) NULL
 )
 GO
-/****** Object:  UserDefinedTableType [dbo].[UDT_EntityList]    Script Date: 3/3/2016 4:20:34 PM ******/
+/****** Object:  UserDefinedTableType [dbo].[UDT_EntityList]    Script Date: 3/7/2016 11:40:29 PM ******/
 CREATE TYPE [dbo].[UDT_EntityList] AS TABLE(
 	[TypeId] [int] NULL,
 	[Id] [varchar](50) NULL,
 	[Name] [varchar](50) NULL
 )
 GO
-/****** Object:  UserDefinedTableType [dbo].[UDT_Relations]    Script Date: 3/3/2016 4:20:34 PM ******/
+/****** Object:  UserDefinedTableType [dbo].[UDT_Relations]    Script Date: 3/7/2016 11:40:29 PM ******/
 CREATE TYPE [dbo].[UDT_Relations] AS TABLE(
 	[ScoringServiceId] [varchar](50) NULL,
 	[ModelVersion] [varchar](50) NULL,
@@ -24,7 +23,7 @@ CREATE TYPE [dbo].[UDT_Relations] AS TABLE(
 	[Score] [real] NULL
 )
 GO
-/****** Object:  Table [dbo].[Documents]    Script Date: 3/3/2016 4:20:34 PM ******/
+/****** Object:  Table [dbo].[Documents]    Script Date: 3/7/2016 11:40:29 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -36,6 +35,7 @@ CREATE TABLE [dbo].[Documents](
 	[Id] [int] NOT NULL,
 	[Description] [varchar](1024) NULL,
 	[StatusId] [int] NOT NULL,
+	[Timestamp] [datetime] NOT NULL,
  CONSTRAINT [PK_Documents_1] PRIMARY KEY CLUSTERED 
 (
 	[SourceId] ASC,
@@ -46,7 +46,7 @@ CREATE TABLE [dbo].[Documents](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[DocumentStatus]    Script Date: 3/3/2016 4:20:34 PM ******/
+/****** Object:  Table [dbo].[DocumentStatus]    Script Date: 3/7/2016 11:40:29 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -65,7 +65,7 @@ CREATE TABLE [dbo].[DocumentStatus](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Entities]    Script Date: 3/3/2016 4:20:34 PM ******/
+/****** Object:  Table [dbo].[Entities]    Script Date: 3/7/2016 11:40:29 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -86,7 +86,7 @@ CREATE TABLE [dbo].[Entities](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[EntityTypes]    Script Date: 3/3/2016 4:20:34 PM ******/
+/****** Object:  Table [dbo].[EntityTypes]    Script Date: 3/7/2016 11:40:29 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -105,7 +105,26 @@ CREATE TABLE [dbo].[EntityTypes](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Relations]    Script Date: 3/3/2016 4:20:34 PM ******/
+/****** Object:  Table [dbo].[GenesInfo]    Script Date: 3/7/2016 11:40:29 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[GenesInfo](
+	[GeneId] [varchar](50) NULL,
+	[HgId] [varchar](1024) NULL,
+	[HgName] [varchar](50) NULL,
+	[HgSymbol] [varchar](1024) NULL,
+	[Description] [varchar](1024) NULL,
+	[Summary] [varchar](1024) NULL
+) ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[Relations]    Script Date: 3/7/2016 11:40:29 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -122,8 +141,9 @@ CREATE TABLE [dbo].[Relations](
 	[Entity1Id] [varchar](50) NOT NULL,
 	[Entity2TypeId] [int] NOT NULL,
 	[Entity2Id] [varchar](50) NOT NULL,
-	[Relation] [varchar](50) NULL,
+	[Relation] [varchar](50) NOT NULL,
 	[Score] [real] NOT NULL,
+	[Timestamp] [datetime] NOT NULL,
  CONSTRAINT [PK_Relations] PRIMARY KEY CLUSTERED 
 (
 	[SourceId] ASC,
@@ -141,7 +161,7 @@ CREATE TABLE [dbo].[Relations](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Sentences]    Script Date: 3/3/2016 4:20:34 PM ******/
+/****** Object:  Table [dbo].[Sentences]    Script Date: 3/7/2016 11:40:29 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -161,7 +181,7 @@ CREATE TABLE [dbo].[Sentences](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Sources]    Script Date: 3/3/2016 4:20:34 PM ******/
+/****** Object:  Table [dbo].[Sources]    Script Date: 3/7/2016 11:40:29 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -182,6 +202,8 @@ GO
 SET ANSI_PADDING OFF
 GO
 ALTER TABLE [dbo].[Documents] ADD  CONSTRAINT [DF_Documents_StatusId]  DEFAULT ((1)) FOR [StatusId]
+GO
+ALTER TABLE [dbo].[Documents] ADD  CONSTRAINT [DF_Documents_Timestamp]  DEFAULT (getutcdate()) FOR [Timestamp]
 GO
 ALTER TABLE [dbo].[Documents]  WITH CHECK ADD  CONSTRAINT [FK_Documents_DocumentStatus] FOREIGN KEY([StatusId])
 REFERENCES [dbo].[DocumentStatus] ([Id])
@@ -218,7 +240,7 @@ REFERENCES [dbo].[Documents] ([SourceId], [Id])
 GO
 ALTER TABLE [dbo].[Sentences] CHECK CONSTRAINT [FK_Sentences_Documents]
 GO
-/****** Object:  StoredProcedure [dbo].[FilterExistingDocuments]    Script Date: 3/3/2016 4:20:34 PM ******/
+/****** Object:  StoredProcedure [dbo].[FilterExistingDocuments]    Script Date: 3/7/2016 11:40:29 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -266,7 +288,28 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[GetEntitiesGenericNames]    Script Date: 3/3/2016 4:20:34 PM ******/
+/****** Object:  StoredProcedure [dbo].[GetDocuments]    Script Date: 3/7/2016 11:40:29 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[GetDocuments]
+	@Offset bigint,
+	@BatchSize bigint,
+	@Timestamp datetime
+AS
+BEGIN
+
+	select * from Documents
+	where [Timestamp] <= @Timestamp AND StatusId <= 3 -- all documents that are not in a NOT_ACCESSIBLE (4) status
+	order by SourceID, Id
+	OFFSET @Offset ROWS
+	FETCH NEXT @BatchSize ROWS ONLY 
+
+END
+
+GO
+/****** Object:  StoredProcedure [dbo].[GetEntitiesGenericNames]    Script Date: 3/7/2016 11:40:29 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -372,7 +415,7 @@ END
 */
 
 GO
-/****** Object:  StoredProcedure [dbo].[GetGraph]    Script Date: 3/3/2016 4:20:34 PM ******/
+/****** Object:  StoredProcedure [dbo].[GetGraph]    Script Date: 3/7/2016 11:40:29 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -408,7 +451,48 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateDocumentStatus]    Script Date: 3/3/2016 4:20:34 PM ******/
+/****** Object:  StoredProcedure [dbo].[GetGraphModelVersions]    Script Date: 3/7/2016 11:40:29 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[GetGraphModelVersions]
+AS
+BEGIN
+
+select distinct ScoringServiceId, ModelVersion
+from relations
+order by ScoringServiceId, ModelVersion ASC
+
+END
+
+GO
+/****** Object:  StoredProcedure [dbo].[GetSentences]    Script Date: 3/7/2016 11:40:29 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[GetSentences]
+	@Offset bigint,
+	@BatchSize bigint,
+	@Timestamp datetime
+AS
+BEGIN
+
+	-- get last fully process document
+	--declare @Timestamp datetime = (select max(TimeStamp) from Documents where StatusId = 3)
+
+	select s.* from Sentences s
+	join Documents d
+	on d.[Timestamp] <= @Timestamp AND s.SourceId = d.SourceId AND s.DocId = d.Id
+	order by s.SourceID, s.DocId, s.SentenceIndex
+	OFFSET @Offset ROWS 
+	FETCH NEXT @BatchSize ROWS ONLY 
+
+END
+
+GO
+/****** Object:  StoredProcedure [dbo].[UpdateDocumentStatus]    Script Date: 3/7/2016 11:40:29 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -433,7 +517,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[UpsertDocument]    Script Date: 3/3/2016 4:20:34 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpsertDocument]    Script Date: 3/7/2016 11:40:29 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -452,6 +536,8 @@ BEGIN
 
 	SET NOCOUNT ON;
 
+	DECLARE @Timestamp DATETIME = GETUTCDATE()
+
 	MERGE 
 	   Documents
 	USING ( 
@@ -459,16 +545,16 @@ BEGIN
 	) AS source (SourceId, Id, Description, StatusId) 
 	ON Documents.SourceId = source.SourceId AND Documents.Id = source.Id 
 	WHEN MATCHED THEN
-	   UPDATE SET Description = source.Description, StatusId = source.StatusId
+	   UPDATE SET Description = source.Description, StatusId = source.StatusId, [TimeStamp] = @Timestamp
 	WHEN NOT MATCHED THEN
-	   INSERT (SourceId, Id, Description, StatusId)
-	   VALUES (SourceId, Id, Description, StatusId)
+	   INSERT (SourceId, Id, Description, StatusId, [Timestamp])
+	   VALUES (SourceId, Id, Description, StatusId, @Timestamp)
 	; --A MERGE statement must be terminated by a semi-colon (;).
 
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[UpsertEntities]    Script Date: 3/3/2016 4:20:34 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpsertEntities]    Script Date: 3/7/2016 11:40:29 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -504,7 +590,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[UpsertRelations]    Script Date: 3/3/2016 4:20:34 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpsertRelations]    Script Date: 3/7/2016 11:40:29 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -553,6 +639,8 @@ BEGIN
 	   VALUES (TypeId, Id, Name)
 	; --A MERGE statement must be terminated by a semi-colon (;).
 
+
+	/*
 	-- delete previous relations for this sentence if any
 	-- this is a workaround. better do it with cursor dynamically over select unique ScoringServiceIDs
 	DELETE FROM Relations
@@ -574,27 +662,30 @@ BEGIN
 	INSERT INTO Relations 
 	SELECT @SourceId, @DocId, @SentenceIndex, r.ScoringServiceId, r.ModelVersion, r.Entity1TypeId, r.Entity1Id, r.Entity2TypeId, r.Entity2Id, r.Relation, r.Score
 	FROM @relations r
-	
-
-	/*
-	MERGE Graph 
-	USING ( SELECT @SourceId, @DocId, @SentenceIndex, r.Entity1TypeId, r.Entity1Name, r.Entity2TypeId, r.Entity2Name, r.Relation, r.Score, @ModelVersion
-			FROM @relations r) 
-	AS source (SourceId, DocId, SentenceIndex, Entity1TypeId, Entity1Name, Entity2TypeId, Entity2Name, Relation, Score, ModelVersion) 
-	ON	Graph.SourceId = source.SourceId 
-		AND Graph.DocId = source.DocId 
-		AND Graph.SentenceIndex = source.SentenceIndex
-		AND Graph.Entity1TypeId = source.Entity1TypeId
-		AND Graph.Entity1Name = source.Entity1Name
-		AND Graph.Entity2TypeId = source.Entity2TypeId
-		AND Graph.Entity2Name = source.Entity2Name
-	WHEN MATCHED THEN
-	   UPDATE SET Relation = source.Relation, Score = source.Score, ModelVersion = source.ModelVersion
-	WHEN NOT MATCHED THEN
-	   INSERT (SourceId, DocId, SentenceIndex, Entity1TypeId, Entity1Name, Entity2TypeId, Entity2Name, Relation, Score, ModelVersion)
-	   VALUES (SourceId, DocId, SentenceIndex, Entity1TypeId, Entity1Name, Entity2TypeId, Entity2Name, Relation, Score, ModelVersion)
-	; --A MERGE statement must be terminated by a semi-colon (;).
 	*/
+
+	DECLARE @Timestamp DATETIME = GETUTCDATE()
+
+	MERGE Relations 
+	USING ( SELECT @SourceId, @DocId, @SentenceIndex, r.ScoringServiceId, r.ModelVersion, r.Entity1TypeId, r.Entity1Id, r.Entity2TypeId, r.Entity2Id, r.Relation, r.Score
+			FROM @relations r) 
+	AS source (SourceId, DocId, SentenceIndex, ScoringServiceId, ModelVersion, Entity1TypeId, Entity1Id, Entity2TypeId, Entity2Id, Relation, Score) 
+	ON	Relations.SourceId = source.SourceId 
+		AND Relations.DocId = source.DocId 
+		AND Relations.SentenceIndex = source.SentenceIndex
+		AND Relations.ScoringServiceId = source.ScoringServiceId
+		AND Relations.ModelVersion = source.ModelVersion
+		AND Relations.Entity1TypeId = source.Entity1TypeId
+		AND Relations.Entity1Id = source.Entity1Id
+		AND Relations.Entity2TypeId = source.Entity2TypeId
+		AND Relations.Entity2Id = source.Entity2Id
+	WHEN MATCHED THEN
+	   UPDATE SET Relation = source.Relation, Score = source.Score, [Timestamp] = @Timestamp
+	WHEN NOT MATCHED THEN
+	   INSERT (SourceId, DocId, SentenceIndex, ScoringServiceId, ModelVersion, Entity1TypeId, Entity1Id, Entity2TypeId, Entity2Id, Relation, Score, [Timestamp])
+	   VALUES (SourceId, DocId, SentenceIndex, ScoringServiceId, ModelVersion, Entity1TypeId, Entity1Id, Entity2TypeId, Entity2Id, Relation, Score, @Timestamp)
+	; --A MERGE statement must be terminated by a semi-colon (;).
+	
 
 	COMMIT TRANSACTION T1
 
@@ -604,6 +695,7 @@ END
 
 
 GO
+
 
 
 INSERT INTO DocumentStatus (Id,Name) VALUES (1, 'Processing')

@@ -1,12 +1,17 @@
-﻿var async = require('async');
+﻿
 var path = require('path');
+var appNodeModules = path.join(__dirname, '..', 'pipeline_modules');
+console.log('pipeline modules path:', appNodeModules);
+require('app-module-path').addPath(appNodeModules);
+
+var async = require('async');
 var fs = require('fs');
 var exec = require('child_process').exec;
 
 var moment = require('moment');
 var azure = require('azure-storage');
 
-var log = require('x-log');
+var log = require('pl-log');
 var utils = require('./utils.js');
 
 var DATE_TO_CHECK = '2007-10-10';
@@ -54,7 +59,7 @@ describe('Whole Pipeline', function () {
           // TODO:
           // Add to fix method for all environment variables
           process.env.DB_PASSWORD = process.env.DB_PASSWORD.replace(/_DOLLAR_/g, '$'); // travis jumbles up $ signs
-          config = require('x-config');
+          config = require('pl-config');
           return cb();
         }
         
@@ -63,7 +68,7 @@ describe('Whole Pipeline', function () {
           if (error) return cb(error);
           
           // Loading config now that the environment variables have been loaded
-          config = require('x-config');
+          config = require('pl-config');
           return cb();
         });
       },

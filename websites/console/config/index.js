@@ -2,7 +2,7 @@
 var fs = require('fs');
 var path = require('path');
 var format = require("string_format");
-var pipelineConfig = require('x-config');
+var pipelineConfig = require('pl-config');
 
 var config = {
     queues: {

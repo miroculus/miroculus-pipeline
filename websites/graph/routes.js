@@ -1,11 +1,21 @@
 var express = require('express');
 var router = express.Router();
 
-var db = require('x-db');
-var constants = require('x-constants');
+var db = require('pl-db');
+var constants = require('pl-constants');
 
 router.get('/', function (req, res) { 
-  return res.end('hello from Graph API');
+  db.getModelVersions(function (err, result) { 
+    if (err) return res.end(err.message);
+    res.setHeader('Content-Type', 'text/html');
+    res.write('<p>Graph API<p>Please use one of the following links:<br/><ul>');
+    for (var i = 0; i < (result && result.models && result.models.length); i++) {
+      var model = result.models[i];
+      res.write('<li><a href="/graph?scoringServiceId=' + model.ScoringServiceId + '&modelVersion=' + model.ModelVersion
+        + '">/graph?scoringServiceId=' + model.ScoringServiceId + '&modelVersion=' + model.ModelVersion + '<a></li>');
+    }
+    res.end('</ul>');
+  });
 });
 
 router.get('/graph', function (req, res) {

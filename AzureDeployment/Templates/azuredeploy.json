@@ -46,11 +46,7 @@
       "type": "string",
       "minLength": 1
     },
-    "SK_SCORING_URL": {
-      "type": "string",
-      "minLength": 1
-    },
-    "TLC_SCORING_URL": {
+    "SCORING_SERVICES": {
       "type": "string",
       "minLength": 1
     },
@@ -309,8 +305,7 @@
             "LOG_STORAGE_ACCOUNT": "[parameters('LOG_STORAGE_ACCOUNT')]",
             "LOG_STORAGE_KEY": "[listKeys(concat('Microsoft.Storage/storageAccounts/', parameters('LOG_STORAGE_ACCOUNT')),'2015-06-15').key1]",
             "SERVICE_DOC_URL": "[parameters('SERVICE_DOC_URL')]",
-            "SK_SCORING_URL": "[parameters('SK_SCORING_URL')]",
-            "TLC_SCORING_URL": "[parameters('TLC_SCORING_URL')]"
+            "SCORING_SERVICES": "[parameters('SCORING_SERVICES')]"
           }
         },
         {
@@ -364,8 +359,7 @@
             "LOG_STORAGE_ACCOUNT": "[parameters('LOG_STORAGE_ACCOUNT')]",
             "LOG_STORAGE_KEY": "[listKeys(concat('Microsoft.Storage/storageAccounts/', parameters('LOG_STORAGE_ACCOUNT')),'2015-06-15').key1]",
             "SERVICE_DOC_URL": "[parameters('SERVICE_DOC_URL')]",
-            "SK_SCORING_URL": "[parameters('SK_SCORING_URL')]",
-            "TLC_SCORING_URL": "[parameters('TLC_SCORING_URL')]"
+            "SCORING_SERVICES": "[parameters('SCORING_SERVICES')]"
           }
         },
         {
@@ -419,8 +413,7 @@
             "LOG_STORAGE_ACCOUNT": "[parameters('LOG_STORAGE_ACCOUNT')]",
             "LOG_STORAGE_KEY": "[listKeys(concat('Microsoft.Storage/storageAccounts/', parameters('LOG_STORAGE_ACCOUNT')),'2015-06-15').key1]",
             "SERVICE_DOC_URL": "[parameters('SERVICE_DOC_URL')]",
-            "SK_SCORING_URL": "[parameters('SK_SCORING_URL')]",
-            "TLC_SCORING_URL": "[parameters('TLC_SCORING_URL')]"
+            "SCORING_SERVICES": "[parameters('SCORING_SERVICES')]"
           }
         },
         {
@@ -479,8 +472,7 @@
             "LOG_STORAGE_ACCOUNT": "[parameters('LOG_STORAGE_ACCOUNT')]",
             "LOG_STORAGE_KEY": "[listKeys(concat('Microsoft.Storage/storageAccounts/', parameters('LOG_STORAGE_ACCOUNT')),'2015-06-15').key1]",
             "SERVICE_DOC_URL": "[parameters('SERVICE_DOC_URL')]",
-            "SK_SCORING_URL": "[parameters('SK_SCORING_URL')]",
-            "TLC_SCORING_URL": "[parameters('TLC_SCORING_URL')]",
+            "SCORING_SERVICES": "[parameters('SCORING_SERVICES')]",
             "DEPLOYMENT_ROLE": "website"
           }
         }
@@ -529,8 +521,7 @@
             "LOG_STORAGE_ACCOUNT": "[parameters('LOG_STORAGE_ACCOUNT')]",
             "LOG_STORAGE_KEY": "[listKeys(concat('Microsoft.Storage/storageAccounts/', parameters('LOG_STORAGE_ACCOUNT')),'2015-06-15').key1]",
             "SERVICE_DOC_URL": "[parameters('SERVICE_DOC_URL')]",
-            "SK_SCORING_URL": "[parameters('SK_SCORING_URL')]",
-            "TLC_SCORING_URL": "[parameters('TLC_SCORING_URL')]",
+            "SCORING_SERVICES": "[parameters('SCORING_SERVICES')]",
             "GOOGLE_CLIENT_ID": "[parameters('GOOGLE_CLIENT_ID')]",
             "GOOGLE_CLIENT_SECRET": "[parameters('GOOGLE_CLIENT_SECRET')]",
             "GOOGLE_CALLBACK_URL": "[concat('https://', parameters('consoleWebsiteName'), '.azurewebsites.net/.auth/login/google/callback')]",
