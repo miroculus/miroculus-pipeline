@@ -8,7 +8,7 @@ var Connection = tedious.Connection;
 var ConnectionPool = require('tedious-connection-pool');
 
 var logger = require('azure-logging');
-var log = require('x-log');
+var log = require('pl-log');
 
 var pool;
 
@@ -17,7 +17,7 @@ function initDB() {
   
   if (pool) return;
   
-  var configSql = require('x-config').sql;
+  var configSql = require('pl-config').sql;
   
   // TODO: move to configuration
   var poolConfig = {
@@ -163,7 +163,7 @@ function runDBScript2(dbScript, cb) {
 }
 
 function runDBScript(dbScript, db) {
-  var configSql = require('x-config').sql;
+  var configSql = require('pl-config').sql;
   var cmd = 'sqlcmd -U ' + configSql.userName + 
               ' -S ' + configSql.server + 
               ' -P ' + configSql.password + 
@@ -188,7 +188,7 @@ function countLogMessages(options, cb) {
   options.farm = options.farm || process.env.COMPUTERNAME || '';
   options.limit = options.limit || '100';
   options.top = options.top || '100';
-  options.transporters = require('x-config').log.transporters;
+  options.transporters = require('pl-config').log.transporters;
   
   return logger.reader(options, function (err, r) {
     if (err) return cb(err);

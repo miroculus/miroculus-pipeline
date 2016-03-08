@@ -46,11 +46,7 @@
       "type": "string",
       "minLength": 1
     },
-    "SK_SCORING_URL": {
-      "type": "string",
-      "minLength": 1
-    },
-    "TLC_SCORING_URL": {
+    "SCORING_SERVICES": {
       "type": "string",
       "minLength": 1
     },

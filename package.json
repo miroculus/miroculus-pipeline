@@ -21,6 +21,7 @@
     "docrouter": "^0.7.0",
     "express": "^4.13.4",
     "express-session": "^1.12.1",
+    "fs-extra": "^0.26.5",
     "googleapis": "^2.1.7",
     "memory-streams": "^0.1.0",
     "mocha": "^2.4.5",
@@ -41,8 +42,9 @@
     "wordwrap": "^1.0.0"
   },
   "scripts": {
-    "postinstall": "node ensure-sql",
-    "test": "./node_modules/.bin/mocha -R xunit test/ > test-reports.xml"
+    "preinstall": "node deployment/ensure-folder-hierarchy",
+    "postinstall": "node deployment/ensure-sql",
+    "test": "./node_modules/.bin/mocha test/"
   },
   "repository": {
     "type": "git",

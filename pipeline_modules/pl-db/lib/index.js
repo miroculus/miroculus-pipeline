@@ -106,7 +106,7 @@ function upsertRelations(opts, cb) {
         relation.relation,
         relation.score
       ]);
-      console.info('Relation', relation);
+      console.log('Relation', relation);
     }
     request.addParameter('relations', TYPES.TVP, relationsTable);
     

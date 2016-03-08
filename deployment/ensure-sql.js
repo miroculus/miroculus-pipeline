@@ -15,7 +15,8 @@ child_process.exec(cmd, null, function (error, stdout, stderr) {
   console.info('schema not found, creating a new schema...');
   
   var createdb_command = '';
-  createdb_command += 'sqlcmd -U %DB_USER% -S %DB_SERVER% -P %DB_PASSWORD% -d %DB_NAME% -i ' + path.join('Sql', 'schema.sql') + ' > createdb.log';
+  createdb_command += 'sqlcmd -U %DB_USER% -S %DB_SERVER% -P %DB_PASSWORD% -d %DB_NAME% -i ' + 
+    path.join('deployment', 'sql', 'schema.sql') + ' > createdb.log';
   child_process.exec(createdb_command, null, function (error, stdout, stderr) {
     
     if (error) return console.error('Error creating new DB schema', error);
