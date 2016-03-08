@@ -1,5 +1,8 @@
 var path = require('path');
-var appNodeModules = path.join(__dirname, '..', 'pipeline_modules');
+var fs = require('fs');
+var appNodeModules = path.join(__dirname, '..', '..', '..', '..', 'pipeline_modules');
+if (!fs.existsSync(appNodeModules))
+  appNodeModules = path.join(__dirname, '..', 'pipeline_modules');
 console.log('pipeline modules path:', appNodeModules);
 require('app-module-path').addPath(appNodeModules);
 
