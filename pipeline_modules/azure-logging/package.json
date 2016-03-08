@@ -1,0 +1,15 @@
+{
+  "author": "Elad Ben-Israel <eladb@microsoft.com>",
+  "name": "anode-logging",
+  "description": "Logging module for anode",
+  "version": "0.3.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/anodejs/repo.git"
+  },
+  "main": "main",
+  "bin": [
+    "bin/reader"
+  ],
+  "devDependencies": {}
+}

@@ -1,0 +1,10 @@
+{
+  "name": "pl-worker",
+  "version": "1.0.0",
+  "description": "worker wrapper module, for common pipeline worker logics",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "ami turgman"
+}
