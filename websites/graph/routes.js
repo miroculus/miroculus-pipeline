@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
-var db = require('x-db');
-var constants = require('x-constants');
+var db = require('pl-db');
+var constants = require('pl-constants');
 
 router.get('/', function (req, res) { 
   db.getModelVersions(function (err, result) { 

@@ -7,9 +7,9 @@ var express = require('express'),
   config = require('../config'),
   azure = require('azure-storage'),
   async = require('async'),
-  queue = require('x-queue'),
+  queue = require('pl-queue'),
   db = require('./db'),
-  constants = require('x-constants'),
+  constants = require('pl-constants'),
   S = require('string');
   
   

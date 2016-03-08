@@ -49,7 +49,7 @@
                    {
                        resultsContainer: $("#cliOutput"),
                        promptControl: $("#cliPrompt"),
-                       myBoard: $("#cliMyBoard"),
+                       docker: $("#cliDocker"),
                        environment: anode.env,
                        commands: anode.commands,
                        plugins: plugins,

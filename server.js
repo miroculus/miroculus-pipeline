@@ -1,15 +1,19 @@
 ﻿process.on('uncaughtException', handleError);
 
 function handleError(err) {
-  console.error((new Date).toUTCString() + ' uncaughtException:', err.message)
-  console.error(err.stack)
-  process.exit(1)
+  console.error((new Date).toUTCString() + ' uncaughtException:', err.message);
+  console.error(err.stack);
+  process.exit(1);
 }
 
 var path = require('path');
+var appNodeModules = path.join(__dirname, 'pipeline_modules');
+console.log('pipeline modules path:', appNodeModules);
+require('app-module-path').addPath(appNodeModules);
+
 var fs = require('fs');
-var log = require('x-log');
-var config = require('x-config');
+var log = require('pl-log');
+var config = require('pl-config');
 var websiteName = process.env.PIPELINE_ROLE;
 
 var websitePath = path.join(__dirname, 'websites', websiteName);

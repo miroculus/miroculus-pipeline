@@ -1,5 +1,5 @@
 {
-  "name": "x-queue",
+  "name": "pl-queue",
   "version": "1.0.0",
   "description": "queue module",
   "main": "lib/index.js",
