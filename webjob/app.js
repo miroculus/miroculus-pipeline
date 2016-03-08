@@ -1,5 +1,8 @@
 var path = require('path');
 var fs = require('fs');
+
+// on Azure, the webjobs are running from a  
+// different location than where they run locally
 var appNodeModules = path.join(__dirname, '..', '..', '..', '..', 'pipeline_modules');
 if (!fs.existsSync(appNodeModules))
   appNodeModules = path.join(__dirname, '..', 'pipeline_modules');
