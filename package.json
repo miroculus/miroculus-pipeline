@@ -8,6 +8,7 @@
     "email": "morshe@microsoft.com"
   },
   "dependencies": {
+    "app-module-path": "^1.0.5",
     "async": "^1.5.2",
     "azure-storage": "^0.6.0",
     "base32": "^0.0.6",

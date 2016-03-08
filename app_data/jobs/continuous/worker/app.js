@@ -1,7 +1,12 @@
+var path = require('path');
+var appNodeModules = path.join(__dirname, '../../../../', 'pipeline_modules');
+console.log('pipeline modules path:', appNodeModules);
+require('app-module-path').addPath(appNodeModules);
+
 var cluster = require('cluster');
 var workers = process.env.WORKERS || require('os').cpus().length;
-var log = require('x-log');
-var config = require('x-config');
+var log = require('pl-log');
+var config = require('pl-config');
 
 process.on('uncaughtException', handleError);
 
@@ -29,7 +34,8 @@ function cloneAndStartProcess() {
 }
 
 function loadService() {
-  var workerModule = require('x-' + workerName);
+  console.log('requiring', workerName);
+  var workerModule = require('pl-' + workerName);
 
   log.init({
       domain: process.env.COMPUTERNAME || '',

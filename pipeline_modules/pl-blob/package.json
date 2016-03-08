@@ -1,0 +1,10 @@
+{
+  "name": "pl-blob",
+  "version": "1.0.0",
+  "description": "Manage blob actions",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "mor shemesh"
+}
