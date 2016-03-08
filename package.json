@@ -42,8 +42,7 @@
     "wordwrap": "^1.0.0"
   },
   "scripts": {
-    "preinstall": "node deployment/ensure-folder-hierarchy",
-    "postinstall": "node deployment/ensure-sql",
+    "postinstall": "node deployment/ensure-folder-hierarchy && node deployment/ensure-sql",
     "test": "./node_modules/.bin/mocha test/"
   },
   "repository": {
