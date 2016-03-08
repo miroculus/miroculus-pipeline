@@ -19,6 +19,22 @@ var logMessages = [];
 
 var startTime = moment();
 
+// This method helps print any left over errors to the console before the process ends
+function doneWithError(err, done) {
+  console.error('The test failed with the following error:', err);
+  
+  return setTimeout(function () {
+    return done(err);
+  }, 500);
+}
+
+// This method helps print any left over messages to the console before the process ends
+function doneSuccessfully(done) {
+  return setTimeout(function () {
+    return done();
+  }, 500);
+}
+
 describe('Whole Pipeline', function () {
   
   this.timeout(15 * 60 * 1000); // 15 minute timeout
@@ -91,7 +107,7 @@ describe('Whole Pipeline', function () {
             console.error('Error running empty db schema:', err);
             return cb(err);
           }
-
+          
           return utils.runDBScript(schemaScript, function (err) {
             if (err) {
               console.error('Error running create db schema:', err);
@@ -131,7 +147,7 @@ describe('Whole Pipeline', function () {
       function (cb) {
         
         // If one of the workers throws an error, log the error message
-        var runAppJSPath = path.join(__dirname, '..', 'app_data', 'jobs', 'continuous', 'worker', 'app.js');
+        var runAppJSPath = path.join(__dirname, '..', 'webjob', 'app.js');
         var queryWorker = exec('set PIPELINE_ROLE=query-id&& set WORKERS=1&& node ' + runAppJSPath, function (err, stdout, stderr) {
           if (err) return console.error('Error in Query worker', err);
         });
@@ -161,14 +177,11 @@ describe('Whole Pipeline', function () {
         return cb();
       }
     ], function (err) {
-
-      if (err) {
-        console.error('There was an error during the test setup:', err);
-        return done(err);
-      }
+      
+      if (err) return doneWithError(err, done);
       
       console.info('Setup was completed successfully');
-      return done();
+      return doneSuccessfully(done);
     });
 
   });
@@ -199,10 +212,10 @@ describe('Whole Pipeline', function () {
       }
     ], 
         
-        // When done setting up, run all workers and when for checkups to complete
-        function (error) {
+    // When done setting up, run all workers and when for checkups to complete
+    function (err) {
       
-      if (error) return done(error);
+      if (err) return doneWithError(err, done);
       
       // Periodic check for errors in the pipeline
       // The monitored errors will only be errors created by the testing process
@@ -221,7 +234,7 @@ describe('Whole Pipeline', function () {
       // If one role fails, the failure will fail the entire test immediately
       return async.parallel([
                 
-                // Periodic check that document was queried from service
+        // Periodic check that document was queried from service
         function (cb) {
           return utils.waitForLogMessage({
             message: 'done queuing messages for all documents', 
@@ -251,7 +264,7 @@ describe('Whole Pipeline', function () {
           });
         },
 
-                // Periodic check that document was parsed for sentences
+        // Periodic check that document was parsed for sentences
         function (cb) {
           
           return utils.waitForLogMessage({
@@ -285,15 +298,20 @@ describe('Whole Pipeline', function () {
           return utils.waitForTableRowCount({
             tableName: 'Sentences', 
             where: 'DocId=' + DOCUMENT_ID_TO_MONITOR,
-            expectedCount: 40
-          }, function (error) {
-            if (error) return cb(error);
+            expectedCount: 37
+          }, function (err) {
+            if (err) return cb(err);
             
             console.info('Scorer worker test completed successfully');
             return cb();
           });
         }
-      ], done);
+      ], function (err) {
+        
+        if (err) return doneWithError(err, done);
+      
+        return doneSuccessfully(done);
+      });
 
     });
 
@@ -314,6 +332,6 @@ describe('Whole Pipeline', function () {
       queueService.deleteQueueIfExists(config.queues.scoring, function () { });
     }
     
-    return done();
+    return doneSuccessfully(done);
   });
 })

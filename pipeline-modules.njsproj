@@ -36,7 +36,6 @@
   <ItemGroup>
     <Compile Include="deployment\ensure-folder-hierarchy.js" />
     <Compile Include="deployment\ensure-sql.js" />
-    <Compile Include="deployment_scripts\ensure-sql.js" />
     <Compile Include="node_modules\azure-logging\lib\format.js" />
     <Compile Include="node_modules\azure-logging\lib\formatters\html.js" />
     <Compile Include="node_modules\azure-logging\lib\formatters\text.js" />
@@ -114,7 +113,6 @@
   <ItemGroup>
     <Folder Include="deployment\" />
     <Folder Include="deployment\sql\" />
-    <Folder Include="deployment_scripts\" />
     <Folder Include="webjob\" />
     <Folder Include="node_modules\azure-logging\" />
     <Folder Include="node_modules\azure-logging\lib\" />
