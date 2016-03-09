@@ -27,20 +27,28 @@ if (!fs.existsSync(websitePath)) {
 else {
   var app = require(websitePath);
 
-  log.init({
-    domain: process.env.COMPUTERNAME || '',
-    instanceId: log.getInstanceId(),
-    app: websiteName,
-    level: config.log.level,
-    transporters: config.log.transporters
-  },
-    function (err) {
-      if (err) return handleError(err);
-      console.log('starting %s server...', websiteName);
-
-      var server = app.listen(app.get('port'), function (err) {
+  if (process.env.USE_ANODE_LOGGING !== 'false') {
+    log.init({
+      domain: process.env.COMPUTERNAME || '',
+      instanceId: log.getInstanceId(),
+      app: websiteName,
+      level: config.log.level,
+      transporters: config.log.transporters
+    },
+      function(err) {
         if (err) return handleError(err);
-        console.log('%s server listening on port %s', websiteName, server.address().port);
+        console.log('starting %s server...', websiteName);
+
+        return runWebsite();
       });
+  }
+ else
+    return runWebsite();
+
+  function runWebsite() {
+    var server = app.listen(app.get('port'), function(err) {
+      if (err) return handleError(err);
+      console.log('%s server listening on port %s', websiteName, server.address().port);
     });
+  }
 }

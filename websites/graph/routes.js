@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+var fs = require('fs');
+var path = require('path');
 
 var db = require('pl-db');
 var constants = require('pl-constants');
@@ -16,6 +18,14 @@ router.get('/', function (req, res) {
     }
     res.end('</ul>');
   });
+});
+
+// this is a temporary workaround for fetching document
+// returns a permanent doc sample of 2000354
+router.get('/doc/pmc/*', function(req, res) {
+  res.setHeader("content-type", "application/json");
+  var filePath = path.join(__dirname, 'sample', '2000354.json');
+  fs.createReadStream(filePath).pipe(res);
 });
 
 router.get('/graph', function (req, res) {
