@@ -4,16 +4,18 @@ var request = require('request')
 var config = require('pl-config');
 var db = require('pl-db');
 var constants = require('pl-constants');
-var Worker = require('pl-worker').Worker;
+var pipelineWorker = require('pl-worker');
 
 function run(cb) {
-  
-  var worker = new Worker({
-    processMessage: processMessage,
-    queueInName: config.queues.scoring
+
+  var worker = pipelineWorker.start({
+      processMessage: processMessage,
+      queueInName: config.queues.scoring
+    },
+    function(err) {
+      if (err) return cb(err);
+      console.info('worker initialized successfully');
   });
-  
-  return worker.run(cb);
   
   function processMessage(message, cb) {
 
@@ -78,8 +80,7 @@ function run(cb) {
               mentions: JSON.parse(row.MentionsJson)
           }
         };
-        var queueIn = worker.queues[constants.queues.types.IN];
-        return queueIn.sendMessage(scoringMessage, function (err) {
+        return worker.queueIn.sendMessage(scoringMessage, function (err) {
           if (err) {
             console.error('failed to queue rescoring item', scoringMessage);
             return cb(err);

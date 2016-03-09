@@ -41,10 +41,6 @@ var constants = {
       GET_DOCUMENT: 'getDocument',
       RESCORE: 'rescore',
       REPROCESS: 'reprocess'
-    },
-    types: {
-      IN: 'in', 
-      OUT: 'out'
     }
   }
 }

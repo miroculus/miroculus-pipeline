@@ -3,17 +3,19 @@ var config = require("pl-config");
 var service = require("pl-docServiceProxy");
 var async = require("async");
 var db = require("pl-db")
-var Worker = require('pl-worker').Worker;
+var pipelineWorker = require('pl-worker');
 
 function run(cb) {
-    
-  var worker = new Worker({
-    processMessage: processMessage,
-    queueInName: config.queues.new_ids,
-    queueOutName: config.queues.scoring
+
+  var worker = pipelineWorker.start({
+      processMessage: processMessage,
+      queueInName: config.queues.new_ids,
+      queueOutName: config.queues.scoring
+    },
+    function(err) {
+      if (err) return cb(err);
+      console.info('worker initialized successfully');
   });
-  
-  return worker.run(cb);
     
   function processMessage(message, cb) {
 
@@ -143,8 +145,7 @@ function run(cb) {
                   docId: docId  
                 }
               };
-              var queueOut = worker.queues[constants.queues.types.OUT];
-              return queueOut.sendMessage(msg, function (err) {
+              return worker.queueOut.sendMessage(msg, function (err) {
                 if (err) return cb(err);
                   
                 console.log('queued last item mark');
@@ -170,8 +171,7 @@ function run(cb) {
                 }
               };
                 
-              var queueOut = worker.queues[constants.queues.types.OUT];
-              return queueOut.sendMessage(message, function (err) {
+              return worker.queueOut.sendMessage(message, function (err) {
                 if (err) {
                   console.error('failed to queue message: <%s> of paper <%s>', message, docId);
                   return cb(err);

@@ -5,17 +5,19 @@ var config = require("pl-config");
 var service = require("pl-docServiceProxy");
 var db = require('pl-db');
 var async = require("async");
-var Worker = require('pl-worker').Worker;
+var pipelineWorker = require('pl-worker');
 
 function run(cb) {
-  
-  var worker = new Worker({
-    processMessage: processMessage,
-    queueInName: config.queues.trigger_query,
-    queueOutName: config.queues.new_ids
+
+ var worker = pipelineWorker.start({
+      processMessage: processMessage,
+      queueInName: config.queues.trigger_query,
+      queueOutName: config.queues.new_ids
+    },
+    function(err) {
+      if (err) return cb(err);
+      console.info('worker initialized successfully');
   });
-  
-  return worker.run(cb);
   
   function processMessage(message, cb) {
     var data = message && message.data || {};
@@ -118,8 +120,7 @@ function run(cb) {
         }
       };
       
-      var queueOut = worker.queues[constants.queues.types.OUT];
-      return queueOut.sendMessage(message, function (err) {
+      return worker.queueOut.sendMessage(message, function (err) {
         if (err) {
           console.error('There was an error queuing a document.');
           return cb(err);
