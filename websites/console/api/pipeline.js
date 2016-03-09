@@ -10,8 +10,9 @@ var express = require('express'),
   queue = require('pl-queue'),
   db = require('./db'),
   constants = require('pl-constants'),
-  S = require('string');
-  
+  S = require('string'),
+  request = require('request'),
+  url = require('url');
   
 var pipelineQueues = Object.keys(config.queues)
     .map(function (key) { return config.queues[key] })
@@ -20,6 +21,11 @@ var pipelineQueues = Object.keys(config.queues)
   
 var queueService = azure.createQueueService(config.storage.account, config.storage.key)
       .withFilter(new azure.ExponentialRetryPolicyFilter());
+
+var scoringServices = {};
+config.services.scoring.forEach(function(service) {
+  scoringServices[service.id.toUpperCase()] = service;
+});
 
 module.exports = api;
 
@@ -46,7 +52,13 @@ docRouter(router, "/api/pipeline", function (router) {
       
       return triggerQueue.sendMessage(message, function (err, result) {
         if (err) return res.json({ err: err.message });
-        return res.json({ result: 'success' });
+        var result = {
+          status: 'OK',
+          message: 'trigger request sent successfully',
+        };
+        if (from) result.from = from;
+        if (to) result.to = to;
+        return res.json(result);
       });
     });
   },
@@ -103,7 +115,6 @@ docRouter(router, "/api/pipeline", function (router) {
         },
         function (err) {
           if (err) return res.json({ err: err.message }); 
-          
           return res.json(obj);
         }
       );
@@ -118,7 +129,6 @@ docRouter(router, "/api/pipeline", function (router) {
       response: { representations: ['application/json'] }
     }
     );
-  
     
   router.get('/status', function (req, res) { 
       var queuesCounters = {};
@@ -185,8 +195,12 @@ docRouter(router, "/api/pipeline", function (router) {
           });
         },
         function (err) {
-          if (err) return res.json({ err: err.message }); 
-          return res.json(obj);
+          if (err) return res.json({ err: err.message });
+          return res.json({
+            status: 'OK', 
+            message: 'clear request completed successfully',
+            queus: obj
+          });
         }
       );
     },
@@ -201,26 +215,57 @@ docRouter(router, "/api/pipeline", function (router) {
     }
   );
   
-  router.post('/loadmodel', function (req, res) { 
-      return res.end('waiting for Nadav to implement');
+  router.post('/updatemodel', function(req, res) {
+      var service = req.body.service.toUpperCase();
+      var path = req.body.path;
+
+      if (!scoringServices[service]) return res.json({ err: 'service ' + service + ' does not exists' });
+      var urlElements = url.parse(scoringServices[service].url);
+      var address = urlElements.protocol + "//" + urlElements.hostname + '/updatemodel'; 
+    
+      var opts = {
+        url: address,
+        method: 'POST',
+        json: {
+          "path": path
+        }
+      };
+
+      return request(opts, function(err, resp, body) {
+        if (err) return res.json({ err: err.message });
+        return res.json({
+          status: 'OK', 
+          message: 'update model request sent successfully',
+          service: service,
+          endpoint: address
+        });
+      });
     },
     {
-      id: 'pipeline_loadmodel',
-      name: 'loadmodel',
-      usage: 'pipeline loadmodel',
-      example: 'pipeline loadmodel',
+      id: 'pipeline_updatemodel',
+      name: 'updatemodel',
+      usage: 'pipeline updatemodel',
+      example: 'pipeline updatemodel',
       doc: 'Updates model in scorer services',
       params: {
-          "model": {
-          "short": "m",
-          "type": "string",
-          "doc": "model path in blob container",
-          "style": "query"
+          "path": {
+            "short": "p",
+            "type": "string",
+            "doc": "model path in blob container",
+            "style": "body",
+            "required": "true"
+        },
+          "service": {
+            "short": "s",
+            "type": "string",
+            "doc": "the service to send update request: " + Object.keys(scoringServices).join(','),
+            "style": "body",
+            "required": "true"
         }
       },
       response: { representations: ['application/json'] }
     }
-    );
+  );
   
   router.post('/rescore', function (req, res) { 
       var scoringQueue = queue({
@@ -238,8 +283,12 @@ docRouter(router, "/api/pipeline", function (router) {
         if (err) return console.error('error initizalizing queue', scoringQueue, err);
         return scoringQueue.sendMessage(msg, function (err) {
           if (err) return res.json({ err: err.message });
-          console.log('rescoring request added to scoring queue');
-          return res.end('rescoring request added to scoring queue');
+          console.log('rescoring request sent successfully');
+          return res.json({ 
+            status: 'OK', 
+            message: 'rescoring request sent successfully',
+            queue: config.queues.scoring.name
+          });
         });
       });
     },
@@ -271,8 +320,12 @@ docRouter(router, "/api/pipeline", function (router) {
         if (err) return console.error('error initizalizing queue', queryQueue, err);
         return queryQueue.sendMessage(msg, function (err) {
           if (err) return res.json({ err: err.message });
-          console.log('reprocessing request added to trigger_query queue');
-          return res.end('rescoring request added to trigger_query queue');
+          console.log('reprocess request sent successfully');
+          return res.json({ 
+            status: 'OK', 
+            message: 'reprocess request sent successfully',
+            queue: config.queues.trigger_query.name
+          });
         });
       });
     },
