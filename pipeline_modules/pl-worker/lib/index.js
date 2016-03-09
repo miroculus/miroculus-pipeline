@@ -97,6 +97,9 @@ function start(opts, cb) {
         return deleteMessage(message);
       }
 
+      // this is a temporary solution to add message id to the logs
+      // explore this approach for long term:
+      // https://datahero.com/blog/2014/05/22/node-js-preserving-data-across-async-callbacks/
       ['log', 'info', 'warn', 'error'].forEach(function(level) {
         msgObject[level] = function() {
           msg = util.format.apply(null, arguments);
@@ -115,7 +118,7 @@ function start(opts, cb) {
           return checkInputQueue();
         } else {
           // message processed successfully- delete and move on the next one
-          message.log('deleting item');
+          msgObject.log('deleting item');
           return deleteMessage(message, function(err) {
             if (err) msgObject.error('error deleting message:', message.messageid, err);
             
