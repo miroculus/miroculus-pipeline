@@ -84,8 +84,6 @@ function start(opts, cb) {
       if (!message) {
         return setNextCheck();
       }
-
-      console.log('new message:', message);
       
       // try to parse message json
       var msgObject;
@@ -106,7 +104,9 @@ function start(opts, cb) {
           msg = '[' + message.messageid + '] ' + msg;
           console[level].call(null, msg);
         }
-      });      
+      });
+
+      msgObject.log('new message:', message);      
 
       // run service specific processMessage handler
       // pass the message object
