@@ -43,9 +43,6 @@ function getCloseConnectionCb(connection, cb) {
 }
 
 function upsertRelations(opts, cb) {
-  
-  console.log('upserting relation', opts);
-  
   return connect(function (err, connection) {
     if (err) return logError(err, connection, cb);
     
@@ -106,13 +103,8 @@ function upsertRelations(opts, cb) {
         relation.relation,
         relation.score
       ]);
-      console.log('Relation', relation);
     }
     request.addParameter('relations', TYPES.TVP, relationsTable);
-    
-    request.on('returnValue', function (parameterName, value, metadata) {
-      console.log('returnValue {}', parameterName + ' = ' + value);
-    });
     
     return connection.callProcedure(request);
   });
@@ -212,7 +204,6 @@ function getModelVersions(cb) {
 
 function upsertDocument(opts, cb) {
 
-  console.log('upserting document', opts);
   return connect(function (err, connection) {
     if (err) return logError(err, connection, cb);
 
@@ -229,7 +220,6 @@ function upsertDocument(opts, cb) {
 
 
 function updateDocumentStatus(opts, cb) {
-  console.log('UpdateDocumentStatus', opts);
   return connect(function (err, connection) {
     if (err) return logError(err, connection, cb);
     
@@ -337,7 +327,6 @@ function getBatch(opts, cb) {
       });
 
       request.on('doneProc', function () {
-        console.log('doneProc:', rowCount);
         // if we have a full batch, that means we migt have more
         // rows, continue fetching next batch
         if (rowCount == batchSize) {

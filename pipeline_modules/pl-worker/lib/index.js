@@ -2,6 +2,7 @@
 var async = require('async');
 var queue = require('pl-queue');
 var config = require('pl-config');
+var util = require('util');
 
 var QueueType = {
   IN: 'in',
@@ -95,19 +96,28 @@ function start(opts, cb) {
         console.error('error parsing message, invalid json, deleting...', message);
         return deleteMessage(message);
       }
-      
+
+      ['log', 'info', 'warn', 'error'].forEach(function(level) {
+        msgObject[level] = function() {
+          msg = util.format.apply(null, arguments);
+          msg = '[' + message.messageid + '] ' + msg;
+          console[level].call(null, msg);
+        }
+      });      
+
       // run service specific processMessage handler
       // pass the message object
       return processMessage(msgObject, function (err) {
         if (err) {
-          console.error('error processing message:', message.messageid, err);
+          msgObject.error('error processing message:', message.messageid, err);
           
           // move to the next message immediately without waiting
           return checkInputQueue();
         } else {
           // message processed successfully- delete and move on the next one
+          message.log('deleting item');
           return deleteMessage(message, function(err) {
-            if (err) console.error('error deleting message:', message.messageid, err);
+            if (err) msgObject.error('error deleting message:', message.messageid, err);
             
             // move to the next message immediately without waiting
             return checkInputQueue();
@@ -123,10 +133,8 @@ function start(opts, cb) {
   };
 
   function deleteMessage(message, cb) {
-    console.log('deleting item', message.messageid);
     return queueIn.deleteMessage(message, function (err) {
       if (err) return cb(new Error('error deleting item from queue', err));
-      console.log('item deleted from queue', message.messageid);
       return cb();
     });
   }
