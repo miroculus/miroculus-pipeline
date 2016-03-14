@@ -23,7 +23,12 @@ function getDocumentSentences(docId, sourceId, cb) {
   var source = constants.sourcesById[sourceId];
   var urlRequest = config.services.docServiceUrl + '/doc/' + source + '/' + docId;
   console.info('calling', urlRequest);
-  return request(urlRequest, function (err, resp, body) {
+
+  var opts = {
+      url: urlRequest,
+      timeout: config.http.timeoutMsec
+  };
+  return request(opts, function(err, resp, body) {
     if (err) return cb(err);
     
     // TODO: this is a temporary code to 

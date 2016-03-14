@@ -4,26 +4,28 @@ var request = require('request')
 var config = require('pl-config');
 var db = require('pl-db');
 var constants = require('pl-constants');
-var Worker = require('pl-worker').Worker;
+var pipelineWorker = require('pl-worker');
 
 function run(cb) {
-  
-  var worker = new Worker({
-    processMessage: processMessage,
-    queueInName: config.queues.scoring
+
+  var worker = pipelineWorker.start({
+      processMessage: processMessage,
+      queueInName: config.queues.scoring
+    },
+    function(err) {
+      if (err) return cb(err);
+      console.info('worker initialized successfully');
   });
-  
-  return worker.run(cb);
   
   function processMessage(message, cb) {
 
     var data = message && message.data;
     if (!data) {
-      console.error('message does not contain data field, deleting...', message);
+      message.error('message does not contain data field, deleting...', message);
       return cb();
     }
     
-    console.log('requestType', message.requestType);
+    message.log('requestType', message.requestType);
     switch(message.requestType) {
       case (constants.queues.action.LAST_ITEM_TO_SCORE) :
         return markLastItem();
@@ -32,7 +34,7 @@ function run(cb) {
       case (constants.queues.action.SCORE) :
         return score();
       default:
-        console.error('message should not appear in this queue, deleting...', message);
+        message.error('message should not appear in this queue, deleting...', message);
         return cb();
     }
     
@@ -52,7 +54,7 @@ function run(cb) {
     
     // rescoring handler
     function rescore() {
-      console.info('starting rescoring request');
+      message.info('starting rescoring request');
       
       // rescore all sentences
       var rowCount = 0;
@@ -62,7 +64,7 @@ function run(cb) {
         },
         function (err) { 
           if (err) return cb(err);
-          console.info('rescoring request deleted from queue, %s sentences sent for rescoring', rowCount);
+          message.info('rescoring request deleted from queue, %s sentences sent for rescoring', rowCount);
           return cb();
       });
       
@@ -78,10 +80,9 @@ function run(cb) {
               mentions: JSON.parse(row.MentionsJson)
           }
         };
-        var queueIn = worker.queues[constants.queues.types.IN];
-        return queueIn.sendMessage(scoringMessage, function (err) {
+        return worker.queueIn.sendMessage(scoringMessage, function (err) {
           if (err) {
-            console.error('failed to queue rescoring item', scoringMessage);
+            message.error('failed to queue rescoring item', scoringMessage);
             return cb(err);
           }
         });
@@ -95,14 +96,14 @@ function run(cb) {
         // we'll return and hopefully the message will be scored the next
         // time we try...
         if (err) {
-          console.error('error getting scoring for message', err);
+          message.error('error getting scoring for message', err);
           return cb(err);
         }
 
-        console.log('got scoring relations', JSON.stringify(result));
+        message.log('got scoring relations', JSON.stringify(result));
 
         if (!result.relations || !result.relations.length) {
-          console.error('scorer didn\'t return relations for sentence', data, result);
+          message.error('scorer didn\'t return relations for sentence', data, result);
 
           // should we delete the message from the queue? 
           // should we leave it there for reprocessing?
@@ -119,7 +120,7 @@ function run(cb) {
           // just return and hopefully the next iteration will work.
           // the item will stay in the queue until it will be processed.
           if (err) {
-            console.error('error updating relation in db', err)
+            message.error('error updating relation in db', err)
             return cb(err);
           }
           
@@ -148,10 +149,10 @@ function run(cb) {
               }
             };
             
-            console.log('requesting scoring', JSON.stringify(opts));
+            message.log('requesting scoring', JSON.stringify(opts));
             
             return request(opts, function (err, resp, body) {
-              console.log('body', JSON.stringify(body));
+              message.log('body', JSON.stringify(body));
               
               if (err) return cb(err);
               if (resp.statusCode !== 200) return cb(new Error('error: statusCode=' + resp.statusCode));
@@ -208,7 +209,7 @@ function run(cb) {
             if (err) return cb(err);
 
             var result = { entities: finalEntities, relations: finalRelations };
-            console.log('finished processing scoring for sentence: %j', result);
+            message.log('finished processing scoring for sentence: %j', result);
             return cb(null, result);
           }
         );

@@ -54,6 +54,9 @@ var config = {
     docServiceUrl: process.env.SERVICE_DOC_URL,
     scoring: []
   },
+  http: {
+    timeoutMsec: process.env.HTTP_TIMEOUT_MSECS ? parseInt(process.env.HTTP_TIMEOUT_MSECS) : 60000
+  },
   currentRole: process.env.PIPELINE_ROLE
 };
 

@@ -1,5 +1,11 @@
 var path = require('path');
-var appNodeModules = path.join(__dirname, '..', 'pipeline_modules');
+var fs = require('fs');
+
+// on Azure, the webjobs are running from a  
+// different location than where they run locally
+var appNodeModules = path.join(__dirname, '..', '..', '..', '..', 'pipeline_modules');
+if (!fs.existsSync(appNodeModules))
+  appNodeModules = path.join(__dirname, '..', 'pipeline_modules');
 console.log('pipeline modules path:', appNodeModules);
 require('app-module-path').addPath(appNodeModules);
 
@@ -37,22 +43,31 @@ function loadService() {
   console.log('requiring', workerName);
   var workerModule = require('pl-' + workerName);
 
-  log.init({
+  if (process.env.USE_ANODE_LOGGING !== 'false') {
+    log.init({
       domain: process.env.COMPUTERNAME || '',
       instanceId: log.getInstanceId(),
       app: workerName,
       level: config.log.level,
       transporters: config.log.transporters
     },
-    function (err) {
-      if (err) return handleError(err);
-      console.log('starting %s worker...', workerName);
+      function(err) {
+        if (err) return handleError(err);
+        console.log('starting %s worker...', workerName);
 
-      return workerModule.run(function (err) {
-        if (err) return console.error('error running %s, error:', workerName, err);
-        console.info(workerName, 'worker exited');
+        return runWorker();
       });
-  });
+  }
+  else
+    return runWorker();
+
+  function runWorker() {
+    return workerModule.run(function (err) {
+      if (err) return console.error('error running %s, error:', workerName, err);
+      console.info(workerName, 'worker exited');
+    });
+  }  
+  
 }
 
 function handleError(err) {

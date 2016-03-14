@@ -578,7 +578,7 @@
                             result = jsonToHtml(result, true);
 
                         resultContainer.html("").append(result);
-                        scrollDown();
+                        if (!isLive) scrollDown();
                     }
                   }
                 }

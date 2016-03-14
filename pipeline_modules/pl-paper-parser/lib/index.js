@@ -3,17 +3,19 @@ var config = require("pl-config");
 var service = require("pl-docServiceProxy");
 var async = require("async");
 var db = require("pl-db")
-var Worker = require('pl-worker').Worker;
+var pipelineWorker = require('pl-worker');
 
 function run(cb) {
-    
-  var worker = new Worker({
-    processMessage: processMessage,
-    queueInName: config.queues.new_ids,
-    queueOutName: config.queues.scoring
+
+  var worker = pipelineWorker.start({
+      processMessage: processMessage,
+      queueInName: config.queues.new_ids,
+      queueOutName: config.queues.scoring
+    },
+    function(err) {
+      if (err) return cb(err);
+      console.info('worker initialized successfully');
   });
-  
-  return worker.run(cb);
     
   function processMessage(message, cb) {
 
@@ -22,11 +24,11 @@ function run(cb) {
     var sourceId = data.sourceId;
     
     if (sourceId !== constants.sources.PMC) {
-        console.info('skipping message processing, since it is not PMC source');
+        message.info('skipping message processing, since it is not PMC source');
         return cb();
     }
     
-    console.info("processing document: source: %s, id: %s", sourceId, docId);
+    message.info("processing document: source: %s, id: %s", sourceId, docId);
     
     // Add a "Processing" status to document
     return db.upsertDocument({
@@ -36,16 +38,16 @@ function run(cb) {
       }, 
       function (err, result) {
         if (err) {
-            console.error('there was an error inserting document row into database.');
+            message.error('there was an error inserting document row into database.');
             return cb(err);
         }
         
         // PMC: getting sentences of document from PMC service (TODO: extend for pubmed)
-        console.log('searching for sentences...');
+        message.log('searching for sentences...');
         // sample in the samples folder from here: http://104.197.190.17/doc/pmc/2000354
         return service.getDocumentSentences(docId, sourceId, function (err, sentencesArray) {
             if (err) {
-              console.error(err);
+              message.error(err);
               
               if (err.errorCode == service.ERRORS.NOT_ACCESSIBLE) {
                 // the document is not accessible, no point in retrying.
@@ -59,12 +61,12 @@ function run(cb) {
                 };
                 return db.updateDocumentStatus(updateStatusOpts, function (err) { 
                   if (err) {
-                    console.error('error updating document status in db', updateStatusOpts, err);
+                    message.error('error updating document status in db', updateStatusOpts, err);
                     return cb(err);
                   }
                   
                   // delete message from queue
-                  console.warn('document is not accessible, deleting item', message);
+                  message.warn('document is not accessible, deleting item', message);
                   return cb();
                 });
               }
@@ -110,7 +112,7 @@ function run(cb) {
                 
                 // filter out sentences with no mirna and genes,
                 if (!genes.length || !mirnas.length) {
-                  console.log('filtering out a sentence with no mirna and gene', sentence);
+                  message.log('filtering out a sentence with no mirna and gene', sentence);
                   return null;
                 }
                   
@@ -119,20 +121,20 @@ function run(cb) {
               // capture sentence index in the array
               .map(function (sentence, index) {
                 return { data: sentence, index: index };
-            });
+              });
             
-            console.info('found %s relevant sentences for scoring', sentences.length);
+            message.info('found %s relevant sentences for scoring', sentences.length);
             
             // Asynchronously queuing all sentences in current document
             return async.each(sentences, processSentence, function (err) {
               if (err) {
-                console.error(err);
+                message.error(err);
                 return cb(err);
               }
               
               // Test Dependency:
               // The following message is used as part of E2E testing
-              console.info('done queuing messages for document <%s>', docId);
+              message.info('done queuing messages for document <%s>', docId);
 
               // send a last item to the queue to mark that
               // the processing of this document is done 
@@ -143,11 +145,10 @@ function run(cb) {
                   docId: docId  
                 }
               };
-              var queueOut = worker.queues[constants.queues.types.OUT];
-              return queueOut.sendMessage(msg, function (err) {
+              return worker.queueOut.sendMessage(msg, function (err) {
                 if (err) return cb(err);
                   
-                console.log('queued last item mark');
+                message.log('queued last item mark');
               
                 // update document status to SCORING
                 return db.updateDocumentStatus({
@@ -170,14 +171,13 @@ function run(cb) {
                 }
               };
                 
-              var queueOut = worker.queues[constants.queues.types.OUT];
-              return queueOut.sendMessage(message, function (err) {
+              return worker.queueOut.sendMessage(message, function (err) {
                 if (err) {
-                  console.error('failed to queue message: <%s> of paper <%s>', message, docId);
+                  message.error('failed to queue message: <%s> of paper <%s>', message, docId);
                   return cb(err);
                 }
                 
-                console.info('queued sentence sourceId: %s, docId: %s, index: %s', data.sourceId, sentence.index, docId);
+                message.info('queued sentence sourceId: %s, docId: %s, index: %s', data.sourceId, sentence.index, docId);
                 return cb();
               });
             }

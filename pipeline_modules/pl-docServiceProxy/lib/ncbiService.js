@@ -2,6 +2,7 @@ var log = require('pl-log');
 var request = require('request');
 var queryString = require('querystring');
 var constants = require('pl-constants');
+var config = require("pl-config");
 
 var ncbiService = (function () {
     "use strict";
@@ -48,7 +49,12 @@ var ncbiService = (function () {
         var urlRequest = host + path + services.search + '?' + queryString.stringify(query);
         console.log(urlRequest);
 
-        return request(urlRequest, function (err, resp, body) {
+        var opts = {
+          url: urlRequest,
+          timeout: config.http.timeoutMsec
+        };
+
+      return request(opts, function(err, resp, body) {
             if (err) {
                 return callback(err);
             }
@@ -97,7 +103,14 @@ var ncbiService = (function () {
             query_key: lastCache.query
         };
         var urlRequest = host + path + services.fetch + '?' + queryString.stringify(query);
-        request(urlRequest, function (err, resp, body) {
+
+
+        var opts = {
+          url: urlRequest,
+          timeout: config.http.timeoutMsec
+        };
+
+      request(urlRequest, function(err, resp, body) {
             if (err) {
                 return callback(err);
             }
@@ -115,9 +128,14 @@ var ncbiService = (function () {
             rettype: 'xml'
         };
         var urlRequest = host + path + services.fetch + '?' + queryString.stringify(query);
-        
+
+        var opts = {
+          url: urlRequest,
+          timeout: config.http.timeoutMsec
+        };
+
         console.info(urlRequest);
-        request(urlRequest, function (err, resp, body) {
+        request(opts, function(err, resp, body) {
             if (err) {
                 return callback(err);
             }
@@ -132,7 +150,6 @@ var ncbiService = (function () {
         configCache: configCache,
         getCache: getCache,
         getDBId: getDBId,
-        
         dbs: dbs,
         etypes: etypes
     };
