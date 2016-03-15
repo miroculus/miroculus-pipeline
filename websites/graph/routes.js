@@ -43,17 +43,8 @@ router.get('/graph', function (req, res) {
     nodes: function (row) {
       return {
         id: ['n', row.TypeId, row.Id].join(sep),
-        group: constants.conceptTypesById[row.TypeId].toUpperCase(),
-        name: row.Name,
-        title: 'N/A',
-        description: 'N/A',
-        refseqDescription: 'N/A',
-        refseqSummary: 'N/A',
-        hgId: 'N/A',
-        hgName: 'N/A',
-        hgSymbol: 'N/A',
-        x: 0,
-        y: 0
+        entityId: row.Id,
+        group: constants.conceptTypesById[row.TypeId].toUpperCase()
       };
     },
     edges: function (row) {
@@ -61,15 +52,19 @@ router.get('/graph', function (req, res) {
       var toId = [row.Entity2TypeId, row.Entity2Id].join(sep);
 
       var obj = {
-        from: ['n', fromId].join(sep),
-        to: ['n', toId].join(sep),
+        from: {
+          id: ['n', fromId].join(sep),
+          start: 1,
+          end: 20},
+        to: {id: ['n', toId].join(sep),
+          start: 1,
+          end: 20},
         id: ['e', row.SourceId, row.DocId, row.SentenceIndex, fromId, toId].join(sep),
         class: row.Relation,
         score: row.Score,
-        data: {}
+        documentId: row.DocId,
+        Sentence: row.Sentence
       };
-      
-      obj.data[row.DocId] = row.Sentence;
       return obj;
     }
   }; 
