@@ -707,6 +707,7 @@ BEGIN
 
 END
 
+GO
 
 INSERT INTO DocumentStatus (Id,Name) VALUES (1, 'Processing')
 INSERT INTO DocumentStatus (Id,Name) VALUES (2, 'Scoring')
