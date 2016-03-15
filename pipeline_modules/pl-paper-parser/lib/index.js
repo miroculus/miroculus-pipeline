@@ -160,7 +160,7 @@ function run(cb) {
             });
             
             function processSentence(sentence, cb) {
-              var message = {
+              var msg = {
                 requestType: constants.queues.action.SCORE,
                 data: {
                   sourceId: data.sourceId,
@@ -171,7 +171,7 @@ function run(cb) {
                 }
               };
                 
-              return worker.queueOut.sendMessage(message, function (err) {
+              return worker.queueOut.sendMessage(msg, function (err) {
                 if (err) {
                   message.error('failed to queue message: <%s> of paper <%s>', message, docId);
                   return cb(err);

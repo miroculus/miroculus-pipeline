@@ -85,7 +85,8 @@ function upsertRelations(opts, cb) {
         { name: 'Entity2TypeId', type: TYPES.Int },
         { name: 'Entity2Id', type: TYPES.VarChar },
         { name: 'Relation', type: TYPES.VarChar },
-        { name: 'Score', type: TYPES.Real }
+        { name: 'Score', type: TYPES.Real },
+        { name: 'Json', type: TYPES.VarChar }
       ],
       rows: []
     };
@@ -101,7 +102,8 @@ function upsertRelations(opts, cb) {
         relation.entity2.typeId,
         relation.entity2.id,
         relation.relation,
-        relation.score
+        relation.score,
+        JSON.stringify(relation.data)
       ]);
     }
     request.addParameter('relations', TYPES.TVP, relationsTable);

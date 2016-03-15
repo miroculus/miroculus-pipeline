@@ -184,7 +184,7 @@ docRouter(router, "/api/pipeline", function (router) {
     }
   );
   
-  router.post('/clear/:name', function (req, res) { 
+  router.post('/clear', function (req, res) { 
       var obj = {};
       return async.each(pipelineQueues, function (queue, cb) {
         return queueService.clearMessages(queue,

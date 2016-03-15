@@ -165,7 +165,9 @@ function run(cb) {
                   return {
                     typeId: constants.conceptTypes[entity.type.toUpperCase()],
                     id: entity.id || entity.value,
-                    name: entity.value
+                    name: entity.value,
+                    from: entity.from,
+                    to: entity.to
                   }
                 });
                 
@@ -197,7 +199,17 @@ function run(cb) {
                       entity1: mirna,
                       entity2: gene,
                       relation: relation.class || relation.classification,
-                      score: relation.score
+                      score: relation.score,
+                      data: {
+                        entity1: {
+                          from: mirna.from || 0, 
+                          to: mirna.to || 0
+                        },
+                        entity2: { 
+                          from: gene.from || 0, 
+                          to: gene.to || 0
+                        }
+                      }
                     });
                   })
                 });

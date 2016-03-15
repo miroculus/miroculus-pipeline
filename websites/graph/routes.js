@@ -20,6 +20,13 @@ router.get('/', function (req, res) {
   });
 });
 
+router.get('/models', function (req, res) { 
+  db.getModelVersions(function (err, result) { 
+    if (err) res.status(500).json({ error: err.message });
+    return res.json(result);
+  });
+});
+
 // this is a temporary workaround for fetching document
 // returns a permanent doc sample of 2000354
 router.get('/doc/pmc/*', function(req, res) {
@@ -51,14 +58,18 @@ router.get('/graph', function (req, res) {
       var fromId = [row.Entity1TypeId, row.Entity1Id].join(sep);
       var toId = [row.Entity2TypeId, row.Entity2Id].join(sep);
 
+      var data = JSON.parse(row.Json);      
+      
       var obj = {
         from: {
           id: ['n', fromId].join(sep),
-          start: 1,
-          end: 20},
+          start: data.entity1.from,
+          end: data.entity1.to
+        },
         to: {id: ['n', toId].join(sep),
-          start: 1,
-          end: 20},
+         start: data.entity2.from,
+         end: data.entity2.to
+        },
         id: ['e', row.SourceId, row.DocId, row.SentenceIndex, fromId, toId].join(sep),
         class: row.Relation,
         score: row.Score,
