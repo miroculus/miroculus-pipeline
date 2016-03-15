@@ -64,7 +64,7 @@ function run(cb) {
           message.info('Found %s new documents', documents.length);
           
           // Queue all new document ids
-          async.each(documents, enqueueDocument, function (err) {
+          async.eachLimit(documents, 50, enqueueDocument, function (err) {
             if (err) {
               message.error('failed to queue messages for documents.');
               return cb(err);
