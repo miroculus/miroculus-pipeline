@@ -61,15 +61,12 @@ router.get('/graph', function (req, res) {
       var data = JSON.parse(row.Json);      
       
       var obj = {
-        from: {
-          id: ['n', fromId].join(sep),
-          start: data.entity1.from,
-          end: data.entity1.to
-        },
-        to: {id: ['n', toId].join(sep),
-         start: data.entity2.from,
-         end: data.entity2.to
-        },
+        fromId: ['n', fromId].join(sep),
+        fromStart: data.entity1.from,
+        fromEnd: data.entity1.to,
+        toId: ['n', toId].join(sep),
+        toStart: data.entity2.from,
+        toEnd: data.entity2.to,
         id: ['e', row.SourceId, row.DocId, row.SentenceIndex, fromId, toId].join(sep),
         class: row.Relation,
         score: row.Score,
