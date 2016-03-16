@@ -292,6 +292,7 @@
           "properties": {
             "WEBSITE_NODE_DEFAULT_VERSION": "4.2.3",
             "PIPELINE_ROLE": "query-id",
+            "DEPLOYMENT_ROLE": "webjob",
             "DB_SERVER": "[concat(parameters('DB_SERVER'), '.database.windows.net')]",
             "DB_NAME": "[parameters('DB_NAME')]",
             "DB_PASSWORD": "[parameters('DB_PASSWORD')]",
@@ -346,6 +347,7 @@
           "properties": {
             "WEBSITE_NODE_DEFAULT_VERSION": "4.2.3",
             "PIPELINE_ROLE": "paper-parser",
+            "DEPLOYMENT_ROLE": "webjob",
             "DB_SERVER": "[concat(parameters('DB_SERVER'), '.database.windows.net')]",
             "DB_NAME": "[parameters('DB_NAME')]",
             "DB_PASSWORD": "[parameters('DB_PASSWORD')]",
@@ -400,6 +402,7 @@
           "properties": {
             "WEBSITE_NODE_DEFAULT_VERSION": "4.2.3",
             "PIPELINE_ROLE": "scoring",
+            "DEPLOYMENT_ROLE": "webjob",
             "DB_SERVER": "[concat(parameters('DB_SERVER'), '.database.windows.net')]",
             "DB_NAME": "[parameters('DB_NAME')]",
             "DB_PASSWORD": "[parameters('DB_PASSWORD')]",
@@ -459,6 +462,7 @@
           "properties": {
             "WEBSITE_NODE_DEFAULT_VERSION": "4.2.3",
             "PIPELINE_ROLE": "graph",
+            "DEPLOYMENT_ROLE": "website",
             "DB_SERVER": "[concat(parameters('DB_SERVER'), '.database.windows.net')]",
             "DB_NAME": "[parameters('DB_NAME')]",
             "DB_PASSWORD": "[parameters('DB_PASSWORD')]",
@@ -472,8 +476,7 @@
             "LOG_STORAGE_ACCOUNT": "[parameters('LOG_STORAGE_ACCOUNT')]",
             "LOG_STORAGE_KEY": "[listKeys(concat('Microsoft.Storage/storageAccounts/', parameters('LOG_STORAGE_ACCOUNT')),'2015-06-15').key1]",
             "SERVICE_DOC_URL": "[parameters('SERVICE_DOC_URL')]",
-            "SCORING_SERVICES": "[parameters('SCORING_SERVICES')]",
-            "DEPLOYMENT_ROLE": "website"
+            "SCORING_SERVICES": "[parameters('SCORING_SERVICES')]"
           }
         }
       ]
@@ -508,6 +511,7 @@
           "properties": {
             "WEBSITE_NODE_DEFAULT_VERSION": "4.2.3",
             "PIPELINE_ROLE": "console",
+            "DEPLOYMENT_ROLE": "website",
             "DB_SERVER": "[concat(parameters('DB_SERVER'), '.database.windows.net')]",
             "DB_NAME": "[parameters('DB_NAME')]",
             "DB_PASSWORD": "[parameters('DB_PASSWORD')]",
@@ -524,8 +528,7 @@
             "SCORING_SERVICES": "[parameters('SCORING_SERVICES')]",
             "GOOGLE_CLIENT_ID": "[parameters('GOOGLE_CLIENT_ID')]",
             "GOOGLE_CLIENT_SECRET": "[parameters('GOOGLE_CLIENT_SECRET')]",
-            "GOOGLE_CALLBACK_URL": "[concat('https://', parameters('consoleWebsiteName'), '.azurewebsites.net/.auth/login/google/callback')]",
-            "DEPLOYMENT_ROLE": "website"
+            "GOOGLE_CALLBACK_URL": "[concat('https://', parameters('consoleWebsiteName'), '.azurewebsites.net/.auth/login/google/callback')]"
           }
         }
       ]

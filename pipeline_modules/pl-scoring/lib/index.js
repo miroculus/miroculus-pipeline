@@ -27,66 +27,15 @@ function run(cb) {
     
     message.log('requestType', message.requestType);
     switch(message.requestType) {
+      case (constants.queues.action.SCORE) :
+        return score();
       case (constants.queues.action.LAST_ITEM_TO_SCORE) :
         return markLastItem();
       case (constants.queues.action.RESCORE) :
         return rescore();
-      case (constants.queues.action.SCORE) :
-        return score();
       default:
         message.error('message should not appear in this queue, deleting...', message);
         return cb();
-    }
-    
-    // markLastItem handler
-    function markLastItem() {
-      // update document status to Processed
-      return db.updateDocumentStatus({
-          sourceId: data.sourceId,
-          docId: data.docId,
-          statusId: constants.documentStatus.PROCESSED
-        },
-        function (err) { 
-          if (err) return cb(err);
-          return cb();
-      });
-    }
-    
-    // rescoring handler
-    function rescore() {
-      message.info('starting rescoring request');
-      
-      // rescore all sentences
-      var rowCount = 0;
-      return db.getSentences({
-          batchSize: config.sql.batchSize,
-          rowHandler: rowHandler
-        },
-        function (err) { 
-          if (err) return cb(err);
-          message.info('rescoring request deleted from queue, %s sentences sent for rescoring', rowCount);
-          return cb();
-      });
-      
-      function rowHandler(row) {
-        rowCount++;
-        var scoringMessage = {
-            requestType: constants.queues.action.SCORE,
-            data: {
-              sourceId: row.SourceId,
-              docId: row.DocId,
-              sentenceIndex: row.SentenceIndex,
-              sentence: row.Sentence,
-              mentions: JSON.parse(row.MentionsJson)
-          }
-        };
-        return worker.queueIn.sendMessage(scoringMessage, function (err) {
-          if (err) {
-            message.error('failed to queue rescoring item', scoringMessage);
-            return cb(err);
-          }
-        });
-      }
     }
 
     // scoring handler
@@ -140,6 +89,7 @@ function run(cb) {
         async.each(config.services.scoring,
           function (scoringService, cb) {
 
+            // change to service. => add abstraction
             var opts = {
               url: scoringService.url,
               method: 'post',
@@ -179,6 +129,7 @@ function run(cb) {
                   }
                 });
                 
+                // TODO: remove domain specific code
                 // check that we have at least one mirna and one gene
                 var genes = entities.filter(function (entity) {
                   return entity.typeId === constants.conceptTypes.GENE ? entity : null;
@@ -225,6 +176,57 @@ function run(cb) {
             return cb(null, result);
           }
         );
+      }
+    }
+    
+    // markLastItem handler
+    function markLastItem() {
+      // update document status to Processed
+      return db.updateDocumentStatus({
+          sourceId: data.sourceId,
+          docId: data.docId,
+          statusId: constants.documentStatus.PROCESSED
+        },
+        function (err) { 
+          if (err) return cb(err);
+          return cb();
+      });
+    }
+    
+    // rescoring handler
+    function rescore() {
+      message.info('starting rescoring request');
+      
+      // rescore all sentences
+      var rowCount = 0;
+      return db.getSentences({
+          batchSize: config.sql.batchSize,
+          rowHandler: rowHandler
+        },
+        function (err) { 
+          if (err) return cb(err);
+          message.info('rescoring request deleted from queue, %s sentences sent for rescoring', rowCount);
+          return cb();
+      });
+      
+      function rowHandler(row) {
+        rowCount++;
+        var scoringMessage = {
+            requestType: constants.queues.action.SCORE,
+            data: {
+              sourceId: row.SourceId,
+              docId: row.DocId,
+              sentenceIndex: row.SentenceIndex,
+              sentence: row.Sentence,
+              mentions: JSON.parse(row.MentionsJson)
+          }
+        };
+        return worker.queueIn.sendMessage(scoringMessage, function (err) {
+          if (err) {
+            message.error('failed to queue rescoring item', scoringMessage);
+            return cb(err);
+          }
+        });
       }
     }
   };

@@ -38,6 +38,7 @@ function connect(cb) {
   return pool.acquire(cb);
 }
 
+// Release an SQL connectioin with callback
 function getReleaseCallback(connection, cb) {
   return function () {
     connection.release();
@@ -45,6 +46,7 @@ function getReleaseCallback(connection, cb) {
   }
 }
 
+// Log an error while releasing an SQL connection
 function logErrorReleaseConnection(err, connection, cb) {
   console.error('error:', err);
   console.log('releasing connection');
@@ -105,12 +107,12 @@ function getTableRowCount(tableName, where, cb) {
   return connect(function (err, connection) {
     if (err) return logErrorReleaseConnection(err, connection, cb);
     
-    // If no error, then good to proceed.
     var query = "SELECT COUNT(*) FROM " + tableName + (where ? " WHERE " + where : "") + ";";
     var request = new tedious.Request(query, getReleaseCallback(connection, function (error) {
       if (error) return cb(error);
     }));
     
+    // Read "count(*)" from first returned row
     request.on('row', function (columns) {
       var result = 0;
       if (columns && columns.length && columns[0].value) {
@@ -126,8 +128,13 @@ function getTableRowCount(tableName, where, cb) {
   });
 }
 
-// Wait for table row count to reach a minimum of an expected count
-// options: { tableName: string, where: string, expectedCount: number }
+/**
+ * Wait for table row count to reach a minimum of an expected count.
+ * @param {Object} options - options for querying the table.
+ * @param {string} employee.tableName - table name to query.
+ * @param {string} employee.where - [nullable] where clause for querying the table.
+ * @param {number} employee.expectedCount - how many rows are expected to be reached.
+ */
 function waitForTableRowCount(options, cb) {
   
   setTimeout(function () {
@@ -142,26 +149,7 @@ function waitForTableRowCount(options, cb) {
   }, 5000);
 }
 
-function runDBScript2(dbScript, cb) {
-  
-  initDB();
-  
-  // Notice: this script will not run with complex scripts like DB creation or 
-  // scripts with GO statements
-  var dbScriptSQL = fs.readFileSync(dbScript, 'utf8');
-  
-  return connect(function (err, connection) {
-    if (err) return logErrorReleaseConnection(err, connection, cb);
-    
-    var request = new tedious.Request(dbScriptSQL, getReleaseCallback(connection, function (error) {
-      if (error) return cb(error);
-      
-      return cb();
-    }));
-    connection.execSql(request);
-  });
-}
-
+// Run a .sql file on current database
 function runDBScript(dbScript, db) {
   var configSql = require('pl-config').sql;
   var cmd = 'sqlcmd -U ' + configSql.userName + 
@@ -177,6 +165,10 @@ function runDBScript(dbScript, db) {
   });
 }
 
+/**
+ * Count how many log messages have been logged.
+ * @param {Object} options - options to be sent to azure-logging module.
+ */
 function countLogMessages(options, cb) {
   
   // output format (text | html | json)

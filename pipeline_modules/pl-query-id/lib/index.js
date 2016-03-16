@@ -72,7 +72,7 @@ function run(cb) {
             
             // Test Dependency:
             // The following message is used as part of E2E testing
-            message.info('done queuing messages for all documents');
+            message.info(constants.logMessages.query.doneQueuing);
             return cb();
           });
           
@@ -128,7 +128,7 @@ function run(cb) {
         
         // Test Dependency:
         // The following message is used as part of E2E testing
-        message.log('Queued document %s from source %s', doc.docId, doc.sourceId)
+        message.log(constants.logMessages.query.queueDocFormat, doc.docId, doc.sourceId)
         return cb();
       });
     }

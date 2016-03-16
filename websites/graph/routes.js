@@ -20,7 +20,7 @@ router.get('/', function (req, res) {
   });
 });
 
-router.get('/models', function (req, res) { 
+router.get('/models', function(req, res) { 
   db.getModelVersions(function (err, result) { 
     if (err) res.status(500).json({ error: err.message });
     return res.json(result);

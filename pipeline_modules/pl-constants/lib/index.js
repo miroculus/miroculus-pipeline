@@ -42,6 +42,16 @@ var constants = {
       RESCORE: 'rescore',
       REPROCESS: 'reprocess'
     }
+  },
+  
+  logMessages: {
+    query: {
+      doneQueuing: 'Testable>> done queuing messages for all documents',
+      queueDocFormat: 'Testable>> Queued document %s from source %s'
+    },
+    parser: {
+      doneQueuingFormat: 'Testable>> done queuing messages for document <%s>'
+    }
   }
 }
 

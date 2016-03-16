@@ -184,7 +184,7 @@ docRouter(router, "/api/pipeline", function (router) {
     }
   );
   
-  router.post('/clear', function (req, res) { 
+  router.post('/clear/:name', function (req, res) { 
       var obj = {};
       return async.each(pipelineQueues, function (queue, cb) {
         return queueService.clearMessages(queue,
@@ -339,5 +339,63 @@ docRouter(router, "/api/pipeline", function (router) {
       response: { representations: ['application/json'] }
     }
   );
+
+
+  router.post('/processDoc', function(req, res) {
+    var docId = req.body.docId;
+    var source = req.body.source;
+
+      var parserQueue = queue({
+        storageName: config.storage.account,
+        storageKey: config.storage.key,
+        queueName: config.queues.new_ids.name
+      });
+      
+      var msg = {
+        requestType: constants.queues.action.GET_DOCUMENT,
+        data: {
+          docId: docId,
+          sourceId: constants.sources[source.toUpperCase()]
+        }
+      };
+      
+      parserQueue.init(function (err) {
+        if (err) return console.error('error initizalizing queue', parserQueue, err);
+        return parserQueue.sendMessage(msg, function (err) {
+          if (err) return res.json({ err: err.message });
+          console.log('document sent successfully');
+          return res.json({ 
+            status: 'OK', 
+            message: 'document sent successfully',
+            queue: config.queues.new_ids.name
+          });
+        });
+      });
+    },
+    {
+      id: 'pipeline_processDoc',
+      name: 'processDoc',
+      usage: 'pipeline processDoc',
+      example: 'pipeline processDoc --source pmc --docId 2000354',
+      doc: 'sends a specific document for processing',
+      params: {
+        "source": {
+            "short": "s",
+            "type": "string",
+            "doc": "source repository (pmc / pubmed)",
+            "style": "body",
+            "required": "true"
+        },
+        "docId": {
+            "short": "d",
+            "type": "number",
+            "doc": "document id to process",
+            "style": "body",
+            "required": "true"
+        }
+      },
+      response: { representations: ['application/json'] }
+    }
+    );
   
 });

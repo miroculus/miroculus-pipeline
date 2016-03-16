@@ -6,16 +6,20 @@ require('app-module-path').addPath(appNodeModules);
 
 var async = require('async');
 var fs = require('fs');
+var util = require('util');
 var exec = require('child_process').exec;
 
 var moment = require('moment');
 var azure = require('azure-storage');
 
 var log = require('pl-log');
+var constants = require('pl-constants');
 var utils = require('./utils.js');
 
 var DATE_TO_CHECK = '2007-10-10';
 var DOCUMENT_ID_TO_MONITOR = '2000354';
+
+process.env.PIPELINE_ROLE = 'testing';
 
 var config;
 var queueService;
@@ -30,14 +34,14 @@ function doneWithError(err, done) {
   
   return setTimeout(function () {
     return done(err);
-  }, 500);
+  }, 1000);
 }
 
 // This method helps print any left over messages to the console before the process ends
 function doneSuccessfully(done) {
   return setTimeout(function () {
     return done();
-  }, 500);
+  }, 1000);
 }
 
 describe('Whole Pipeline', function () {
@@ -97,6 +101,9 @@ describe('Whole Pipeline', function () {
       },
 
       // Recreate database schema
+      // 1 - Drop database from all existing objects
+      // 2 - Execute the updated schema.sql file on the database
+      // 3 - Initialize database with information for the test 
       function (cb) {
         var dropScript = path.join(__dirname, '..', 'deployment', 'sql', 'dropschema.sql');
         var schemaScript = path.join(__dirname, '..', 'deployment', 'sql', 'schema.sql');
@@ -119,10 +126,16 @@ describe('Whole Pipeline', function () {
               return cb(err);
             }
             
-            return utils.runDBScript(setupScript, function (err) {
+            return utils.runDBScript(setupScript, function (err, stdout) {
               if (err) {
                 console.error('Error running setup db:', err);
                 return cb(err);
+              }
+              
+              if (stdout && stdout.indexOf('(1 rows affected)') < 0) {
+                var scriptError = new Error('There seems to be a problem running the setup script');
+                console.error(scriptError);
+                return cb(scriptError);
               }
               
               console.info('DB schema was recreated successfully');
@@ -133,7 +146,7 @@ describe('Whole Pipeline', function () {
         });
       },
 
-      // Recreate queues in pipeline
+      // Recreate queues in pipeline - Ensures all queues are empty of messages
       function (cb) {
         return async.parallel([
           function (cb) {
@@ -149,6 +162,7 @@ describe('Whole Pipeline', function () {
       },
 
       // Starting all three workers in pipeline
+      // Each test will monitor it's own data through the pipeline.
       function (cb) {
         
         // If one of the workers throws an error, log the error message
@@ -193,10 +207,18 @@ describe('Whole Pipeline', function () {
   
   // Testing happy flow
   it('Processing and Scoring', function (done) {
+
+    // After recreating all queues, trigger a pipeline happy flow by 
+    // pushing a message to the queue to query all documents for 2007-10-10.
+    // There are 2381 documents that day.
+    //
+    // Scenario:
+    // --------------
+    // 2380 documents are marked as 'Processed' in the database setup.
+    // 1 document is supposed to go through the pipeline and is monitored by the test.
     
     async.series([
 
-            // After recreating all queues, trigger a pipeline happy flow
       function (cb) {
         
         console.info('triggering a new process through queue', config.queues.trigger_query);
@@ -217,14 +239,15 @@ describe('Whole Pipeline', function () {
       }
     ], 
         
-    // When done setting up, run all workers and when for checkups to complete
+    // When done queuing message => start monitoring log from all web jobs in the pipeline 
     function (err) {
       
       if (err) return doneWithError(err, done);
       
       // Periodic check for errors in the pipeline
       // The monitored errors will only be errors created by the testing process
-      // which means any errors aggregated back from the processes of worker roles
+      // which means any errors aggregated back from the processes of worker roles.
+      // Errors like periodic SQL connection problems and network issues will not be aggregated.
       utils.checkForErrorsInLog(startTime, function (error) {
         
         if (error) {
@@ -235,14 +258,14 @@ describe('Whole Pipeline', function () {
         return;
       });
       
-      // Parallel check of all three worker roles.
-      // If one role fails, the failure will fail the entire test immediately
+      // Parallel check of all three web jobs.
+      // If one role fails, this will fail the entire test immediately
       return async.parallel([
                 
         // Periodic check that document was queried from service
         function (cb) {
           return utils.waitForLogMessage({
-            message: 'done queuing messages for all documents', 
+            message: constants.logMessages.query.doneQueuing, 
             app: 'query-id',
             since: startTime
           }, function (error) {
@@ -250,7 +273,7 @@ describe('Whole Pipeline', function () {
             
             // Check the specific document we expect in the pipeline was processed
             return utils.countLogMessages({
-              message: 'Queued document ' + DOCUMENT_ID_TO_MONITOR,
+              message: util.format(constants.logMessages.query.queueDocFormat, DOCUMENT_ID_TO_MONITOR, constants.sources.PMC),
               app: 'query-id',
               level: 'log',
               since: startTime
@@ -273,7 +296,7 @@ describe('Whole Pipeline', function () {
         function (cb) {
           
           return utils.waitForLogMessage({
-            message: 'done queuing messages for document <' + DOCUMENT_ID_TO_MONITOR + '>', 
+            message: util.format(constants.logMessages.parser.doneQueuingFormat, DOCUMENT_ID_TO_MONITOR), 
             app: 'paper-parser',
             since: startTime
           }, function (error) {
@@ -298,12 +321,12 @@ describe('Whole Pipeline', function () {
         // Periodic check that all sentences were scored
         function (cb) {
           
-          // TODO:
-          // Update 40 sentences to X sentences from the following document were scored
+          // There are 37 sentences
+          // Checking only for 3 since it makes the test run faster.
           return utils.waitForTableRowCount({
             tableName: 'Sentences', 
             where: 'DocId=' + DOCUMENT_ID_TO_MONITOR,
-            expectedCount: 37
+            expectedCount: 3
           }, function (err) {
             if (err) return cb(err);
             
@@ -315,6 +338,7 @@ describe('Whole Pipeline', function () {
         
         if (err) return doneWithError(err, done);
       
+        console.info('Test completed successfully');
         return doneSuccessfully(done);
       });
 
@@ -330,7 +354,8 @@ describe('Whole Pipeline', function () {
   // Cleanup
   after(function (done) {
     
-    // Request deletion of all queues so the recreation of the next test will take less time
+    // Request deletion of all queues so the recreation of queues for 
+    // the next test will take less time
     if (queueService) {
       queueService.deleteQueueIfExists(config.queues.trigger_query, function () { });
       queueService.deleteQueueIfExists(config.queues.new_ids, function () { });

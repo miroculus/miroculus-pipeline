@@ -46,6 +46,8 @@ function run(cb) {
         message.log('searching for sentences...');
         // sample in the samples folder from here: http://104.197.190.17/doc/pmc/2000354
         return service.getDocumentSentences(docId, sourceId, function (err, sentencesArray) {
+          
+            // TODO: refactor code to be more readable
             if (err) {
               message.error(err);
               
@@ -101,6 +103,10 @@ function run(cb) {
                   })*/;
                   
               
+                // TODO: refactor domain specific code
+                // 1) move supported entities to configuration
+                // 2) require at least two entity **type** mentions to enable scoring.
+                
                 // check that we have at least one mirna and one gene
                 var genes = entities.filter(function (mention) {
                   return mention.type === constants.entitiesName.GENE ? mention : null;
@@ -126,6 +132,7 @@ function run(cb) {
             message.info('found %s relevant sentences for scoring', sentences.length);
             
             // Asynchronously queuing all sentences in current document
+            // TODO: rename to sendSentenceToBeProcessed
             return async.each(sentences, processSentence, function (err) {
               if (err) {
                 message.error(err);
@@ -134,7 +141,7 @@ function run(cb) {
               
               // Test Dependency:
               // The following message is used as part of E2E testing
-              message.info('done queuing messages for document <%s>', docId);
+              message.info(constants.logMessages.parser.doneQueuingFormat, docId);
 
               // send a last item to the queue to mark that
               // the processing of this document is done 
